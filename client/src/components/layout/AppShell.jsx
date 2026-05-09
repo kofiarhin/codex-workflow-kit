@@ -1,9 +1,13 @@
 import { List, Sparkle } from "@phosphor-icons/react";
+import { useSelector } from "react-redux";
 import { NavLink, Outlet } from "react-router-dom";
 import { APP_NAME, NAV_ITEMS } from "../../constants/constans.js";
+import { AvatarPreview } from "../ui/AvatarPreview.jsx";
 import { ThemeToggle } from "../ui/ThemeToggle.jsx";
 
 export function AppShell() {
+  const auth = useSelector((state) => state.auth);
+
   return (
     <div className="min-h-[100dvh] bg-[#f8faf7] text-ink transition-colors duration-300 dark:bg-zinc-950 dark:text-zinc-100">
       <header className="border-b border-zinc-200/80 bg-[#f8faf7]/92 backdrop-blur transition-colors duration-300 dark:border-zinc-800 dark:bg-zinc-950/90">
@@ -35,6 +39,21 @@ export function AppShell() {
                 </NavLink>
               ))}
             </nav>
+            {auth.userId && (
+              <NavLink
+                to="/profile"
+                className="hidden items-center gap-2 rounded-md border border-zinc-200 bg-white py-1.5 pl-1.5 pr-3 text-sm font-medium text-zinc-700 shadow-sm transition duration-300 hover:border-zinc-300 hover:bg-zinc-50 active:translate-y-[1px] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-zinc-800 md:flex"
+              >
+                <AvatarPreview
+                  size="sm"
+                  src={auth.avatarUrl}
+                  name={auth.displayName || "User"}
+                  alt={`${auth.displayName || "User"} avatar`}
+                  className="border-transparent shadow-none"
+                />
+                <span className="max-w-28 truncate">{auth.displayName || "Profile"}</span>
+              </NavLink>
+            )}
             <ThemeToggle />
             <button
               className="grid h-10 w-10 place-items-center rounded-md border border-zinc-200 bg-white text-zinc-700 shadow-sm transition duration-300 active:translate-y-[1px] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 sm:hidden"

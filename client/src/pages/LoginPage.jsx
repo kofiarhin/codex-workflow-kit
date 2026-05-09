@@ -43,6 +43,7 @@ export function LoginPage() {
         setSession({
           userId: data.user.id,
           displayName: data.user.name,
+          avatarUrl: data.user.avatarUrl,
           activeOrganizationId: null
         })
       );

@@ -19,3 +19,8 @@ export async function logout() {
   const { data } = await api.post("/auth/logout");
   return data;
 }
+
+export async function updateProfile(profile) {
+  const { data } = await api.patch("/auth/profile", profile);
+  return data;
+}

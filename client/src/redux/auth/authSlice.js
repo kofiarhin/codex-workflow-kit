@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   userId: null,
   displayName: null,
+  avatarUrl: "",
   activeOrganizationId: null
 };
 
@@ -13,6 +14,7 @@ const authSlice = createSlice({
     setSession(state, action) {
       state.userId = action.payload.userId;
       state.displayName = action.payload.displayName;
+      state.avatarUrl = action.payload.avatarUrl || "";
       state.activeOrganizationId = action.payload.activeOrganizationId || null;
     },
     clearSession() {

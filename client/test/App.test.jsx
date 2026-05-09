@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "../src/App.jsx";
@@ -15,11 +15,46 @@ vi.mock("../src/hooks/queries/useHealth.js", () => ({
   })
 }));
 
+const profileMocks = vi.hoisted(() => ({
+  currentUserState: {
+    isLoading: false,
+    isError: false,
+    data: null,
+    error: null
+  },
+  updateProfileState: {
+    mutateAsync: vi.fn(),
+    isPending: false,
+    isError: false,
+    isSuccess: false,
+    error: null
+  }
+}));
+
+vi.mock("../src/hooks/queries/useCurrentUser.js", () => ({
+  useCurrentUser: () => profileMocks.currentUserState
+}));
+
+vi.mock("../src/hooks/mutations/useUpdateProfile.js", () => ({
+  useUpdateProfile: () => profileMocks.updateProfileState
+}));
+
 describe("App", () => {
   afterEach(() => {
     cleanup();
     store.dispatch(clearSession());
     store.dispatch(dismissToast());
+    profileMocks.currentUserState = {
+      isLoading: false,
+      isError: false,
+      data: null,
+      error: null
+    };
+    profileMocks.updateProfileState.mutateAsync.mockReset();
+    profileMocks.updateProfileState.isPending = false;
+    profileMocks.updateProfileState.isError = false;
+    profileMocks.updateProfileState.isSuccess = false;
+    profileMocks.updateProfileState.error = null;
     vi.useRealTimers();
   });
 
@@ -63,5 +98,62 @@ describe("App", () => {
     });
 
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
+  it("renders the session avatar in the header", () => {
+    store.dispatch(
+      setSession({
+        userId: "user_47",
+        displayName: "Mara Voss",
+        avatarUrl: "https://cdn.example.test/mara-voss.webp",
+        activeOrganizationId: null
+      })
+    );
+
+    render(
+      <AppProviders>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </AppProviders>
+    );
+
+    expect(screen.getByAltText("Mara Voss avatar")).toHaveAttribute(
+      "src",
+      "https://cdn.example.test/mara-voss.webp"
+    );
+  });
+
+  it("validates avatar URLs on the profile page", () => {
+    profileMocks.currentUserState = {
+      isLoading: false,
+      isError: false,
+      data: {
+        user: {
+          id: "user_47",
+          name: "Mara Voss",
+          avatarUrl: ""
+        }
+      },
+      error: null
+    };
+
+    render(
+      <AppProviders>
+        <MemoryRouter initialEntries={["/profile"]}>
+          <App />
+        </MemoryRouter>
+      </AppProviders>
+    );
+
+    fireEvent.change(screen.getByLabelText("Avatar URL"), {
+      target: { value: "https://cdn.example.test/avatar.gif" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: /save avatar/i }));
+
+    expect(
+      screen.getByText("Enter an http(s) JPG, PNG, or WebP image URL.")
+    ).toBeInTheDocument();
+    expect(profileMocks.updateProfileState.mutateAsync).not.toHaveBeenCalled();
   });
 });
