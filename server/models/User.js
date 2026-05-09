@@ -1,6 +1,37 @@
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
+const notificationPreferencesSchema = new mongoose.Schema(
+  {
+    securityAlerts: {
+      type: Boolean,
+      default: true
+    },
+    accountActivity: {
+      type: Boolean,
+      default: true
+    },
+    productUpdates: {
+      type: Boolean,
+      default: false
+    },
+    workflowSummary: {
+      type: Boolean,
+      default: true
+    },
+    marketing: {
+      type: Boolean,
+      default: false
+    },
+    digestFrequency: {
+      type: String,
+      enum: ["instant", "daily", "weekly", "off"],
+      default: "weekly"
+    }
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -21,6 +52,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       select: false
+    },
+    notificationPreferences: {
+      type: notificationPreferencesSchema,
+      default: () => ({})
     }
   },
   { timestamps: true }
@@ -39,6 +74,7 @@ userSchema.methods.toPublicJSON = function toPublicJSON() {
     id: this.id,
     name: this.name,
     email: this.email,
+    notificationPreferences: this.notificationPreferences,
     createdAt: this.createdAt
   };
 };

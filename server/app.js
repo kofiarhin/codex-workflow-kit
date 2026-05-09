@@ -7,6 +7,7 @@ const { clientOrigin, nodeEnv } = require("./config/env");
 const { errorHandler } = require("./middleware/errorHandler");
 const authRoutes = require("./routes/authRoutes");
 const healthRoutes = require("./routes/healthRoutes");
+const notificationPreferencesRoutes = require("./routes/notificationPreferencesRoutes");
 
 const app = express();
 
@@ -26,6 +27,7 @@ if (nodeEnv !== "test") {
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/notification-preferences", notificationPreferencesRoutes);
 
 app.use((req, res) => {
   res.status(404).json({
