@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 function getInitialTheme() {
   if (typeof window === "undefined") return "light";
@@ -16,7 +16,8 @@ function getInitialTheme() {
 const uiSlice = createSlice({
   name: "ui",
   initialState: {
-    theme: getInitialTheme()
+    theme: getInitialTheme(),
+    notification: null
   },
   reducers: {
     setTheme(state, action) {
@@ -24,9 +25,28 @@ const uiSlice = createSlice({
     },
     toggleTheme(state) {
       state.theme = state.theme === "dark" ? "light" : "dark";
+    },
+    showToast: {
+      reducer(state, action) {
+        state.notification = action.payload;
+      },
+      prepare({ message, type = "success" }) {
+        return {
+          payload: {
+            id: nanoid(),
+            message,
+            type
+          }
+        };
+      }
+    },
+    dismissToast(state, action) {
+      if (!action.payload || state.notification?.id === action.payload) {
+        state.notification = null;
+      }
     }
   }
 });
 
-export const { setTheme, toggleTheme } = uiSlice.actions;
+export const { dismissToast, setTheme, showToast, toggleTheme } = uiSlice.actions;
 export default uiSlice.reducer;

@@ -1,13 +1,16 @@
 import { WarningCircle } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button.jsx";
 import { TextInput } from "../components/ui/TextInput.jsx";
 import { useLogin } from "../hooks/mutations/useLogin.js";
 import { setSession } from "../redux/auth/authSlice.js";
+import { showToast } from "../redux/ui/uiSlice.js";
 
 export function LoginPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const loginMutation = useLogin();
   const [form, setForm] = useState({
     email: "",
@@ -34,14 +37,20 @@ export function LoginPage() {
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
-    const data = await loginMutation.mutateAsync(form);
-    dispatch(
-      setSession({
-        userId: data.user.id,
-        displayName: data.user.name,
-        activeOrganizationId: null
-      })
-    );
+    try {
+      const data = await loginMutation.mutateAsync(form);
+      dispatch(
+        setSession({
+          userId: data.user.id,
+          displayName: data.user.name,
+          activeOrganizationId: null
+        })
+      );
+      dispatch(showToast({ message: `Signed in as ${data.user.name}.` }));
+      navigate("/");
+    } catch {
+      // React Query stores the error for the inline form alert.
+    }
   }
 
   return (
@@ -80,11 +89,6 @@ export function LoginPage() {
               <div className="flex gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800 dark:border-rose-900/70 dark:bg-rose-950/40 dark:text-rose-200">
                 <WarningCircle size={18} className="mt-0.5 shrink-0" />
                 <span>{loginMutation.error.message}</span>
-              </div>
-            )}
-            {loginMutation.isSuccess && (
-              <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800 dark:border-emerald-900/70 dark:bg-emerald-950/40 dark:text-emerald-200">
-                Signed in as {loginMutation.data.user.name}.
               </div>
             )}
             <Button type="submit" disabled={loginMutation.isPending}>
