@@ -8,38 +8,7 @@ The workflow will ask clarifying questions, generate a saved spec in `_spec/`, c
 
 ## Request
 
-Add workflow audit improvements.
-
-Goal:
-Improve the workflow without adding scope budget restrictions.
-
-Add:
-1. `_review/` folder
-2. final artifact checklist
-3. stricter task status transitions
-4. `_decisions/` folder
-5. continue workflow command
-6. workflow health check
-
-Do NOT add scope budget.
-Do NOT modify app implementation code.
-Update workflow templates/docs only.
-
-Create/update:
-- `_review/`
-- `_decisions/`
-- `templates/_review/`
-- `templates/_decisions/`
-- `AGENTS.md`
-- `RUN_WORKFLOW.md`
-- `README.md`
-- `templates/AGENTS.md`
-- `templates/RUN_WORKFLOW.md`
-- `templates/README` if it exists
-- `templates/_task/README.md`
-- `templates/_summary/README.md`
-- `templates/_progress/progress.md`
-- `scripts/install.sh`
+Add profile avatar upload.
 
 ## Question Preference
 
@@ -62,24 +31,8 @@ Default: `full-auto`
 
 ## Optional Context
 
-- Review files must include request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
-- Every final response must include exact paths for work request, spec, task plan, progress, review, summary, and decisions or `none`.
-- If any artifact is missing, workflow health must be failed.
-- Task statuses must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
-- Terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
-- A task cannot be `Done` unless verified and reviewed.
-- A task cannot move to `Reviewed` unless verification was attempted.
-- If verification cannot run, task can be `Needs Human Review`, not `Done`.
-- Decision files are for meaningful architecture/product decisions only, not routine edits.
-- `continue workflow` resumes from the next task that is not `Done` using existing progress, latest summary, and latest task plan.
-- Before final response, run a workflow health check for required artifacts, verification documentation, scope, and decisions.
-- Update the installer to copy review and decision folders/templates.
-- Update README with review phase, decisions folder, continue command, health check, final artifact checklist, and task status transitions.
-- Do not add scope budget, max files touched, max folder limits, or app implementation changes.
+- Latest direct prompt from user: `add profile avatar upload`
 
 ## Out Of Scope
 
-- Scope budget restrictions.
-- Max file or max folder limits.
-- Application implementation code.
-- Deployment behavior changes.
+- To be clarified during intake.

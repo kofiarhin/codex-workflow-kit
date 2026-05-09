@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       select: false
     },
+    avatarUrl: {
+      type: String,
+      trim: true,
+      maxlength: 2048,
+      default: ""
+    },
     notificationPreferences: {
       type: notificationPreferencesSchema,
       default: () => ({})
@@ -74,6 +80,7 @@ userSchema.methods.toPublicJSON = function toPublicJSON() {
     id: this.id,
     name: this.name,
     email: this.email,
+    avatarUrl: this.avatarUrl || "",
     notificationPreferences: this.notificationPreferences,
     createdAt: this.createdAt
   };

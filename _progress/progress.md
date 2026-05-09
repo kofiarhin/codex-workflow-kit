@@ -45,3 +45,12 @@ Append a new entry after each task. Do not replace previous entries except to co
 - Verification result: `rg "_review|_decisions|continue workflow|health check|artifact checklist|Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done" README.md scripts/install.sh` found required README and installer terms; `Test-Path templates\README.md` returned `False`, so no template README update was needed; `rg "scope budget|max files|max folders|max folder" README.md scripts/install.sh` returned no matches.
 - Blockers: none
 - Next step: TASK-004
+
+### 2026-05-11 16:55 - TASK-001
+
+- Status: Done (Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done)
+- Files changed: `server/models/User.js`, `server/controllers/authController.js`, `server/routes/authRoutes.js`, `server/tests/authProfile.test.js`, `client/src/components/layout/AppShell.jsx`, `client/src/components/ui/AvatarPreview.jsx`, `client/src/constants/constans.js`, `client/src/hooks/mutations/useUpdateProfile.js`, `client/src/pages/LoginPage.jsx`, `client/src/pages/ProfileSettingsPage.jsx`, `client/src/redux/auth/authSlice.js`, `client/src/routes/AppRoutes.jsx`, `client/src/services/authService.js`, `client/test/App.test.jsx`, `docs/PROJECT_CONTEXT.md`, `_task/2026-05-11-add-profile-avatar-url.md`
+- Verification result: `npm run test --workspace server` passed with 3 suites and 7 tests; `npm run test --workspace client` passed with 1 suite and 4 tests, with existing React Router future-flag warnings; `npm run build --workspace client` passed.
+- Review result: Scope respected. One in-scope UI issue was found and fixed: avatar image fallback now resets when the URL changes.
+- Blockers: none
+- Next step: Stop after single-task execution and write review/summary artifacts.

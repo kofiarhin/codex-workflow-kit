@@ -54,11 +54,13 @@ No typecheck script is currently defined.
 - API conventions: Frontend API calls go through services and shared `client/src/lib/api.js`.
 - State management conventions: Redux Toolkit for client-owned global state; TanStack Query for server state.
 - Error handling conventions: Current UI uses inline form/dashboard alerts for mutation errors.
+- Profile conventions: User records include an optional `avatarUrl` string; profile avatar updates use the protected `/api/auth/profile` endpoint and store URL strings only.
 
 ## Architecture Rules
 
 - Keep notification toasts as client-only UI state unless a future task explicitly adds persistence.
 - Use existing auth service functions for login/logout workflows.
+- Store user avatar images as URL strings only until a future media storage task is explicitly requested.
 
 ## Known Constraints
 
