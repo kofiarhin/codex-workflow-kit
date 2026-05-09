@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute one task at a time -> update _progress -> final summary in _summary
+request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute one task at a time -> update _progress -> review in _review -> final summary in _summary -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -18,12 +18,14 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `_spec/`: Saved specs generated after intake questions.
 - `_task/`: Saved vertical task plans generated from specs.
 - `_progress/progress.md`: Append-only task progress log.
+- `_review/`: Required workflow reviews written after implementation and before summaries.
 - `_summary/`: Workflow completion summaries.
+- `_decisions/`: Decision logs for meaningful architecture or product decisions.
 - `docs/PROJECT_CONTEXT.md`: Durable facts about stack, commands, conventions, constraints, and architecture rules.
 - `docs/ARCHITECTURE.md`: Architecture planning support.
 - `docs/VERIFY.md`: Legacy/supporting verification notes when useful.
 - `docs/PROMPTS.md`: Reusable prompts for intake, specs, planning, execution, critique, repair, and summaries.
-- `docs/DECISIONS.md`: ADR-style architecture decision log.
+- `docs/DECISIONS.md`: Legacy/supporting project-level decision guidance when useful.
 - `scripts/install.sh`: Installer that copies workflow files into another repository.
 - `examples/mern-saas`: Filled-in examples for a realistic MERN SaaS project.
 
@@ -37,10 +39,12 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Read `_progress/` and `_summary/` before planning.
 - Generate vertical tasks in `_task/`.
 - Execute one Ralph Wiggum-style task at a time.
+- Move each task through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 - Verify every task.
 - Critique and fix in-scope issues.
 - Append progress after each task.
-- Produce a final summary and suggested commit message.
+- Write a review in `_review/`.
+- Produce a final summary, workflow health status, final artifact checklist, and suggested commit message.
 
 ## Repository Structure
 
@@ -55,7 +59,11 @@ templates/
     README.md
   _progress/
     progress.md
+  _review/
+    README.md
   _summary/
+    README.md
+  _decisions/
     README.md
   docs/
     PROJECT_CONTEXT.md
@@ -77,7 +85,7 @@ examples/
     ARCHITECTURE.example.md
 ```
 
-The older `docs/SPEC.md`, `docs/TASKS.md`, and `docs/ACTIVE_TASK.md` templates may remain useful for compatibility, but `_spec/`, `_task/`, `_progress/`, and `_summary/` are the main workflow memory.
+The older `docs/SPEC.md`, `docs/TASKS.md`, and `docs/ACTIVE_TASK.md` templates may remain useful for compatibility, but `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, and `_decisions/` are the main workflow memory.
 
 ## Install Into A Project
 
@@ -111,9 +119,9 @@ Example:
 add dark theme
 ```
 
-Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, generate a spec, generate a vertical task plan, execute one task at a time, verify, critique, update progress, and summarize.
+Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, generate a spec, generate a vertical task plan, execute one task at a time, verify, review, update progress, write a workflow review, summarize, and run a health check.
 
-Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, or `_summary/` is optional, not required.
+Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is optional, not required.
 
 ### Step 3: Answer Questions
 
@@ -145,6 +153,14 @@ The spec captures the request, answers, assumptions, requirements, edge cases, c
 
 The task plan breaks the spec into vertical slices. Each task includes objective, likely files, checklist, acceptance criteria, verification commands, stop condition, and out-of-scope items.
 
+Tasks must use this status flow:
+
+```txt
+Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+```
+
+Allowed terminal states are `Done`, `Blocked`, and `Needs Human Review`. A task cannot be `Done` unless verification was attempted and the result was reviewed. If verification cannot run, the task is `Needs Human Review`, not `Done`.
+
 ### Step 5: Execute One Task At A Time
 
 Before each task, the agent reads:
@@ -156,9 +172,9 @@ _spec/<active-spec>.md
 _task/<active-task-plan>.md
 ```
 
-For each task, the agent inspects relevant code, implements only the current task, verifies, critiques/fixes, appends progress, and continues only if safe.
+For each task, the agent inspects relevant code, implements only the current task, verifies, reviews, fixes in-scope defects, appends progress, and continues only if safe.
 
-### Step 6: Review Progress And Summary
+### Step 6: Write Review, Summary, And Health Check
 
 After each task, the agent appends to:
 
@@ -169,8 +185,55 @@ _progress/progress.md
 After the workflow completes, the agent creates or appends:
 
 ```txt
+_review/<date-or-slug>.md
 _summary/<date-or-slug>.md
 ```
+
+The review file records request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
+
+The final health check reports `Passed`, `Partial`, or `Failed`.
+
+Health checks confirm:
+
+- `WORK_REQUEST.md` synced.
+- Spec, task plan, progress, review, and summary artifacts exist.
+- Verification commands ran or were documented.
+- Scope was respected.
+- Decisions were recorded when needed.
+
+If any required artifact is missing, health is `Failed`.
+
+## Final Artifact Checklist
+
+Every final response must include exact artifact paths:
+
+```txt
+Work request: WORK_REQUEST.md
+Spec: _spec/<file>.md
+Task plan: _task/<file>.md
+Progress: _progress/progress.md
+Review: _review/<file>.md
+Summary: _summary/<file>.md
+Decisions: _decisions/<file>.md or none
+```
+
+Use `none` for decisions when no meaningful architecture or product decision was made.
+
+## Decisions Folder
+
+Use `_decisions/` for meaningful architecture or product decisions only. Routine edits do not need decision files.
+
+Each decision file should include date, decision, context, options considered, selected option, consequences, affected files, and follow-up tasks.
+
+## Continue Workflow
+
+Use this prompt to resume an interrupted workflow:
+
+```txt
+continue workflow
+```
+
+The agent should read `_progress/progress.md`, the latest `_summary/`, and the latest `_task/`, find the next task that is not `Done`, and continue from that task. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
 
 ## Question Control
 
@@ -190,7 +253,7 @@ When questions are skipped, the agent must generate a best-effort spec and recor
 Direct prompts and `WORK_REQUEST.md` can include an optional execution preference:
 
 - `plan-only`: Ask questions, write spec, write task plan, then stop.
-- `single-task`: Ask questions, write spec, write task plan, execute only the first ready task, verify, update progress, write summary, then stop.
+- `single-task`: Ask questions, write spec, write task plan, execute only the first ready task, verify, review, update progress, write review, write summary, run health check, then stop.
 - `full-auto`: Ask questions, write spec, write task plan, execute tasks sequentially until complete, blocked, risky, unclear, or unverified.
 
 Default: `single-task`.
@@ -204,9 +267,11 @@ Default: `single-task`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Generate vertical tasks in `_task/`.
 7. Execute one task at a time.
-8. Verify and critique each task.
+8. Verify and review each task.
 9. Append progress to `_progress/progress.md`.
-10. Write the final summary in `_summary/`.
+10. Write the workflow review in `_review/`.
+11. Write the final summary in `_summary/`.
+12. Run the workflow health check and include the final artifact checklist.
 
 ## Request Types
 
@@ -265,6 +330,12 @@ Follow RUN_WORKFLOW.md.
 Generate a best-effort spec with assumptions, then create the vertical task plan and execute one task at a time.
 ```
 
+Resume prompt:
+
+```txt
+continue workflow
+```
+
 ## Zero-Edit Workflow
 
 You can run the workflow without manually editing any docs:
@@ -276,7 +347,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> _spec -> _task -> task execution -> _progress -> _summary
+direct prompt -> questions -> _spec -> _task -> task execution -> _progress -> _review -> _summary -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, success criteria, or detailed acceptance criteria.
@@ -305,7 +376,7 @@ git diff
 Commit only after verification:
 
 ```bash
-git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _spec/ _task/ _progress/ _summary/ docs/
+git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _spec/ _task/ _progress/ _review/ _summary/ _decisions/ docs/
 git commit -m "docs: add clarified workflow memory"
 ```
 
@@ -321,7 +392,9 @@ Keep these files at the project root:
 - `_spec/`
 - `_task/`
 - `_progress/`
+- `_review/`
 - `_summary/`
+- `_decisions/`
 - `docs/`
 
 Most agents can be started with:
@@ -339,7 +412,7 @@ Read RUN_WORKFLOW.md and execute it using this request: add dark theme
 For review-only work:
 
 ```txt
-Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _spec/, _task/, _progress/progress.md, and _summary/. Report bugs, regressions, missing tests, and scope creep first. Do not edit files.
+Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _spec/, _task/, _progress/progress.md, _review/, _summary/, and _decisions/. Report bugs, regressions, missing tests, and scope creep first. Do not edit files.
 ```
 
 ## Customizing For Other Stacks
@@ -350,7 +423,7 @@ To use this kit outside MERN:
 - Fill in discovered conventions in `docs/PROJECT_CONTEXT.md`.
 - Update folder structure and architecture rules in `docs/ARCHITECTURE.md`.
 - Replace verification commands in generated `_task/` plans.
-- Keep the same questions, spec, vertical tasks, progress, and summary loop.
+- Keep the same questions, spec, vertical tasks, progress, review, summary, decisions, and health-check loop.
 
 ## Example MERN SaaS Workflow
 
@@ -371,7 +444,9 @@ These examples show the expected level of detail. They are not application code.
 - Ralph Wiggum-style steps over broad autonomy.
 - Verification over assumptions.
 - Progress after every task.
+- Review before summary.
 - Summary after every workflow.
+- Health check before final response.
 - Reusable across stacks.
 
 ## License

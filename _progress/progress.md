@@ -29,3 +29,19 @@ Append a new entry after each task. Do not replace previous entries except to co
 - Verification result: `Test-Path _review/README.md; Test-Path _decisions/README.md; Test-Path templates/_review/README.md; Test-Path templates/_decisions/README.md` returned `True` for all files; `rg "Request|Spec file used|Task plan used|Final review verdict|Date|Decision|Options considered|Selected option|routine edits" _review _decisions templates\_review templates\_decisions` confirmed required review and decision fields.
 - Blockers: none
 - Next step: TASK-002
+
+### 2026-05-11 16:38 - TASK-002
+
+- Status: Done (Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done)
+- Files changed: `AGENTS.md`, `RUN_WORKFLOW.md`, `templates/AGENTS.md`, `templates/RUN_WORKFLOW.md`, `templates/_task/README.md`, `templates/_summary/README.md`, `templates/_progress/progress.md`, `_task/2026-05-11-workflow-audit-improvements.md`
+- Verification result: `rg "_review|_decisions|continue workflow|Workflow Health|Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done|Final artifact checklist|Needs Human Review" AGENTS.md RUN_WORKFLOW.md templates/AGENTS.md templates/RUN_WORKFLOW.md templates/_task/README.md templates/_summary/README.md templates/_progress/progress.md` found the required workflow terms; `rg "scope budget|max files|max folders|max folder" AGENTS.md RUN_WORKFLOW.md templates/AGENTS.md templates/RUN_WORKFLOW.md templates/_task/README.md templates/_summary/README.md templates/_progress/progress.md` returned no matches.
+- Blockers: none
+- Next step: TASK-003
+
+### 2026-05-11 16:46 - TASK-003
+
+- Status: Done (Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done)
+- Files changed: `README.md`, `scripts/install.sh`, `_task/2026-05-11-workflow-audit-improvements.md`
+- Verification result: `rg "_review|_decisions|continue workflow|health check|artifact checklist|Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done" README.md scripts/install.sh` found required README and installer terms; `Test-Path templates\README.md` returned `False`, so no template README update was needed; `rg "scope budget|max files|max folders|max folder" README.md scripts/install.sh` returned no matches.
+- Blockers: none
+- Next step: TASK-004

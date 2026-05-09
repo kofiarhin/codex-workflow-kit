@@ -81,7 +81,7 @@ Out-of-scope items:
 
 ### TASK-002: Update workflow operating docs
 
-Status: `In Progress`
+Status: `Done`
 
 Objective:
 Update root and template workflow instructions to include review phase, decisions, status transitions, continue workflow, health check, and final artifact checklist.
@@ -128,7 +128,7 @@ Out-of-scope items:
 
 ### TASK-003: Update README and installer
 
-Status: `Planned`
+Status: `Done`
 
 Objective:
 Update user-facing documentation and installer copying so installed repos receive the new audit workflow folders and guidance.
