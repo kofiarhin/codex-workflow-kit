@@ -2,24 +2,170 @@
 
 Use these prompts with OpenAI Codex, Claude Code, Cursor, or similar coding agents. Replace placeholders before running.
 
-## Project Intake
+## Universal Work Request
 
 ```txt
-Read AGENTS.md, docs/SPEC.md, docs/ARCHITECTURE.md, and docs/TASKS.md.
+Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
 
-Summarize:
-1. What this project is.
-2. The current architecture.
-3. The top implementation risks.
-4. The next three task candidates.
+Follow AGENTS.md.
+Classify the request, inspect the repo, update docs, generate scoped tasks, execute one task at a time, verify, critique/fix, update ACTIVE_TASK.md and VERIFY.md, then provide a final summary and suggested commit message.
+```
 
-Do not edit files yet.
+## Request Classification
+
+```txt
+Read WORK_REQUEST.md.
+
+Classify the request as one primary type:
+- feature
+- bugfix
+- boilerplate
+- security
+- refactor
+- test
+- docs
+- ops
+- research
+
+Also identify:
+1. Scope: small, medium, or large.
+2. Risk: low, medium, or high.
+3. Whether implementation is allowed now.
+4. Whether clarification is required.
+5. The safest first task.
+
+Do not edit implementation files.
+```
+
+## Repo Intake
+
+```txt
+Inspect the repository for the request in WORK_REQUEST.md.
+
+Find:
+1. Stack and major frameworks.
+2. Package manager and lockfiles.
+3. Test, lint, build, and typecheck commands.
+4. Folder and naming conventions.
+5. Existing architecture boundaries.
+6. Files likely affected by the request.
+7. Risks, missing tooling, and unknowns.
+
+Update docs/PROJECT_CONTEXT.md with durable findings only.
+Do not implement the request yet.
+```
+
+## Task Generation
+
+```txt
+Using WORK_REQUEST.md, docs/PROJECT_CONTEXT.md, docs/SPEC.md, and docs/ARCHITECTURE.md, generate scoped tasks in docs/TASKS.md.
+
+Each task must include:
+- Task ID
+- Status
+- Request type
+- Objective
+- Files likely affected
+- Checklist
+- Acceptance criteria
+- Verification commands
+- Stop condition
+
+Tasks must be sequential and reviewable.
+Do not implement code.
+```
+
+## Single-Task Execution
+
+```txt
+Follow AGENTS.md and RUN_WORKFLOW.md.
+
+Execute exactly one task:
+<TASK-ID> - <TASK_TITLE>
+
+Before editing:
+- Copy task details into docs/ACTIVE_TASK.md.
+- Mark status as In progress.
+- Check git status.
+- Inspect only relevant files.
+
+After editing:
+- Record files touched in docs/ACTIVE_TASK.md.
+- Run or recommend verification commands.
+- Update docs/VERIFY.md.
+- Critique the result.
+- Fix only in-scope defects.
+- Mark docs/ACTIVE_TASK.md as Done, Blocked, or Needs review.
+- Check git status again.
+
+Do not implement any other task.
+```
+
+## Critique Loop
+
+```txt
+Review the active task result as a senior engineer.
+
+Use docs/ACTIVE_TASK.md, docs/TASKS.md, and the current diff.
+
+Prioritize:
+1. Bugs or regressions.
+2. Security issues.
+3. Missing acceptance criteria.
+4. Missing edge cases.
+5. Test gaps.
+6. Scope creep.
+7. Unnecessary complexity.
+
+Return findings with file and line references where possible.
+Do not make changes unless explicitly asked.
+```
+
+## Verification Repair
+
+```txt
+Follow AGENTS.md.
+
+The verification for the active task failed:
+<COMMAND>
+
+Failure summary:
+<PASTE_FAILURE_SUMMARY>
+
+Fix only the cause of this active-task failure.
+Do not refactor unrelated code.
+
+After the fix:
+- Re-run the failing command if possible.
+- Run directly related tests.
+- Update docs/ACTIVE_TASK.md.
+- Update docs/VERIFY.md.
+- Summarize the root cause and fix.
+```
+
+## Final Summary
+
+```txt
+Produce the final workflow summary.
+
+Include:
+1. Original work request.
+2. Request classification.
+3. Tasks created or updated.
+4. Tasks completed.
+5. Files changed.
+6. Verification commands and results.
+7. Unresolved issues or blockers.
+8. Recommended next step.
+9. Suggested commit message.
+
+Do not claim a commit was made unless one was actually created.
 ```
 
 ## Architecture Review
 
 ```txt
-Review docs/SPEC.md and docs/ARCHITECTURE.md for consistency.
+Review docs/SPEC.md, docs/PROJECT_CONTEXT.md, and docs/ARCHITECTURE.md for consistency.
 
 Identify:
 1. Architecture decisions that are clear.
@@ -29,82 +175,6 @@ Identify:
 5. Recommended updates to docs/DECISIONS.md.
 
 Do not implement code.
-```
-
-## Feature Planning
-
-```txt
-Using docs/SPEC.md and docs/ARCHITECTURE.md, break this feature into small one-task-at-a-time implementation tasks:
-
-Feature: <FEATURE_DESCRIPTION>
-
-For each task, include:
-- Task ID
-- Objective
-- Likely files
-- Acceptance criteria
-- Verification commands
-- Stop conditions
-
-Update docs/TASKS.md only.
-```
-
-## Implement One Task
-
-```txt
-Follow AGENTS.md.
-
-Implement exactly one task:
-<TASK-ID> - <TASK_TITLE>
-
-Before editing:
-- Read the task acceptance criteria.
-- Check git status.
-- Inspect only relevant files.
-
-After editing:
-- Run or recommend verification commands.
-- Update docs/VERIFY.md.
-- Check git status again.
-- Summarize changed files, validation results, and risks.
-
-Do not implement any other task.
-```
-
-## Critique / Review Loop
-
-```txt
-Review the changes for <TASK-ID> as a senior engineer.
-
-Prioritize:
-1. Bugs or regressions.
-2. Security issues.
-3. Missing edge cases.
-4. Test gaps.
-5. Unnecessary complexity.
-
-Return findings with file and line references where possible.
-Do not make changes unless explicitly asked.
-```
-
-## Fix Failed Tests
-
-```txt
-Follow AGENTS.md.
-
-The following command failed:
-<COMMAND>
-
-Failure summary:
-<PASTE_FAILURE_SUMMARY>
-
-Fix only the cause of this failure. Do not refactor unrelated code.
-
-After the fix:
-- Re-run the failing command if possible.
-- Run any directly related tests.
-- Update docs/VERIFY.md.
-- Summarize the root cause and fix.
 ```
 
 ## Reduce Complexity

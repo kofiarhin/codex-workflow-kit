@@ -4,7 +4,7 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/install.sh <target-repo> [--force]
+  bash scripts/install.sh <target-repo> [--force]
 
 Copies the Codex workflow kit templates into a target repository.
 
@@ -13,8 +13,8 @@ Options:
   --help    Show this help message.
 
 Examples:
-  scripts/install.sh ../my-app
-  scripts/install.sh /path/to/my-app --force
+  bash scripts/install.sh ../my-app
+  bash scripts/install.sh /path/to/my-app --force
 EOF
 }
 
@@ -90,6 +90,10 @@ echo "Installing Codex workflow kit into: $TARGET_ROOT"
 echo
 
 copy_file "$TEMPLATE_ROOT/AGENTS.md" "AGENTS.md"
+copy_file "$TEMPLATE_ROOT/WORK_REQUEST.md" "WORK_REQUEST.md"
+copy_file "$TEMPLATE_ROOT/RUN_WORKFLOW.md" "RUN_WORKFLOW.md"
+copy_file "$TEMPLATE_ROOT/docs/PROJECT_CONTEXT.md" "docs/PROJECT_CONTEXT.md"
+copy_file "$TEMPLATE_ROOT/docs/ACTIVE_TASK.md" "docs/ACTIVE_TASK.md"
 copy_file "$TEMPLATE_ROOT/docs/SPEC.md" "docs/SPEC.md"
 copy_file "$TEMPLATE_ROOT/docs/TASKS.md" "docs/TASKS.md"
 copy_file "$TEMPLATE_ROOT/docs/VERIFY.md" "docs/VERIFY.md"
@@ -101,12 +105,12 @@ echo
 echo "Setup complete."
 echo
 echo "Next steps:"
-echo "1. Edit AGENTS.md for your stack, deployment targets, and project rules."
-echo "2. Fill in docs/SPEC.md with the product specification."
-echo "3. Fill in docs/ARCHITECTURE.md with the intended structure and technical decisions."
-echo "4. Break the first feature into one-task-at-a-time entries in docs/TASKS.md."
-echo "5. Start your agent with:"
+echo "1. Edit AGENTS.md and docs/PROJECT_CONTEXT.md for your stack, commands, and project rules."
+echo "2. Write one plain-English request in WORK_REQUEST.md."
+echo "3. Start your agent with:"
 echo
-echo "   Read AGENTS.md, docs/SPEC.md, docs/ARCHITECTURE.md, and docs/TASKS.md. Implement exactly one task: <TASK-ID>."
+echo "   Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md."
+echo
+echo "4. Review docs/ACTIVE_TASK.md, docs/VERIFY.md, and the final summary before committing."
 echo
 echo "Existing files were skipped unless --force was used."

@@ -2,7 +2,7 @@
 
 This file defines how AI coding agents should work in this repository. It is intended for OpenAI Codex, Claude Code, Cursor, and similar tools.
 
-Customize the placeholders before using this in a production project.
+Customize placeholders before using this in a production project. MERN is the default example stack, but these rules apply to any stack.
 
 ## Project Context
 
@@ -13,7 +13,12 @@ Customize the placeholders before using this in a production project.
   - Backend: Node.js, Express, MongoDB, Mongoose
   - Testing: Vitest/React Testing Library for frontend, Jest/Supertest for backend
 - Deployment: `<DEPLOYMENT_TARGETS>`
+- Workflow entrypoints:
+  - `WORK_REQUEST.md`
+  - `RUN_WORKFLOW.md`
 - Important docs:
+  - `docs/PROJECT_CONTEXT.md`
+  - `docs/ACTIVE_TASK.md`
   - `docs/SPEC.md`
   - `docs/ARCHITECTURE.md`
   - `docs/TASKS.md`
@@ -22,52 +27,61 @@ Customize the placeholders before using this in a production project.
 
 ## Operating Rules
 
-1. Read `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md` before implementation.
-2. Implement exactly one task at a time from `docs/TASKS.md`.
-3. Do not start a second task until the current task is implemented, verified, and documented.
-4. Keep changes scoped to the selected task.
-5. Avoid unrelated refactors, formatting churn, file moves, dependency changes, and architecture rewrites.
-6. Preserve existing behavior unless the task explicitly requires changing it.
-7. Prefer existing project conventions over new patterns.
-8. Ask for clarification when acceptance criteria are ambiguous or conflicting.
-9. Stop if required secrets, credentials, external services, or destructive actions are needed.
-10. Update `docs/VERIFY.md` after each task with commands run, results, bugs found, and unresolved issues.
+1. For plain-English work requests, always read `WORK_REQUEST.md` and `RUN_WORKFLOW.md` before planning or editing.
+2. Read `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md` before implementation.
+3. Classify the request before changing code or docs.
+4. Inspect the repository before generating tasks.
+5. Implement tasks sequentially, one task at a time.
+6. Keep changes scoped to the active task.
+7. Never implement unrelated work.
+8. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+9. Update `docs/ACTIVE_TASK.md` during task execution.
+10. Update `docs/VERIFY.md` after each task.
+11. Do not start a second task until the current task is implemented, verified, critiqued, and documented.
+12. Stop if scope is unclear, risky, destructive, or requires unavailable access.
 
 ## Required Workflow
 
-For every implementation task, follow this loop:
+For a work request:
 
-1. Identify the task ID and acceptance criteria from `docs/TASKS.md`.
-2. Check repository status before editing:
-
-   ```bash
-   git status --short
-   ```
-
-3. Inspect relevant files only.
-4. Make the smallest coherent change that satisfies the task.
-5. Run relevant validation commands, or explain why they cannot be run.
-6. Update `docs/VERIFY.md`.
-7. Check repository status after editing:
+1. Read `WORK_REQUEST.md` and `RUN_WORKFLOW.md`.
+2. Classify the request as `feature`, `bugfix`, `boilerplate`, `security`, `refactor`, `test`, `docs`, `ops`, or `research`.
+3. Check repository status:
 
    ```bash
    git status --short
    ```
 
-8. Summarize changed files, validation results, and remaining risks.
+4. Perform repo intake and update `docs/PROJECT_CONTEXT.md` with durable findings.
+5. Update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` only as needed.
+6. Generate or update scoped tasks in `docs/TASKS.md`.
+7. Move the next valid task into `docs/ACTIVE_TASK.md`.
+8. Implement only that task.
+9. Run or recommend validation commands.
+10. Critique the result and fix only in-scope defects.
+11. Update `docs/VERIFY.md`.
+12. Check repository status again:
+
+    ```bash
+    git status --short
+    ```
+
+13. Summarize results and suggest a commit message.
 
 ## Implementation Boundaries
 
 Agents must not:
 
-- Implement more than one task per prompt.
+- Implement more than one active task at a time.
+- Expand scope beyond the request and active task.
 - Rewrite large parts of the application without explicit approval.
-- Introduce new dependencies unless the task requires them and the reason is documented.
-- Change deployment configuration unless the task requires it.
+- Introduce new dependencies unless the active task requires them and the reason is documented.
+- Change deployment configuration unless the active task requires it.
 - Hard-code secrets, API keys, tokens, credentials, or environment-specific URLs.
 - Duplicate server state into client global state.
 - Expose sensitive fields such as `passwordHash`, tokens, or private user data.
 - Remove tests or weaken validation to make a task pass.
+- Create fake application code to satisfy the workflow.
 - Run destructive commands such as `git reset --hard`, `git clean -fd`, or force pushes unless explicitly instructed.
 
 ## Architecture Guidance
@@ -102,21 +116,22 @@ server/
 
 Guidelines:
 
+- Prefer existing project conventions over new patterns.
 - Keep UI components focused on rendering and interaction.
-- Put frontend API calls in `client/src/services/`.
-- Use a shared frontend API client in `client/src/lib/api.js`.
-- Use TanStack Query or equivalent for server state.
-- Use Redux Toolkit or equivalent only for global client state.
+- Put frontend API calls in service files or query/mutation hooks.
+- Use a shared frontend API client when the stack supports it.
+- Use a server-state library for fetched data when the project already has one.
+- Use global client state only for client-owned state.
 - Keep backend route handlers thin; move business logic into services or utilities when it grows.
 - Validate input at API boundaries.
-- Keep database models authoritative for persistence rules.
-- Document major architectural decisions in `docs/DECISIONS.md`.
+- Keep persistence models authoritative for data rules.
+- Document meaningful architecture decisions in `docs/DECISIONS.md`.
 
 ## Testing Expectations
 
-Use the narrowest validation that proves the task works, then broaden when risk is higher.
+Use the narrowest validation that proves the active task works, then broaden when risk is higher.
 
-Preferred commands:
+Common commands:
 
 ```bash
 # Frontend
@@ -132,6 +147,7 @@ cd server && npm run lint
 npm test
 npm run lint
 npm run build
+npm run typecheck
 ```
 
 If tests or scripts are missing:
@@ -145,8 +161,11 @@ If tests or scripts are missing:
 
 After every task, append an entry to `docs/VERIFY.md` containing:
 
+- Work request summary.
+- Request classification.
 - Task ID and title.
 - Date.
+- Files touched.
 - Commands run.
 - Result of each command.
 - Manual checks performed.
@@ -171,36 +190,36 @@ Do not claim a task is verified unless validation was actually run or a manual c
   Examples:
 
   ```txt
-  feat: add organization invite flow
-  fix: handle expired reset tokens
-  docs: document deployment variables
+  feat: add login flow
+  fix: repair dashboard totals
+  docs: add workflow request template
   test: cover subscription downgrade rules
   ```
 
-- Before preparing a commit, summarize:
-  - Files changed.
-  - Validation run.
-  - Risks or follow-up work.
+- Do not commit unless explicitly instructed.
+- Before preparing a commit, summarize files changed, validation run, risks, and follow-up work.
 
 ## Task Scoping Rules
 
-Each task in `docs/TASKS.md` should include:
+Each task in `docs/TASKS.md` must include:
 
 - Task ID.
+- Status.
+- Request type.
 - Objective.
-- Files or areas likely to change.
+- Files likely affected.
+- Checklist.
 - Acceptance criteria.
 - Verification commands.
-- Stop conditions.
+- Stop condition.
 
-Agents must keep implementation aligned to those fields.
-
-If a task reveals necessary follow-up work, add a new proposed task instead of expanding the current task.
+Agents must keep implementation aligned to those fields. If follow-up work is discovered, add or recommend a new task instead of expanding the active task.
 
 ## Stop Conditions
 
 Stop and ask for direction when:
 
+- The work request is ambiguous enough that implementation could go in multiple incompatible directions.
 - Acceptance criteria conflict with the specification.
 - The implementation requires credentials or access that is unavailable.
 - A destructive migration or data loss is possible.
@@ -208,13 +227,17 @@ Stop and ask for direction when:
 - The task requires introducing a new paid service or dependency.
 - Existing uncommitted changes overlap with the files needed and intent is unclear.
 - Tests fail for reasons unrelated to the current task and the fix would be out of scope.
+- The request is a broad command such as "refactor auth" but no safe first task can be identified.
 
 ## Final Response Format
 
-At the end of a task, agents should report:
+At the end of a workflow run, report:
 
+- Request classification.
+- Tasks created or updated.
 - Task completed.
 - Files changed.
-- Validation commands and results.
-- Updates made to `docs/VERIFY.md`.
-- Any unresolved issues or recommended next task.
+- Verification commands and results.
+- Updates made to `docs/ACTIVE_TASK.md` and `docs/VERIFY.md`.
+- Unresolved issues or recommended next task.
+- Suggested commit message.

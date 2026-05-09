@@ -1,75 +1,93 @@
 # Task Plan
 
-This file controls implementation scope. Agents should complete one task at a time, verify it, update `docs/VERIFY.md`, and stop.
+This file controls implementation scope for the work request in `WORK_REQUEST.md`. Agents should generate scoped tasks, execute one task at a time, verify, critique, update logs, and stop or continue only when explicitly allowed by `RUN_WORKFLOW.md`.
 
 ## Workflow Rules
 
-1. Select exactly one task.
-2. Confirm the task has clear acceptance criteria.
-3. Implement only the files and behavior needed for that task.
-4. Avoid unrelated refactors.
-5. Run or recommend the listed verification commands.
-6. Append verification results to `docs/VERIFY.md`.
-7. Stop after the task summary.
+1. Classify the request before generating tasks.
+2. Create tasks that are small enough to review independently.
+3. Select one active task at a time.
+4. Copy the active task into `docs/ACTIVE_TASK.md`.
+5. Implement only the active task.
+6. Avoid unrelated refactors.
+7. Run or recommend the listed verification commands.
+8. Append verification results to `docs/VERIFY.md`.
+9. Stop if acceptance criteria, risk, or scope are unclear.
 
-## Scoped Implementation Strategy
+## Request Types
 
-Each task should be small enough to review independently. Prefer tasks that can be completed in one focused change set.
+- `feature`: Adds user-facing or system behavior.
+- `bugfix`: Fixes broken behavior.
+- `boilerplate`: Creates starter structure or configuration.
+- `security`: Audits or improves security.
+- `refactor`: Improves structure without intentional behavior change.
+- `test`: Adds or repairs tests.
+- `docs`: Updates documentation only.
+- `ops`: Changes deployment, CI, environment, or infrastructure.
+- `research`: Investigates and reports without implementation.
 
-Good task scope:
-
-- Add one endpoint.
-- Build one screen.
-- Fix one bug.
-- Add tests for one behavior.
-- Extract one shared helper because the current task needs it.
-
-Poor task scope:
-
-- Rebuild authentication.
-- Clean up the whole frontend.
-- Improve all tests.
-- Refactor the API.
-- Make the app production ready.
-
-## Acceptance Criteria System
-
-Every task must define observable completion criteria.
-
-Use this format:
-
-```txt
-Acceptance criteria:
-- [ ] User/system can do <specific behavior>.
-- [ ] Edge case <specific edge case> is handled.
-- [ ] Tests or manual verification cover <specific path>.
-- [ ] Documentation or verification log is updated.
-```
-
-## Stop Conditions
-
-Stop and ask for direction when:
-
-- Acceptance criteria are unclear.
-- Required files or services are missing.
-- The task requires credentials or unavailable access.
-- The task requires a dependency or architecture change not listed here.
-- Existing uncommitted work overlaps with the task.
-- Tests fail outside the task scope.
-
-## Task Backlog
+## Task Template
 
 ### TASK-001: `<Task title>`
 
-Status: `Planned`
+Status: `<Planned / Ready / In progress / Blocked / Needs review / Done>`
+
+Request type: `<feature / bugfix / boilerplate / security / refactor / test / docs / ops / research>`
 
 Objective:
 `<One-sentence objective.>`
 
-Likely files:
+Files likely affected:
 
-- `<path/to/file>`
-- `<path/to/file>`
+- `<path/to/file-or-folder>`
+
+Checklist:
+
+- [ ] `<Implementation step>`
+- [ ] `<Documentation/log update>`
+- [ ] `<Verification step>`
+
+Acceptance criteria:
+
+- [ ] `<Observable behavior or outcome>`
+- [ ] `<Edge case or constraint>`
+- [ ] `<Verification/logging requirement>`
+
+Verification commands:
+
+```bash
+<command>
+```
+
+Stop condition:
+
+- `<Condition that requires stopping or asking the user>`
+
+Notes:
+
+- `<Optional planning note>`
+
+## Task Backlog
+
+### TASK-001: `<Generated task title>`
+
+Status: `Planned`
+
+Request type: `<request type>`
+
+Objective:
+`<Generated from WORK_REQUEST.md.>`
+
+Files likely affected:
+
+- `<path/to/file-or-folder>`
+
+Checklist:
+
+- [ ] `<Step 1>`
+- [ ] `<Step 2>`
+- [ ] Update `docs/ACTIVE_TASK.md`.
+- [ ] Update `docs/VERIFY.md`.
 
 Acceptance criteria:
 
@@ -77,95 +95,134 @@ Acceptance criteria:
 - [ ] `<Criterion 2>`
 - [ ] `<Criterion 3>`
 
-Verification:
+Verification commands:
 
 ```bash
 <command>
 ```
 
-Stop conditions:
+Stop condition:
 
 - `<Condition>`
 
-### TASK-002: `<Task title>`
+Notes:
 
-Status: `Planned`
-
-Objective:
-`<One-sentence objective.>`
-
-Likely files:
-
-- `<path/to/file>`
-
-Acceptance criteria:
-
-- [ ] `<Criterion 1>`
-- [ ] `<Criterion 2>`
-
-Verification:
-
-```bash
-<command>
-```
-
-Stop conditions:
-
-- `<Condition>`
+- `<Any assumptions or links to relevant docs.>`
 
 ## Reusable Task Examples
 
-### Example: Add Health Check Endpoint
+### Example: Feature Request
+
+Status: `Ready`
+
+Request type: `feature`
 
 Objective:
-Add a backend health endpoint for deployment monitoring.
+Add a login endpoint and connect it to the existing auth flow.
+
+Files likely affected:
+
+- `server/routes/authRoutes.js`
+- `server/controllers/authController.js`
+- `server/tests/auth.test.js`
+
+Checklist:
+
+- [ ] Confirm existing auth model and password handling.
+- [ ] Add the smallest endpoint/controller change.
+- [ ] Add or update focused tests.
+- [ ] Update `docs/VERIFY.md`.
 
 Acceptance criteria:
 
-- [ ] `GET /api/health` returns HTTP 200.
-- [ ] Response includes service status and timestamp.
-- [ ] Endpoint does not expose secrets or database credentials.
-- [ ] A Supertest test covers the endpoint.
+- [ ] Valid credentials return a successful auth response.
+- [ ] Invalid credentials return a safe error.
+- [ ] Sensitive fields are not returned.
+- [ ] Auth tests pass.
 
-Verification:
+Verification commands:
 
 ```bash
-cd server && npm test -- health
+cd server && npm test -- auth
 ```
 
-### Example: Add Shared API Client
+Stop condition:
+
+- Auth storage or session strategy is not identifiable.
+
+### Example: Bugfix Request
+
+Status: `Ready`
+
+Request type: `bugfix`
 
 Objective:
-Create a single frontend API client that reads the base URL from environment configuration.
+Fix dashboard totals when completed tasks are filtered out.
+
+Files likely affected:
+
+- `client/src/pages/DashboardPage.jsx`
+- `client/src/services/dashboardService.js`
+- `client/test/DashboardPage.test.jsx`
+
+Checklist:
+
+- [ ] Reproduce or locate the incorrect calculation.
+- [ ] Fix only the dashboard total behavior.
+- [ ] Add or update a focused regression test.
+- [ ] Update verification logs.
 
 Acceptance criteria:
 
-- [ ] `client/src/lib/api.js` exports a configured API client.
-- [ ] API base URL uses `import.meta.env.VITE_API_URL`.
-- [ ] Components do not hard-code API URLs.
-- [ ] At least one service uses the shared client.
+- [ ] Dashboard totals match API data after filters change.
+- [ ] Completed tasks are counted according to the spec.
+- [ ] Regression test covers the broken case.
 
-Verification:
+Verification commands:
 
 ```bash
-cd client && npm test
-cd client && npm run build
+cd client && npm test -- Dashboard
 ```
 
-### Example: Add Login Form Validation
+Stop condition:
+
+- Expected dashboard counting rules are not documented or inferable.
+
+### Example: Security Request
+
+Status: `Ready`
+
+Request type: `security`
 
 Objective:
-Improve login form validation without changing the authentication API.
+Audit authentication responses for sensitive data exposure.
+
+Files likely affected:
+
+- `server/controllers/authController.js`
+- `server/models/User.js`
+- `server/tests/auth.test.js`
+- `docs/VERIFY.md`
+
+Checklist:
+
+- [ ] Inspect auth response serialization.
+- [ ] Identify sensitive fields.
+- [ ] Add tests preventing sensitive field exposure.
+- [ ] Document findings.
 
 Acceptance criteria:
 
-- [ ] Email is required and must be a valid email format.
-- [ ] Password is required.
-- [ ] Validation errors are accessible to screen readers.
-- [ ] Existing login behavior still works.
+- [ ] API responses do not expose `passwordHash`, reset tokens, or internal tokens.
+- [ ] Tests cover sensitive fields.
+- [ ] Any unresolved risk is documented.
 
-Verification:
+Verification commands:
 
 ```bash
-cd client && npm test -- login
+cd server && npm test -- auth
 ```
+
+Stop condition:
+
+- Security issue requires secret rotation or production access.
