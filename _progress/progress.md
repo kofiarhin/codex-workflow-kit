@@ -21,3 +21,11 @@ Append a new entry after each task. Do not replace previous entries except to co
 - Verification result: `npm run test --workspace client` passed with existing React Router future-flag warnings; `npm run build --workspace client` passed.
 - Blockers: none
 - Next step: Stop after default single-task workflow and write final summary.
+
+### 2026-05-11 16:30 - TASK-001
+
+- Status: Done (Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done)
+- Files changed: `_review/README.md`, `_decisions/README.md`, `templates/_review/README.md`, `templates/_decisions/README.md`, `_task/2026-05-11-workflow-audit-improvements.md`
+- Verification result: `Test-Path _review/README.md; Test-Path _decisions/README.md; Test-Path templates/_review/README.md; Test-Path templates/_decisions/README.md` returned `True` for all files; `rg "Request|Spec file used|Task plan used|Final review verdict|Date|Decision|Options considered|Selected option|routine edits" _review _decisions templates\_review templates\_decisions` confirmed required review and decision fields.
+- Blockers: none
+- Next step: TASK-002

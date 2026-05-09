@@ -20,4 +20,24 @@ Each task must include:
 - Stop condition.
 - Out-of-scope items.
 
+## Task Status Transitions
+
+Every task must move through:
+
+```txt
+Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+```
+
+Allowed terminal states:
+
+- `Done`
+- `Blocked`
+- `Needs Human Review`
+
+Rules:
+
+- A task cannot be `Done` unless verification was attempted and the task was reviewed.
+- A task cannot move to `Reviewed` unless verification was attempted.
+- If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+
 Tasks should be Ralph Wiggum-style: small, literal, sequential, and easy to verify.

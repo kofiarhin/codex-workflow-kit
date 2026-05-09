@@ -19,8 +19,10 @@ Customize placeholders before using this in a production project. MERN is the de
 - Main workflow memory:
   - `_spec/`
   - `_task/`
-  - `_summary/`
   - `_progress/progress.md`
+  - `_review/`
+  - `_summary/`
+  - `_decisions/`
 - Supporting docs:
   - `docs/PROJECT_CONTEXT.md`
   - `docs/ARCHITECTURE.md`
@@ -52,11 +54,19 @@ Customize placeholders before using this in a production project. MERN is the de
 20. Implement tasks sequentially, one task at a time.
 21. Keep changes scoped to the active task.
 22. Never implement unrelated work.
-23. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-24. After each task, append progress to `_progress/progress.md`.
-25. After the workflow completes, create or append a summary in `_summary/`.
-26. Continue to the next task only when the current task is implemented, verified, critiqued, documented, and safe to continue.
-27. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
+23. Every task must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
+24. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
+25. A task cannot be `Done` unless verification was attempted and the task was reviewed.
+26. A task cannot move to `Reviewed` unless verification was attempted.
+27. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+28. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+29. After each task, append progress to `_progress/progress.md`.
+30. After implementation and before the final summary, create a review file in `_review/`.
+31. After the review is complete, create or append a summary in `_summary/`.
+32. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
+33. Before the final response, run the workflow health check.
+34. Continue to the next task only when the current task is implemented, verified, reviewed, documented, and safe to continue.
+35. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
 
 ## Required Workflow
 
@@ -88,14 +98,29 @@ For a work request:
     - fix only in-scope defects
     - append progress to `_progress/progress.md`
     - continue only if safe
-13. After all allowed tasks are complete or the workflow stops, create or append a summary in `_summary/`.
-14. Check repository status again:
+13. After all allowed tasks are complete or the workflow stops, create a review file in `_review/`.
+14. After the review, create or append a summary in `_summary/`.
+15. Run the workflow health check and mark the result as `Passed`, `Partial`, or `Failed`.
+16. Check repository status again:
 
     ```bash
     git status --short
     ```
 
-15. Summarize results and suggest a commit message.
+17. Summarize results, include the final artifact checklist, and suggest a commit message.
+
+## Continue Workflow Command
+
+If the user says `continue workflow`:
+
+1. Read `_progress/progress.md`.
+2. Read the latest relevant file in `_summary/`, if any.
+3. Read the latest file in `_task/`.
+4. Read the spec referenced by that task plan.
+5. Find the next task whose status is not `Done`.
+6. Continue from that task without asking the original intake questions again unless the request, scope, or acceptance criteria are unclear.
+7. Do not regenerate the entire spec unless the request changed.
+8. If every task is `Done`, continue with any missing review, summary, health check, or final response steps.
 
 ## Questioning Rules
 
@@ -162,6 +187,24 @@ Each task must include:
 - Stop condition.
 - Out-of-scope items.
 
+Task statuses must follow this lifecycle:
+
+```txt
+Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+```
+
+Allowed terminal states:
+
+- `Done`
+- `Blocked`
+- `Needs Human Review`
+
+Rules:
+
+- A task cannot be `Done` unless verification was attempted and the task was reviewed.
+- A task cannot move to `Reviewed` unless verification was attempted.
+- If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+
 Tasks must be vertical slices. Prefer tasks like `TASK-001: Add theme toggle through settings and persist preference` over tasks like `TASK-001: Update frontend`.
 
 ## Ralph Wiggum Task Style
@@ -194,8 +237,10 @@ After each task, append:
 
 - Task ID.
 - Status.
+- Lifecycle transition reached.
 - Files changed.
 - Verification result.
+- Review result.
 - Blockers.
 - Next step.
 
@@ -203,17 +248,57 @@ Do not replace previous progress entries.
 
 ## Summary Rules
 
-After workflow completion, create or append a summary in `_summary/`.
+After implementation and before the final summary, create a review file in `_review/`.
+
+The review must include:
+
+- Request.
+- Spec file used.
+- Task plan used.
+- Tasks reviewed.
+- Bugs found.
+- Scope creep check.
+- Missing tests.
+- Security concerns.
+- Architecture concerns.
+- Follow-up tasks.
+- Final review verdict.
+
+After the review is complete, create or append a summary in `_summary/`.
 
 The summary must include:
 
 - Request.
 - Spec file used.
+- Task plan used.
+- Review file used.
 - Tasks completed.
 - Files changed.
 - Verification run.
 - Unresolved issues.
 - Next recommended work.
+
+## Workflow Health Check
+
+Before the final response, check:
+
+- Did `WORK_REQUEST.md` sync?
+- Did the spec file exist?
+- Did the task plan exist?
+- Was progress updated?
+- Was the review created?
+- Was the summary created?
+- Were verification commands run or documented?
+- Was scope respected?
+- Were decisions recorded if needed?
+
+Final health status must be one of:
+
+- `Passed`
+- `Partial`
+- `Failed`
+
+If any required artifact is missing, mark workflow health as `Failed`.
 
 ## Implementation Boundaries
 
@@ -275,7 +360,7 @@ Guidelines:
 - Keep backend route handlers thin; move business logic into services or utilities when it grows.
 - Validate input at API boundaries.
 - Keep persistence models authoritative for data rules.
-- Document meaningful architecture decisions in `docs/DECISIONS.md`.
+- Document meaningful architecture or product decisions in `_decisions/`. Keep `docs/DECISIONS.md` for durable project-level decision guidance when useful.
 
 ## Testing Expectations
 
@@ -346,6 +431,17 @@ At the end of a workflow run, report:
 - Files changed.
 - Verification commands and results.
 - Progress updated in `_progress/progress.md`.
+- Review updated in `_review/<file>.md`.
 - Summary updated in `_summary/`.
+- Decisions updated in `_decisions/<file>.md` or `none`.
+- Workflow health status: `Passed`, `Partial`, or `Failed`.
+- Final artifact checklist with exact paths:
+  - Work request: `WORK_REQUEST.md`
+  - Spec: `_spec/<file>.md`
+  - Task plan: `_task/<file>.md`
+  - Progress: `_progress/progress.md`
+  - Review: `_review/<file>.md`
+  - Summary: `_summary/<file>.md`
+  - Decisions: `_decisions/<file>.md` or `none`
 - Unresolved issues or recommended next task.
 - Suggested commit message.

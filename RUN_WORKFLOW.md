@@ -14,6 +14,7 @@ Do not implement without:
 2. A saved vertical task plan in `_task/`.
 3. A current read of `_progress/progress.md`.
 4. A current read of the latest relevant `_summary/` entry.
+5. Task status transitions that follow `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 
 ## Pipeline
 
@@ -28,7 +29,9 @@ direct user prompt or WORK_REQUEST
 -> verify
 -> critique/fix
 -> update _progress
+-> review in _review
 -> final summary in _summary
+-> health check
 ```
 
 ## 1. Resolve Active Request
@@ -42,7 +45,7 @@ Read:
 - `_progress/progress.md`, creating it if missing.
 - The latest relevant file in `_summary/`, if any.
 
-If `_spec/`, `_task/`, `_summary/`, or `_progress/` is missing, create it before continuing. If `_progress/progress.md` is missing, create it with an initial heading.
+If `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is missing, create it before continuing. If `_progress/progress.md` is missing, create it with an initial heading.
 
 Request source rules:
 
@@ -52,6 +55,20 @@ Request source rules:
 - Do not require the user to manually edit workflow docs before proceeding.
 
 Sync the active request into `WORK_REQUEST.md` before questioning and planning. Preserve useful optional context when present, but make the latest active request obvious.
+
+## 1A. Continue Workflow Command
+
+If the active user prompt is exactly or primarily `continue workflow`, resume instead of restarting intake:
+
+1. Read `_progress/progress.md`.
+2. Read the latest relevant file in `_summary/`, if any.
+3. Read the latest file in `_task/`.
+4. Read the spec referenced by that task plan.
+5. Find the next task whose status is not `Done`.
+6. Continue from that task.
+7. Do not ask the original intake questions again unless a current ambiguity blocks safe continuation.
+8. Do not regenerate the entire spec unless the request changed.
+9. If all tasks are `Done`, complete any missing `_review/`, `_summary/`, workflow health check, or final response step.
 
 ## 2. Intake And Questioning
 
@@ -185,6 +202,24 @@ Each task must include:
 - Stop condition.
 - Out-of-scope items.
 
+Each task status must follow this lifecycle:
+
+```txt
+Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+```
+
+Allowed terminal states:
+
+- `Done`
+- `Blocked`
+- `Needs Human Review`
+
+Status rules:
+
+- A task cannot be `Done` unless verification was attempted and the task was reviewed.
+- A task cannot move to `Reviewed` unless verification was attempted.
+- If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+
 Use Ralph Wiggum-style task phrasing: small, literal, concrete steps with simple verbs and clear boundaries.
 
 No implementation may happen until this file exists.
@@ -201,11 +236,14 @@ For each task:
 4. Inspect only the relevant codebase area.
 5. Implement only the current task.
 6. Run verification commands or record why they could not run.
-7. Critique the result.
-8. Fix only in-scope defects.
-9. Re-run relevant verification if fixes were made.
-10. Append progress to `_progress/progress.md`.
-11. Continue only if safe.
+7. Move the task to `Verified` when verification was attempted and results are documented.
+8. Critique and review the result.
+9. Move the task to `Reviewed` after review.
+10. Fix only in-scope defects.
+11. Re-run relevant verification if fixes were made.
+12. Move the task to `Done` only after verification and review are complete.
+13. Append progress to `_progress/progress.md`.
+14. Continue only if safe.
 
 Do not start the next task if the current task is blocked, risky, unclear, unverified, outside scope, or has unresolved in-scope defects.
 
@@ -232,6 +270,8 @@ cd server && npm test
 
 If commands are missing or cannot run, document the reason in `_progress/progress.md` and the final `_summary/` entry. Provide the best manual verification available.
 
+If verification cannot run, do not mark the task `Done`. Mark it `Needs Human Review` and stop unless the user explicitly directs a different safe path.
+
 ## 9. Progress Tracking
 
 Maintain `_progress/progress.md`.
@@ -240,22 +280,51 @@ After each task, append:
 
 - Task ID.
 - Status.
+- Lifecycle transition reached.
 - Files changed.
 - Verification result.
+- Review result.
 - Blockers.
 - Next step.
 
 Do not rewrite previous progress entries except to correct factual errors.
 
-## 10. Summary Phase
+## 10. Review Phase
 
-After the workflow completes, create or append a summary in `_summary/`.
+After implementation and before the final summary, create a review file in `_review/`.
+
+Use a timestamped or slugged filename:
+
+```txt
+_review/2026-05-10-add-dark-theme.md
+```
+
+The review must include:
+
+- Request.
+- Spec file used.
+- Task plan used.
+- Tasks reviewed.
+- Bugs found.
+- Scope creep check.
+- Missing tests.
+- Security concerns.
+- Architecture concerns.
+- Follow-up tasks.
+- Final review verdict.
+
+If in-scope defects are found, fix them before summary and rerun relevant verification. If defects cannot be fixed safely, stop with `Needs Human Review`.
+
+## 11. Summary Phase
+
+After the review is complete, create or append a summary in `_summary/`.
 
 The summary should include:
 
 - Request.
 - Spec file used.
 - Task plan used.
+- Review file used.
 - Tasks completed.
 - Files changed.
 - Verification run.
@@ -268,7 +337,24 @@ Use a timestamped or slugged filename when creating a new summary:
 _summary/2026-05-10-add-dark-theme.md
 ```
 
-## 11. Critique And Fix
+## 12. Decision Logs
+
+Use `_decisions/` for meaningful architecture or product decisions only. Do not create decision files for routine edits.
+
+Each decision file must include:
+
+- Date.
+- Decision.
+- Context.
+- Options considered.
+- Selected option.
+- Consequences.
+- Affected files.
+- Follow-up tasks.
+
+If no meaningful decision file was needed, report decisions as `none` in the final artifact checklist.
+
+## 13. Critique And Fix
 
 Before finalizing each task, review the result.
 
@@ -284,7 +370,29 @@ Check for:
 
 Fix only defects within the active task. Create follow-up tasks for anything larger.
 
-## 12. Final Response
+## 14. Workflow Health Check
+
+Before the final response, check:
+
+- Did `WORK_REQUEST.md` sync?
+- Did the spec file exist?
+- Did the task plan exist?
+- Was progress updated?
+- Was the review created?
+- Was the summary created?
+- Were verification commands run or documented?
+- Was scope respected?
+- Were decisions recorded if needed?
+
+Final health status:
+
+- `Passed`: all required artifacts exist, verification was run or documented, scope was respected, and decisions were handled correctly.
+- `Partial`: artifacts exist, but non-blocking verification gaps or follow-up risks remain documented.
+- `Failed`: any required artifact is missing, scope was not respected, or required verification/review/summary documentation is absent.
+
+If any required artifact is missing, mark workflow health as `Failed`.
+
+## 15. Final Response
 
 End with:
 
@@ -295,7 +403,18 @@ End with:
 - Files changed.
 - Verification commands and results.
 - Progress update location.
+- Review location.
 - Summary location.
+- Decisions location or `none`.
+- Workflow health status: `Passed`, `Partial`, or `Failed`.
+- Final artifact checklist with exact paths:
+  - Work request: `WORK_REQUEST.md`
+  - Spec: `_spec/<file>.md`
+  - Task plan: `_task/<file>.md`
+  - Progress: `_progress/progress.md`
+  - Review: `_review/<file>.md`
+  - Summary: `_summary/<file>.md`
+  - Decisions: `_decisions/<file>.md` or `none`
 - Known blockers or unresolved issues.
 - Recommended next step.
 - Suggested commit message.
