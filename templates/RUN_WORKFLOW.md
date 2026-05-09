@@ -6,6 +6,8 @@ This is the master orchestration prompt for a reusable AI engineering workflow. 
 
 Read `WORK_REQUEST.md`, `AGENTS.md`, and this file. Execute this workflow exactly. Keep the work lightweight, scoped, and sequential.
 
+Execution mode is controlled by `WORK_REQUEST.md`. If execution mode is missing, assume `single-task`.
+
 ## Pipeline
 
 ```txt
@@ -36,6 +38,14 @@ Read:
 - `docs/VERIFY.md`
 
 If a file is missing, create it from the workflow template shape before continuing.
+
+Read execution mode from `WORK_REQUEST.md`:
+
+- `plan-only`: classify request, inspect repo, update docs, generate tasks, then stop.
+- `single-task`: generate tasks, implement only the first ready task, verify, critique/fix, update logs, then stop.
+- `full-auto`: execute generated tasks sequentially until complete, blocked, risky, unclear, unverified, or outside scope.
+
+If execution mode is missing or empty, use `single-task`. Treat unknown execution modes as unclear scope and stop for clarification.
 
 ## 2. Classify Request
 
@@ -99,11 +109,17 @@ Update `docs/TASKS.md` with scoped tasks. Each generated task must include:
 - Verification commands.
 - Stop condition.
 
-Tasks must be sequential and independently reviewable. If multiple safe tasks are required, execute them one by one. Stop before the next task if the current task is blocked, unverified, risky, or outside the request scope.
+Tasks must be sequential and independently reviewable. If multiple safe tasks are required, execute them one by one only when the selected execution mode allows it. Stop before the next task if the current task is blocked, unverified, risky, or outside the request scope.
+
+Execution mode rules:
+
+- In `plan-only`, stop after updating `docs/TASKS.md`. Do not edit implementation files and do not execute tasks.
+- In `single-task`, execute only the first `Ready` task. If no task is `Ready`, prepare the safest next task and stop.
+- In `full-auto`, execute sequential `Ready` tasks until all generated tasks are complete or a stop condition is reached.
 
 ## 6. Execute One Task At A Time
 
-For each task:
+For each task allowed by the selected execution mode:
 
 1. Move the task into `docs/ACTIVE_TASK.md`.
 2. Mark status as `In progress`.
@@ -118,7 +134,13 @@ For each task:
 11. Re-run relevant verification if fixes were made.
 12. Mark `docs/ACTIVE_TASK.md` as `Done`, `Blocked`, or `Needs review`.
 
-Continue to the next task only when the current task is done, verified, critiqued, and logged. Do not start the next task if the current task is blocked, unverified, or has unresolved in-scope defects.
+Never continue to another task unless the current task is done, verified, critiqued, and logged. Do not start the next task if the current task is blocked, risky, unclear, unverified, outside scope, or has unresolved in-scope defects.
+
+Mode-specific stopping:
+
+- `plan-only`: stop before this section.
+- `single-task`: stop after one task is done, verified, critiqued/fixed, and logged.
+- `full-auto`: continue only through sequential `Ready` tasks while each previous task satisfies the continuation rule above.
 
 ## 7. Verify
 
@@ -163,6 +185,7 @@ Fix only defects within the active task. Create follow-up tasks for anything lar
 
 End with:
 
+- Execution mode.
 - Request classification.
 - Tasks created or updated.
 - Tasks completed.

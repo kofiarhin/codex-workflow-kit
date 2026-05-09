@@ -115,6 +115,40 @@ Implement login with JWT auth.
 
 Optional context can include constraints, failing commands, screenshots notes, or files that should not change.
 
+### Execution Modes
+
+`WORK_REQUEST.md` supports explicit execution modes. If the mode is missing, the workflow defaults to `single-task`.
+
+- `plan-only`: Classify the request, inspect the repo, update docs, generate tasks, then stop.
+- `single-task`: Generate tasks, implement only the first ready task, verify, critique/fix, then stop.
+- `full-auto`: Execute all generated tasks sequentially until complete, blocked, risky, unclear, unverified, or outside scope.
+
+Use `single-task` for normal coding work. Use `plan-only` when you want a plan before edits. Use `full-auto` only when the request is well-scoped and you are comfortable with the agent completing multiple sequential tasks.
+
+Plan-only example:
+
+```md
+## Execution Mode
+
+`plan-only`
+```
+
+Single-task example:
+
+```md
+## Execution Mode
+
+`single-task`
+```
+
+Full-auto example:
+
+```md
+## Execution Mode
+
+`full-auto`
+```
+
 ### Step 3: Run Codex
 
 Use this exact prompt:
@@ -123,7 +157,7 @@ Use this exact prompt:
 Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
 ```
 
-The agent should classify the request, inspect the repo, update docs, generate tasks, execute one task at a time, verify, critique/fix, update logs, and produce a final summary.
+The agent should classify the request, inspect the repo, update docs, generate tasks, obey the selected execution mode, verify, critique/fix, update logs, and produce a final summary.
 
 ### Step 4: Review, Verify, Commit
 
@@ -140,12 +174,12 @@ Then commit only the verified task-sized change.
 ## Recommended Agent Loop
 
 1. Read `WORK_REQUEST.md` and `RUN_WORKFLOW.md`.
-2. Classify the request.
-3. Inspect repository conventions and commands.
-4. Update `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, and `docs/ARCHITECTURE.md` only as needed.
-5. Generate scoped tasks in `docs/TASKS.md`.
-6. Copy the current task to `docs/ACTIVE_TASK.md`.
-7. Implement only that task.
+2. Read execution mode, defaulting to `single-task`.
+3. Classify the request.
+4. Inspect repository conventions and commands.
+5. Update `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, and `docs/ARCHITECTURE.md` only as needed.
+6. Generate scoped tasks in `docs/TASKS.md`.
+7. Execute according to mode: none, one ready task, or sequential ready tasks.
 8. Run verification and update `docs/VERIFY.md`.
 9. Critique and fix only in-scope issues.
 10. Summarize results and suggest a commit message.

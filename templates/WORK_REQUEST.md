@@ -1,10 +1,20 @@
 # Work Request
 
-Write one plain-English request below. Keep it short. The workflow will classify it, inspect the repo, update docs, create scoped tasks, execute tasks sequentially, verify results, and summarize the outcome.
+Write one plain-English request below. Keep it short. The workflow will classify it, inspect the repo, update docs, create scoped tasks, and execute according to the selected execution mode.
 
 ## Request
 
 `<Example: Implement login with JWT auth.>`
+
+## Execution Mode
+
+Choose one:
+
+- `plan-only`: classify request, inspect repo, update docs, generate tasks, then stop.
+- `single-task`: generate tasks, implement only the first ready task, verify, critique/fix, then stop.
+- `full-auto`: execute all generated tasks sequentially until complete, blocked, risky, or unverified.
+
+Default: `single-task`
 
 ## Optional Context
 

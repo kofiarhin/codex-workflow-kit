@@ -29,50 +29,58 @@ Customize placeholders before using this in a production project. MERN is the de
 
 1. For plain-English work requests, always read `WORK_REQUEST.md` and `RUN_WORKFLOW.md` before planning or editing.
 2. Read `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md` before implementation.
-3. Classify the request before changing code or docs.
-4. Inspect the repository before generating tasks.
-5. Implement tasks sequentially, one task at a time.
-6. Keep changes scoped to the active task.
-7. Never implement unrelated work.
-8. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-9. Update `docs/ACTIVE_TASK.md` during task execution.
-10. Update `docs/VERIFY.md` after each task.
-11. Do not start a second task until the current task is implemented, verified, critiqued, and documented.
-12. Stop if scope is unclear, risky, destructive, or requires unavailable access.
+3. Read execution mode from `WORK_REQUEST.md`; if it is missing, assume `single-task`.
+4. Obey execution mode exactly.
+5. `full-auto` is allowed only when explicitly selected.
+6. Never continue through multiple tasks in `single-task` mode.
+7. Classify the request before changing code or docs.
+8. Inspect the repository before generating tasks.
+9. Implement tasks sequentially, one task at a time.
+10. Keep changes scoped to the active task.
+11. Never implement unrelated work.
+12. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+13. Update `docs/ACTIVE_TASK.md` during task execution.
+14. Update `docs/VERIFY.md` after each task.
+15. Do not start a second task until the current task is implemented, verified, critiqued, and documented.
+16. Stop if scope is unclear, risky, destructive, or requires unavailable access.
 
 ## Required Workflow
 
 For a work request:
 
 1. Read `WORK_REQUEST.md` and `RUN_WORKFLOW.md`.
-2. Classify the request as `feature`, `bugfix`, `boilerplate`, `security`, `refactor`, `test`, `docs`, `ops`, or `research`.
-3. Check repository status:
+2. Determine execution mode: `plan-only`, `single-task`, or `full-auto`. Use `single-task` when missing.
+3. Classify the request as `feature`, `bugfix`, `boilerplate`, `security`, `refactor`, `test`, `docs`, `ops`, or `research`.
+4. Check repository status:
 
    ```bash
    git status --short
    ```
 
-4. Perform repo intake and update `docs/PROJECT_CONTEXT.md` with durable findings.
-5. Update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` only as needed.
-6. Generate or update scoped tasks in `docs/TASKS.md`.
-7. Move the next valid task into `docs/ACTIVE_TASK.md`.
-8. Implement only that task.
-9. Run or recommend validation commands.
-10. Critique the result and fix only in-scope defects.
-11. Update `docs/VERIFY.md`.
-12. Check repository status again:
+5. Perform repo intake and update `docs/PROJECT_CONTEXT.md` with durable findings.
+6. Update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` only as needed.
+7. Generate or update scoped tasks in `docs/TASKS.md`.
+8. If mode is `plan-only`, stop after task generation and summarize the plan.
+9. If mode is `single-task`, move only the first ready task into `docs/ACTIVE_TASK.md`, implement it, verify it, critique/fix it, update logs, and stop.
+10. If mode is `full-auto`, execute ready tasks sequentially until complete, blocked, risky, unclear, unverified, or outside scope.
+11. Run or recommend validation commands for each executed task.
+12. Critique each executed task and fix only in-scope defects.
+13. Update `docs/VERIFY.md` after each executed task.
+14. Check repository status again:
 
     ```bash
     git status --short
     ```
 
-13. Summarize results and suggest a commit message.
+15. Summarize results and suggest a commit message.
 
 ## Implementation Boundaries
 
 Agents must not:
 
 - Implement more than one active task at a time.
+- Execute multiple tasks in `single-task` mode.
+- Enter `full-auto` behavior unless `full-auto` is explicitly selected in `WORK_REQUEST.md`.
 - Expand scope beyond the request and active task.
 - Rewrite large parts of the application without explicit approval.
 - Introduce new dependencies unless the active task requires them and the reason is documented.
@@ -234,6 +242,7 @@ Stop and ask for direction when:
 At the end of a workflow run, report:
 
 - Request classification.
+- Execution mode.
 - Tasks created or updated.
 - Task completed.
 - Files changed.

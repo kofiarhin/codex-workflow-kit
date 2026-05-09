@@ -2,17 +2,37 @@
 
 This file controls implementation scope for the work request in `WORK_REQUEST.md`. Agents should generate scoped tasks, execute one task at a time, verify, critique, update logs, and stop or continue only when explicitly allowed by `RUN_WORKFLOW.md`.
 
+Default execution mode is `single-task` unless `WORK_REQUEST.md` explicitly says otherwise.
+
 ## Workflow Rules
 
 1. Classify the request before generating tasks.
-2. Create tasks that are small enough to review independently.
-3. Select one active task at a time.
-4. Copy the active task into `docs/ACTIVE_TASK.md`.
-5. Implement only the active task.
-6. Avoid unrelated refactors.
-7. Run or recommend the listed verification commands.
-8. Append verification results to `docs/VERIFY.md`.
-9. Stop if acceptance criteria, risk, or scope are unclear.
+2. Read execution mode from `WORK_REQUEST.md`; use `single-task` if missing.
+3. Create tasks that are small enough to review independently.
+4. Select one active task at a time.
+5. Copy the active task into `docs/ACTIVE_TASK.md`.
+6. Implement only the active task.
+7. Avoid unrelated refactors.
+8. Run or recommend the listed verification commands.
+9. Append verification results to `docs/VERIFY.md`.
+10. Stop if acceptance criteria, risk, or scope are unclear.
+
+## Execution Modes
+
+- `plan-only`: Create or update tasks but execute none. Stop after task generation.
+- `single-task`: Execute one `Ready` task only. Verify, critique/fix, update logs, then stop.
+- `full-auto`: Execute sequential `Ready` tasks until all are complete or stopped.
+
+`full-auto` must be explicitly selected in `WORK_REQUEST.md`. Agents must not continue to another task unless the current task is `Done`, verified, critiqued, and logged.
+
+## Task Status Rules
+
+- `Planned`: Task is identified but not ready for execution.
+- `Ready`: Task has enough scope, acceptance criteria, and verification commands to execute.
+- `In progress`: Task is currently active in `docs/ACTIVE_TASK.md`.
+- `Blocked`: Task cannot continue because of missing information, access, tooling, risk, or failed prerequisites.
+- `Needs review`: Task is implemented but requires user or human review before it can be considered done.
+- `Done`: Task is implemented, verified, critiqued, logged, and has no unresolved in-scope defects.
 
 ## Request Types
 
