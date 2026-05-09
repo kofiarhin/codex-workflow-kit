@@ -8,13 +8,92 @@ Use these prompts with OpenAI Codex, Claude Code, Cursor, or similar coding agen
 Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
 
 Follow AGENTS.md.
-Classify the request, inspect the repo, update docs, generate scoped tasks, execute one task at a time, verify, critique/fix, update ACTIVE_TASK.md and VERIFY.md, then provide a final summary and suggested commit message.
+Ask clarifying questions until about 90% understanding before touching code unless the request says "skip questions".
+Generate a saved spec in _spec/, generate a vertical task plan in _task/, execute one Ralph Wiggum-style task at a time, verify, critique/fix, update _progress/progress.md, write a final summary in _summary/, then provide a final response and suggested commit message.
+```
+
+## Direct Request With Questions
+
+```txt
+Use this as the active request:
+<REQUEST>
+
+Follow RUN_WORKFLOW.md.
+First ask focused clarifying questions about goal, users, exact behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope work.
+Do not touch code until questions are answered, a spec is saved in _spec/, and a task plan is saved in _task/.
+```
+
+## Direct Request That Skips Questions
+
+```txt
+Use this as the active request:
+<REQUEST>
+
+skip questions
+
+Follow RUN_WORKFLOW.md.
+Generate a best-effort spec in _spec/ and clearly list assumptions.
+Generate a vertical task plan in _task/.
+Before implementation, read _progress/progress.md and the latest relevant _summary/ entry.
+Then execute tasks one at a time only if safe.
+```
+
+## Intake Questions
+
+```txt
+Read WORK_REQUEST.md and AGENTS.md.
+
+Ask the fewest focused questions needed to reach about 90% understanding.
+
+Clarify:
+1. Goal.
+2. Users.
+3. Exact behavior.
+4. Edge cases.
+5. UI expectations.
+6. API expectations.
+7. Data model expectations.
+8. Constraints.
+9. Success criteria.
+10. Out-of-scope items.
+
+Do not inspect or edit implementation code yet.
+```
+
+## Spec Generation
+
+```txt
+Using the active request and the answers so far, generate a detailed spec.
+
+Save it in _spec/ with a timestamped or slugged filename, for example:
+_spec/2026-05-10-add-dark-theme.md
+
+Include:
+- Request summary
+- Date
+- Source prompt
+- Questions asked and answers received
+- Assumptions
+- Goal
+- Non-goals
+- Users
+- Functional requirements
+- UI expectations, if relevant
+- API expectations, if relevant
+- Data model expectations, if relevant
+- Edge cases
+- Constraints
+- Success criteria
+- Out-of-scope items
+- Open questions
+
+Do not implement code.
 ```
 
 ## Request Classification
 
 ```txt
-Read WORK_REQUEST.md.
+Read WORK_REQUEST.md and the saved _spec/ file.
 
 Classify the request as one primary type:
 - feature
@@ -30,9 +109,9 @@ Classify the request as one primary type:
 Also identify:
 1. Scope: small, medium, or large.
 2. Risk: low, medium, or high.
-3. Whether implementation is allowed now.
-4. Whether clarification is required.
-5. The safest first task.
+3. Whether implementation is allowed after the saved spec and task plan.
+4. Whether any open question blocks implementation.
+5. The safest first vertical task.
 
 Do not edit implementation files.
 ```
@@ -40,7 +119,7 @@ Do not edit implementation files.
 ## Repo Intake
 
 ```txt
-Inspect the repository for the request in WORK_REQUEST.md.
+Inspect the repository for the saved spec in _spec/.
 
 Find:
 1. Stack and major frameworks.
@@ -55,23 +134,25 @@ Update docs/PROJECT_CONTEXT.md with durable findings only.
 Do not implement the request yet.
 ```
 
-## Task Generation
+## Vertical Task Generation
 
 ```txt
-Using WORK_REQUEST.md, docs/PROJECT_CONTEXT.md, docs/SPEC.md, and docs/ARCHITECTURE.md, generate scoped tasks in docs/TASKS.md.
+Using WORK_REQUEST.md, the saved _spec/ file, _progress/progress.md, the latest relevant _summary/ entry, and durable docs, generate a vertical task plan in _task/.
 
 Each task must include:
 - Task ID
 - Status
-- Request type
 - Objective
 - Files likely affected
 - Checklist
 - Acceptance criteria
 - Verification commands
 - Stop condition
+- Out-of-scope items
 
-Tasks must be sequential and reviewable.
+Tasks must be vertical slices, not vague layers.
+Use Ralph Wiggum-style task phrasing: small, literal, concrete, sequential.
+
 Do not implement code.
 ```
 
@@ -84,21 +165,38 @@ Execute exactly one task:
 <TASK-ID> - <TASK_TITLE>
 
 Before editing:
-- Copy task details into docs/ACTIVE_TASK.md.
-- Mark status as In progress.
+- Read _progress/progress.md.
+- Read the latest relevant _summary/ entry.
+- Read the saved _spec/ file.
+- Read the saved _task/ plan.
 - Check git status.
 - Inspect only relevant files.
 
 After editing:
-- Record files touched in docs/ACTIVE_TASK.md.
 - Run or recommend verification commands.
-- Update docs/VERIFY.md.
 - Critique the result.
 - Fix only in-scope defects.
-- Mark docs/ACTIVE_TASK.md as Done, Blocked, or Needs review.
+- Append to _progress/progress.md with task ID, status, files changed, verification result, blockers, and next step.
+- Create or append the relevant _summary/ entry if the workflow stops here.
 - Check git status again.
 
 Do not implement any other task.
+```
+
+## Ralph Wiggum Task Execution
+
+```txt
+Run the current task like a small literal checklist.
+
+For each checklist item:
+1. Say what file or behavior you are checking.
+2. Make only the change needed for the current item.
+3. Stop if the next action would expand scope.
+4. Verify the task acceptance criteria.
+5. Update _progress/progress.md before moving on.
+
+No bundled refactors.
+No second task until this task is verified, critiqued, and logged.
 ```
 
 ## Critique Loop
@@ -106,7 +204,7 @@ Do not implement any other task.
 ```txt
 Review the active task result as a senior engineer.
 
-Use docs/ACTIVE_TASK.md, docs/TASKS.md, and the current diff.
+Use the saved _spec/ file, saved _task/ plan, _progress/progress.md, and the current diff.
 
 Prioritize:
 1. Bugs or regressions.
@@ -118,7 +216,7 @@ Prioritize:
 7. Unnecessary complexity.
 
 Return findings with file and line references where possible.
-Do not make changes unless explicitly asked.
+Fix only defects inside the current task scope.
 ```
 
 ## Verification Repair
@@ -138,25 +236,25 @@ Do not refactor unrelated code.
 After the fix:
 - Re-run the failing command if possible.
 - Run directly related tests.
-- Update docs/ACTIVE_TASK.md.
-- Update docs/VERIFY.md.
+- Append the result to _progress/progress.md.
+- Update the final _summary/ entry if the workflow is complete.
 - Summarize the root cause and fix.
 ```
 
 ## Final Summary
 
 ```txt
-Produce the final workflow summary.
+Produce the final workflow summary and create or append it in _summary/.
 
 Include:
 1. Original work request.
-2. Request classification.
-3. Tasks created or updated.
+2. Spec file used.
+3. Task plan used.
 4. Tasks completed.
 5. Files changed.
 6. Verification commands and results.
 7. Unresolved issues or blockers.
-8. Recommended next step.
+8. Recommended next work.
 9. Suggested commit message.
 
 Do not claim a commit was made unless one was actually created.
@@ -165,7 +263,7 @@ Do not claim a commit was made unless one was actually created.
 ## Architecture Review
 
 ```txt
-Review docs/SPEC.md, docs/PROJECT_CONTEXT.md, and docs/ARCHITECTURE.md for consistency.
+Review the saved _spec/ file, docs/PROJECT_CONTEXT.md, and docs/ARCHITECTURE.md for consistency.
 
 Identify:
 1. Architecture decisions that are clear.
@@ -236,25 +334,4 @@ Include:
 3. What to show in a demo.
 4. Known limitations.
 5. Suggested next improvement.
-```
-
-## Generate Social Content Recap
-
-```txt
-Create a concise social post recap for this engineering update:
-
-Update:
-<SUMMARY>
-
-Audience:
-<AUDIENCE>
-
-Tone:
-Practical, specific, and non-hype.
-
-Include:
-- Problem
-- What changed
-- Why it matters
-- One concrete technical detail
 ```

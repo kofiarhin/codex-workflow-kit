@@ -1,19 +1,18 @@
-# Active Task
+# Legacy Active Task Notes
 
-Use this file to track the one task currently being executed. Keep it current while work is in progress.
+The main workflow now uses saved task plans in `_task/` and append-only progress in `_progress/progress.md`.
 
-## Current Task
+Use this file only for compatibility with older agents that expect `docs/ACTIVE_TASK.md`. If used, it must mirror the current task from `_task/` and must not replace `_progress/progress.md`.
+
+## Current Task Mirror
 
 - Task ID: `<TASK-ID>`
 - Title: `<Task title>`
-- Request type: `<feature / bugfix / boilerplate / security / refactor / test / docs / ops / research>`
+- Source task plan: `_task/<filename>.md`
+- Source spec: `_spec/<filename>.md`
 - Status: `<Not started / In progress / Blocked / Needs review / Done>`
 - Started: `<YYYY-MM-DD>`
 - Updated: `<YYYY-MM-DD>`
-
-## Objective
-
-`<One-sentence objective for this task.>`
 
 ## Scope
 
@@ -25,28 +24,20 @@ Out of scope:
 
 - `<Behavior or file area>`
 
-## Files Touched
-
-- `<path/to/file>`: `<Created / Updated / Deleted and why>`
-
-## Verification Commands
+## Verification
 
 ```bash
 <command>
 ```
 
-Results:
+Result:
 
-- `<Command>`: `<Passed / Failed / Not run and why>`
+- `<Passed / Failed / Not run and why>`
 
-## Blockers
+## Progress Log Requirement
 
-- `<Blocker or None>`
+After this task, append the authoritative progress entry to:
 
-## Critique Notes
-
-- `<Issue found during self-review or None>`
-
-## Next Step
-
-`<Continue / fix issue / ask user / move to next task / prepare commit>`
+```txt
+_progress/progress.md
+```

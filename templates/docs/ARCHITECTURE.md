@@ -1,6 +1,8 @@
 # Architecture Plan
 
-This file is generated and maintained from the active request, repository context, and implementation decisions. Users may edit it manually, but manual edits are optional; agents should update it automatically when running `RUN_WORKFLOW.md`.
+This file stores durable architecture context. Active request specs live in `_spec/`, active task plans live in `_task/`, progress lives in `_progress/progress.md`, and final summaries live in `_summary/`.
+
+Users may edit this file manually. Agents should update it only when a request reveals durable architecture facts or decisions that apply beyond one task.
 
 Project: `<PROJECT_NAME>`
 
@@ -47,11 +49,18 @@ server/
   utils/
 
 docs/
-  SPEC.md
   ARCHITECTURE.md
-  TASKS.md
   VERIFY.md
   DECISIONS.md
+
+_spec/
+  <date-or-slug>.md
+_task/
+  <date-or-slug>.md
+_progress/
+  progress.md
+_summary/
+  <date-or-slug>.md
 ```
 
 Adapt this structure for other stacks, but keep clear boundaries between UI, API access, business logic, persistence, tests, and documentation.

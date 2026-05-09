@@ -4,29 +4,44 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will classify the active request, inspect the repo, generate or update docs, create scoped tasks, and execute according to the selected execution mode.
+The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one, update `_progress/progress.md`, and write a final summary in `_summary/`.
 
 ## Request
 
-`<Auto-synced from latest direct prompt, e.g. Implement login with JWT auth.>`
+`<Auto-synced from latest direct prompt, e.g. Add dark theme to the app.>`
 
-## Execution Mode
+## Question Preference
 
 Choose one:
 
-- `plan-only`: classify request, inspect repo, update docs, generate tasks, then stop.
-- `single-task`: generate tasks, implement only the first ready task, verify, critique/fix, then stop.
-- `full-auto`: execute all generated tasks sequentially until complete, blocked, risky, or unverified.
+- `ask questions`: default. Ask focused questions until about 90% understanding before writing the spec.
+- `skip questions`: do not ask questions; generate a best-effort spec and record assumptions.
+
+Default: `ask questions`
+
+## Optional Execution Preference
+
+Choose one:
+
+- `plan-only`: ask questions, write spec, write task plan, then stop.
+- `single-task`: ask questions, write spec, write task plan, execute only the first ready task, verify, update progress, write summary, then stop.
+- `full-auto`: ask questions, write spec, write task plan, execute tasks sequentially until complete, blocked, risky, unclear, or unverified.
 
 Default: `single-task`
 
 ## Optional Context
 
 - User or business goal: `<Why this matters>`
-- Known bug or error: `<Paste error, screenshot notes, or failing command>`
+- Target users: `<Who uses this>`
+- Expected behavior: `<What should happen>`
+- UI expectations: `<Screens, components, states, accessibility, responsive behavior>`
+- API expectations: `<Endpoints, payloads, errors, auth, permissions>`
+- Data model expectations: `<Fields, relationships, migrations, defaults>`
+- Edge cases: `<Failure states, empty states, permissions, limits>`
 - Constraints: `<Do not change X / must use Y / no new dependencies>`
+- Success criteria: `<How we know this is done>`
 - Preferred verification: `<Test command, manual check, build command>`
 
-## Do Not Change
+## Out Of Scope
 
 - `<File, feature, API, behavior, or area that should stay untouched>`

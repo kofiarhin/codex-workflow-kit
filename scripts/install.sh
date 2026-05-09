@@ -92,6 +92,10 @@ echo
 copy_file "$TEMPLATE_ROOT/AGENTS.md" "AGENTS.md"
 copy_file "$TEMPLATE_ROOT/WORK_REQUEST.md" "WORK_REQUEST.md"
 copy_file "$TEMPLATE_ROOT/RUN_WORKFLOW.md" "RUN_WORKFLOW.md"
+copy_file "$TEMPLATE_ROOT/_spec/README.md" "_spec/README.md"
+copy_file "$TEMPLATE_ROOT/_task/README.md" "_task/README.md"
+copy_file "$TEMPLATE_ROOT/_progress/progress.md" "_progress/progress.md"
+copy_file "$TEMPLATE_ROOT/_summary/README.md" "_summary/README.md"
 copy_file "$TEMPLATE_ROOT/docs/PROJECT_CONTEXT.md" "docs/PROJECT_CONTEXT.md"
 copy_file "$TEMPLATE_ROOT/docs/ACTIVE_TASK.md" "docs/ACTIVE_TASK.md"
 copy_file "$TEMPLATE_ROOT/docs/SPEC.md" "docs/SPEC.md"
@@ -106,11 +110,11 @@ echo "Setup complete."
 echo
 echo "Next steps:"
 echo "1. Edit AGENTS.md and docs/PROJECT_CONTEXT.md for your stack, commands, and project rules."
-echo "2. Write one plain-English request in WORK_REQUEST.md."
+echo "2. Write one plain-English request in WORK_REQUEST.md or directly in your agent."
 echo "3. Start your agent with:"
 echo
 echo "   Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md."
 echo
-echo "4. Review docs/ACTIVE_TASK.md, docs/VERIFY.md, and the final summary before committing."
+echo "4. Review _spec/, _task/, _progress/progress.md, _summary/, and the final response before committing."
 echo
 echo "Existing files were skipped unless --force was used."

@@ -1,8 +1,8 @@
-# Verification Log
+# Legacy Verification Notes
 
-Use this file to record what was actually checked for each active task. Agents should append entries automatically during `RUN_WORKFLOW.md` execution after each completed, blocked, or repaired task.
+The main workflow now records per-task verification in `_progress/progress.md` and final workflow verification in `_summary/`.
 
-The work request may come directly from the latest user prompt or from `WORK_REQUEST.md`; record whichever source was active.
+Use this file only for compatibility or durable verification guidance. Do not treat it as the authoritative progress log.
 
 ## Verification Rules
 
@@ -11,112 +11,29 @@ The work request may come directly from the latest user prompt or from `WORK_REQ
 - If a command cannot run, record why.
 - Include manual checks when automated tests are unavailable.
 - Record bugs found during verification and fixes applied.
-- Link the entry to the work request and active task.
+- Link verification to the task ID in `_task/`.
 
-## Verification Entry Template
+## Progress Entry Location
 
-### `<YYYY-MM-DD>` - `<TASK-ID: Task title>`
+After each task, append verification results to:
 
-Work request:
-`<Plain-English request from latest direct prompt or WORK_REQUEST.md>`
-
-Request classification:
-`<feature / bugfix / boilerplate / security / refactor / test / docs / ops / research>`
-
-Active task status:
-`<Done / Blocked / Needs review>`
-
-Summary:
-`<Brief summary of what changed.>`
-
-Files touched:
-
-- `<path/to/file>`: `<Created / Updated / Deleted and why>`
-
-Commands run:
-
-```bash
-<command>
+```txt
+_progress/progress.md
 ```
 
-Results:
+Required fields:
 
-- `<Command>`: `<Passed / Failed / Not run, with reason>`
+- Task ID.
+- Status.
+- Files changed.
+- Verification result.
+- Blockers.
+- Next step.
 
-Manual checks:
+## Summary Location
 
-- `<Manual check performed or None>`
+After the workflow completes, include verification results in:
 
-Bugs found:
-
-- `<Bug or None>`
-
-Fixes applied:
-
-- `<Fix or None>`
-
-Critique result:
-
-- `<Issue found during critique or None>`
-
-Unresolved issues:
-
-- `<Issue or None>`
-
-Next recommended step:
-
-- `<Next task or follow-up>`
-
-## Entries
-
-### `<YYYY-MM-DD>` - `<TASK-ID: Task title>`
-
-Work request:
-`<Add the first work request here.>`
-
-Request classification:
-`<request type>`
-
-Active task status:
-`<status>`
-
-Summary:
-`<Add the first verification entry here.>`
-
-Files touched:
-
-- `<path/to/file>`: `<reason>`
-
-Commands run:
-
-```bash
-<command>
+```txt
+_summary/<date-or-slug>.md
 ```
-
-Results:
-
-- `<Command>`: `<Result>`
-
-Manual checks:
-
-- `<Check or None>`
-
-Bugs found:
-
-- `<Bug or None>`
-
-Fixes applied:
-
-- `<Fix or None>`
-
-Critique result:
-
-- `<Finding or None>`
-
-Unresolved issues:
-
-- `<Issue or None>`
-
-Next recommended step:
-
-- `<Recommendation>`

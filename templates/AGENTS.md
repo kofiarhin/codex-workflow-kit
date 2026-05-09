@@ -16,50 +16,47 @@ Customize placeholders before using this in a production project. MERN is the de
 - Workflow entrypoints:
   - `WORK_REQUEST.md`
   - `RUN_WORKFLOW.md`
-- Important docs:
+- Main workflow memory:
+  - `_spec/`
+  - `_task/`
+  - `_summary/`
+  - `_progress/progress.md`
+- Supporting docs:
   - `docs/PROJECT_CONTEXT.md`
-  - `docs/ACTIVE_TASK.md`
-  - `docs/SPEC.md`
   - `docs/ARCHITECTURE.md`
-  - `docs/TASKS.md`
   - `docs/VERIFY.md`
   - `docs/DECISIONS.md`
+  - `docs/PROMPTS.md`
 
 ## Operating Rules
 
 1. If the latest user prompt looks like project work, treat it as the active work request and route it through `RUN_WORKFLOW.md`.
 2. Project work includes requests such as `implement`, `fix`, `create`, `generate`, `audit`, `refactor`, `test`, `document`, `deploy`, `review`, or similar software changes.
 3. Automatically sync the active user prompt into `WORK_REQUEST.md`. Do not ask the user to manually edit workflow docs first.
-4. For plain-English work requests, always read `RUN_WORKFLOW.md` before planning or editing.
-5. Read `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md` before implementation, creating or updating them from the active request as needed.
-6. Read execution mode from the direct prompt or `WORK_REQUEST.md`; if it is missing, assume `single-task`.
-7. Obey execution mode exactly.
-8. `full-auto` is allowed only when explicitly selected.
-9. Never continue through multiple tasks in `single-task` mode.
-10. Classify the request before changing implementation files.
-11. Inspect the repository before generating tasks.
-12. Automatically generate or update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, and `docs/VERIFY.md` as needed.
-13. Implement tasks sequentially, one task at a time.
-14. Keep changes scoped to the active task.
-15. Never implement unrelated work.
-16. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-17. Update `docs/ACTIVE_TASK.md` during task execution.
-18. Update `docs/VERIFY.md` after each task.
-19. Do not start a second task until the current task is implemented, verified, critiqued, and documented.
-20. Stop if scope is unclear, risky, destructive, or requires unavailable access.
-
-## Direct Prompt Routing
-
-When the user types a direct request such as `generate mern boilerplate`, `implement login feature`, or `fix dashboard bug`, do not require manual edits to `WORK_REQUEST.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, or `docs/TASKS.md`.
-
-Instead:
-
-1. Treat the latest user prompt as the primary request source.
-2. Copy that request into `WORK_REQUEST.md`.
-3. Preserve or infer execution mode. If none is stated, use `single-task`.
-4. Run the workflow in `RUN_WORKFLOW.md`.
-5. Generate or update product spec, architecture notes, task breakdown, active task, and verification log automatically.
-6. Execute according to mode.
+4. Ask focused clarifying questions before implementation unless the prompt explicitly says `skip questions`.
+5. Keep asking until there is about 90% understanding of the request.
+6. Clarify the goal, users, exact behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope items.
+7. If the request is tiny and obvious, ask fewer questions, but still avoid touching code until the spec and task plan exist.
+8. Do not touch code during the questioning phase.
+9. If the user says `skip questions`, generate a best-effort spec and clearly record assumptions.
+10. No implementation is allowed without a saved spec in `_spec/`.
+11. No implementation is allowed without a saved task plan in `_task/`.
+12. Before planning, read `_progress/progress.md` and the latest relevant file in `_summary/`.
+13. Before touching code for any task, read `_progress/progress.md` and the latest relevant file in `_summary/`.
+14. Read `RUN_WORKFLOW.md` before planning or editing.
+15. Read `docs/PROJECT_CONTEXT.md` and relevant supporting docs before implementation, updating them only when durable project facts change.
+16. Generate a timestamped or slugged spec file in `_spec/`, for example `_spec/2026-05-10-add-dark-theme.md`.
+17. Generate a vertical task plan in `_task/` from the saved spec.
+18. Tasks must be vertical slices of user-visible or independently verifiable value, not vague frontend/backend/database layers.
+19. Break work into Ralph Wiggum-style tasks: small, literal, safe, sequential steps that are easy to follow and hard to misinterpret.
+20. Implement tasks sequentially, one task at a time.
+21. Keep changes scoped to the active task.
+22. Never implement unrelated work.
+23. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+24. After each task, append progress to `_progress/progress.md`.
+25. After the workflow completes, create or append a summary in `_summary/`.
+26. Continue to the next task only when the current task is implemented, verified, critiqued, documented, and safe to continue.
+27. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
 
 ## Required Workflow
 
@@ -68,40 +65,164 @@ For a work request:
 1. Use the latest direct user prompt as the active request when it looks like project work; otherwise read `WORK_REQUEST.md`.
 2. Sync the active request into `WORK_REQUEST.md`.
 3. Read `RUN_WORKFLOW.md`.
-4. Determine execution mode: `plan-only`, `single-task`, or `full-auto`. Use `single-task` when missing.
-5. Classify the request as `feature`, `bugfix`, `boilerplate`, `security`, `refactor`, `test`, `docs`, `ops`, or `research`.
+4. Ask clarifying questions until there is about 90% understanding, unless the prompt explicitly says `skip questions`.
+5. If questions are skipped, write assumptions into the spec.
 6. Check repository status:
 
    ```bash
    git status --short
    ```
 
-7. Perform repo intake and update `docs/PROJECT_CONTEXT.md` with durable findings.
-8. Generate or update `docs/SPEC.md` from the active request and repo context.
-9. Generate or update `docs/ARCHITECTURE.md` from the active request and repo context.
-10. Update `docs/DECISIONS.md` only for meaningful architecture or dependency decisions.
-11. Generate or update scoped tasks in `docs/TASKS.md`.
-12. If mode is `plan-only`, stop after task generation and summarize the plan.
-13. If mode is `single-task`, move only the first ready task into `docs/ACTIVE_TASK.md`, implement it, verify it, critique/fix it, update logs, and stop.
-14. If mode is `full-auto`, execute ready tasks sequentially until complete, blocked, risky, unclear, unverified, or outside scope.
-15. Run or recommend validation commands for each executed task.
-16. Critique each executed task and fix only in-scope defects.
-17. Update `docs/VERIFY.md` after each executed task.
-18. Check repository status again:
+7. Read `_progress/progress.md`, the latest relevant `_summary/` entry, and durable supporting docs.
+8. Generate a detailed spec in `_spec/`.
+9. Generate a vertical task plan in `_task/`.
+10. If execution is not allowed yet, stop after saving the spec and task plan.
+11. Execute one task at a time.
+12. For each task:
+    - read latest `_progress/progress.md`
+    - read relevant `_summary/`
+    - inspect the codebase for the current task
+    - implement only the current task
+    - verify
+    - critique the result
+    - fix only in-scope defects
+    - append progress to `_progress/progress.md`
+    - continue only if safe
+13. After all allowed tasks are complete or the workflow stops, create or append a summary in `_summary/`.
+14. Check repository status again:
 
     ```bash
     git status --short
     ```
 
-19. Summarize results and suggest a commit message.
+15. Summarize results and suggest a commit message.
+
+## Questioning Rules
+
+Questions should be focused and grouped. Do not ask a large questionnaire when a short set of questions will reach useful certainty.
+
+Ask about:
+
+- Goal and business/user value.
+- Primary users and roles.
+- Exact behavior and expected workflow.
+- UI, API, data model, and state expectations.
+- Edge cases and failure states.
+- Constraints, dependencies, and compatibility requirements.
+- Success criteria and verification.
+- Explicitly out-of-scope work.
+
+Stop questioning when the remaining unknowns are minor enough to document as assumptions, or when the user says to proceed.
+
+## Spec Rules
+
+Each spec in `_spec/` must include:
+
+- Request summary.
+- Date.
+- Source prompt.
+- Questions asked and answers received.
+- Assumptions.
+- Goal and non-goals.
+- Users.
+- Functional requirements.
+- UI expectations, when relevant.
+- API expectations, when relevant.
+- Data model expectations, when relevant.
+- Edge cases.
+- Constraints.
+- Success criteria.
+- Out-of-scope items.
+- Open questions.
+
+Use timestamped or slugged filenames, such as:
+
+```txt
+_spec/2026-05-10-add-dark-theme.md
+```
+
+## Task Planning Rules
+
+Each task plan in `_task/` must include:
+
+- Spec file used.
+- Planning date.
+- Progress and summary files read.
+- Task list.
+
+Each task must include:
+
+- Task ID.
+- Status.
+- Objective.
+- Files likely affected.
+- Checklist.
+- Acceptance criteria.
+- Verification commands.
+- Stop condition.
+- Out-of-scope items.
+
+Tasks must be vertical slices. Prefer tasks like `TASK-001: Add theme toggle through settings and persist preference` over tasks like `TASK-001: Update frontend`.
+
+## Ralph Wiggum Task Style
+
+Tasks should be small enough that the agent can say exactly what it is doing without interpretation.
+
+Good task shape:
+
+- One concrete outcome.
+- One narrow set of files.
+- Plain verbs.
+- No bundled refactors.
+- Clear stop condition.
+- Clear verification.
+
+Example:
+
+```md
+### TASK-001: Add dark theme toggle in settings
+
+Objective:
+Add one visible settings toggle that switches the app between light and dark themes.
+```
+
+## Progress Tracking
+
+Maintain `_progress/progress.md`.
+
+After each task, append:
+
+- Task ID.
+- Status.
+- Files changed.
+- Verification result.
+- Blockers.
+- Next step.
+
+Do not replace previous progress entries.
+
+## Summary Rules
+
+After workflow completion, create or append a summary in `_summary/`.
+
+The summary must include:
+
+- Request.
+- Spec file used.
+- Tasks completed.
+- Files changed.
+- Verification run.
+- Unresolved issues.
+- Next recommended work.
 
 ## Implementation Boundaries
 
 Agents must not:
 
+- Touch implementation code before questions, spec, and task plan are complete.
+- Implement without a saved spec in `_spec/`.
+- Implement without a saved task plan in `_task/`.
 - Implement more than one active task at a time.
-- Execute multiple tasks in `single-task` mode.
-- Enter `full-auto` behavior unless `full-auto` is explicitly selected in `WORK_REQUEST.md`.
 - Expand scope beyond the request and active task.
 - Rewrite large parts of the application without explicit approval.
 - Introduce new dependencies unless the active task requires them and the reason is documented.
@@ -184,26 +305,7 @@ If tests or scripts are missing:
 - State that they are missing.
 - Recommend the command that should exist.
 - Use available manual verification.
-- Record the gap in `docs/VERIFY.md`.
-
-## Verification Requirements
-
-After every task, append an entry to `docs/VERIFY.md` containing:
-
-- Work request summary.
-- Request classification.
-- Task ID and title.
-- Date.
-- Files touched.
-- Commands run.
-- Result of each command.
-- Manual checks performed.
-- Bugs found.
-- Fixes applied.
-- Unresolved issues.
-- Recommended next step.
-
-Do not claim a task is verified unless validation was actually run or a manual check is clearly described.
+- Record the gap in `_progress/progress.md` and the final `_summary/` entry.
 
 ## Git Workflow Guidance
 
@@ -216,33 +318,8 @@ Do not claim a task is verified unless validation was actually run or a manual c
   <type>: <short task summary>
   ```
 
-  Examples:
-
-  ```txt
-  feat: add login flow
-  fix: repair dashboard totals
-  docs: add workflow request template
-  test: cover subscription downgrade rules
-  ```
-
 - Do not commit unless explicitly instructed.
 - Before preparing a commit, summarize files changed, validation run, risks, and follow-up work.
-
-## Task Scoping Rules
-
-Each task in `docs/TASKS.md` must include:
-
-- Task ID.
-- Status.
-- Request type.
-- Objective.
-- Files likely affected.
-- Checklist.
-- Acceptance criteria.
-- Verification commands.
-- Stop condition.
-
-Agents must keep implementation aligned to those fields. If follow-up work is discovered, add or recommend a new task instead of expanding the active task.
 
 ## Stop Conditions
 
@@ -256,18 +333,19 @@ Stop and ask for direction when:
 - The task requires introducing a new paid service or dependency.
 - Existing uncommitted changes overlap with the files needed and intent is unclear.
 - Tests fail for reasons unrelated to the current task and the fix would be out of scope.
-- The request is a broad command such as "refactor auth" but no safe first task can be identified.
+- The request is broad but no safe first vertical task can be identified.
 
 ## Final Response Format
 
 At the end of a workflow run, report:
 
 - Request classification.
-- Execution mode.
-- Tasks created or updated.
-- Task completed.
+- Spec file used.
+- Task plan used.
+- Tasks completed.
 - Files changed.
 - Verification commands and results.
-- Updates made to `docs/ACTIVE_TASK.md` and `docs/VERIFY.md`.
+- Progress updated in `_progress/progress.md`.
+- Summary updated in `_summary/`.
 - Unresolved issues or recommended next task.
 - Suggested commit message.
