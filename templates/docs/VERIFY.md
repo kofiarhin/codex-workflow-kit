@@ -1,6 +1,8 @@
 # Verification Log
 
-Use this file to record what was actually checked for each active task. Append a new entry after each completed, blocked, or repaired task.
+Use this file to record what was actually checked for each active task. Agents should append entries automatically during `RUN_WORKFLOW.md` execution after each completed, blocked, or repaired task.
+
+The work request may come directly from the latest user prompt or from `WORK_REQUEST.md`; record whichever source was active.
 
 ## Verification Rules
 
@@ -16,7 +18,7 @@ Use this file to record what was actually checked for each active task. Append a
 ### `<YYYY-MM-DD>` - `<TASK-ID: Task title>`
 
 Work request:
-`<Plain-English request from WORK_REQUEST.md>`
+`<Plain-English request from latest direct prompt or WORK_REQUEST.md>`
 
 Request classification:
 `<feature / bugfix / boilerplate / security / refactor / test / docs / ops / research>`

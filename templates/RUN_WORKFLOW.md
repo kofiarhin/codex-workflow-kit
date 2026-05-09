@@ -1,20 +1,22 @@
 # Run Workflow
 
-This is the master orchestration prompt for a reusable AI engineering workflow. Use it with `WORK_REQUEST.md` to turn one plain-English request into scoped, verified engineering work.
+This is the master orchestration prompt for a reusable AI engineering workflow. It turns either the latest direct user prompt or `WORK_REQUEST.md` into scoped, verified engineering work.
 
 ## Command To Agent
 
-Read `WORK_REQUEST.md`, `AGENTS.md`, and this file. Execute this workflow exactly. Keep the work lightweight, scoped, and sequential.
+Use the latest direct user prompt as the primary request source when it looks like project work. Sync it into `WORK_REQUEST.md`, then execute this workflow exactly. Keep the work lightweight, scoped, and sequential.
 
-Execution mode is controlled by `WORK_REQUEST.md`. If execution mode is missing, assume `single-task`.
+Execution mode may be stated in the direct prompt or `WORK_REQUEST.md`. If execution mode is missing, assume `single-task`.
 
 ## Pipeline
 
 ```txt
-WORK_REQUEST
+direct user prompt or WORK_REQUEST
+-> sync WORK_REQUEST
 -> classify
 -> repo intake
--> update docs
+-> generate/update spec
+-> generate/update architecture
 -> generate tasks
 -> execute one task at a time
 -> verify
@@ -24,10 +26,11 @@ WORK_REQUEST
 -> final summary
 ```
 
-## 1. Read Work Request
+## 1. Resolve Active Request
 
 Read:
 
+- Latest user prompt in the current conversation
 - `WORK_REQUEST.md`
 - `AGENTS.md`
 - `docs/PROJECT_CONTEXT.md`
@@ -39,7 +42,16 @@ Read:
 
 If a file is missing, create it from the workflow template shape before continuing.
 
-Read execution mode from `WORK_REQUEST.md`:
+Request source rules:
+
+- If the latest user prompt looks like project work, it is the active request.
+- Project work includes prompts like `generate mern boilerplate`, `implement login feature`, `fix dashboard bug`, `audit security`, or `refactor auth`.
+- If there is no direct project-work prompt, use the request stored in `WORK_REQUEST.md`.
+- Do not require the user to manually edit workflow docs before proceeding.
+
+Sync the active request into `WORK_REQUEST.md` before planning. Preserve useful optional context when present, but make the latest active request obvious.
+
+Read execution mode from the direct prompt first, then `WORK_REQUEST.md`:
 
 - `plan-only`: classify request, inspect repo, update docs, generate tasks, then stop.
 - `single-task`: generate tasks, implement only the first ready task, verify, critique/fix, update logs, then stop.
@@ -85,13 +97,14 @@ Required intake:
 
 Update `docs/PROJECT_CONTEXT.md` with durable findings. Do not turn temporary observations into permanent rules unless they are clear from the repo.
 
-## 4. Update Docs
+## 4. Generate Or Update Docs
 
-Before implementation, update documentation only as much as needed:
+Before implementation, generate or update workflow docs automatically. The user should not need to manually edit `SPEC.md`, `ARCHITECTURE.md`, or `TASKS.md` before execution.
 
-- `docs/SPEC.md`: Add or refine product requirements implied by the request.
-- `docs/ARCHITECTURE.md`: Add or refine architecture notes if the request affects structure, data flow, APIs, state, security, or deployment.
+- `docs/SPEC.md`: Generate or refine product requirements implied by the active request and repo context.
+- `docs/ARCHITECTURE.md`: Generate or refine architecture notes if the request affects structure, data flow, APIs, state, security, or deployment.
 - `docs/DECISIONS.md`: Add an ADR only for meaningful architecture or dependency decisions.
+- `docs/VERIFY.md`: Prepare to append verification results for executed tasks.
 
 Do not over-document routine edits.
 

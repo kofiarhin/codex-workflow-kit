@@ -2,7 +2,7 @@
 
 A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude Code, Cursor, and similar coding agents.
 
-The kit lets a user write one plain-English work request:
+The kit lets a user type one plain-English request directly into Codex:
 
 ```txt
 Implement login
@@ -15,14 +15,14 @@ Refactor auth
 Then the workflow guides the agent through:
 
 ```txt
-request -> classify -> repo intake -> docs -> tasks -> implement -> verify -> critique -> refine -> summary
+request -> spec -> architecture -> tasks -> implementation -> verification -> critique -> summary
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
 
 ## What This Provides
 
-- `WORK_REQUEST.md`: The single place where the user writes a plain-English request.
+- `WORK_REQUEST.md`: Auto-managed record of the latest active request.
 - `RUN_WORKFLOW.md`: The master orchestration prompt that tells the agent how to run the workflow.
 - `AGENTS.md`: Repository operating rules for coding agents.
 - `docs/PROJECT_CONTEXT.md`: Durable facts about stack, commands, conventions, constraints, and architecture rules.
@@ -40,9 +40,10 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 
 AI coding agents work better with clear scope and a repeatable loop. This kit turns a broad request into controlled execution:
 
+- Route direct user prompts into the workflow automatically.
 - Classify the request before changing files.
 - Inspect the repo before planning.
-- Update docs only where useful.
+- Generate or update spec, architecture, and tasks automatically.
 - Generate scoped tasks.
 - Execute one task at a time.
 - Verify every task.
@@ -101,23 +102,21 @@ Existing files are skipped by default.
 bash scripts/install.sh ../my-project
 ```
 
-### Step 2: Edit `WORK_REQUEST.md`
+### Step 2: Type A Direct Request Into Codex
 
 Example:
 
-```md
-# Work Request
-
-## Request
-
-Implement login with JWT auth.
+```txt
+generate mern boilerplate
 ```
 
-Optional context can include constraints, failing commands, screenshots notes, or files that should not change.
+Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, generate or update workflow docs, create tasks, execute according to mode, verify, critique, and summarize.
+
+Manual editing of `WORK_REQUEST.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, or `docs/TASKS.md` is optional, not required.
 
 ### Execution Modes
 
-`WORK_REQUEST.md` supports explicit execution modes. If the mode is missing, the workflow defaults to `single-task`.
+Direct prompts and `WORK_REQUEST.md` support explicit execution modes. If the mode is missing, the workflow defaults to `single-task`.
 
 - `plan-only`: Classify the request, inspect the repo, update docs, generate tasks, then stop.
 - `single-task`: Generate tasks, implement only the first ready task, verify, critique/fix, then stop.
@@ -149,15 +148,21 @@ Full-auto example:
 `full-auto`
 ```
 
-### Step 3: Run Codex
+### Step 3: Optional Explicit Invocation
 
-Use this exact prompt:
+Default zero-edit usage is simply typing the work request:
 
 ```txt
-Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
+implement login feature
 ```
 
-The agent should classify the request, inspect the repo, update docs, generate tasks, obey the selected execution mode, verify, critique/fix, update logs, and produce a final summary.
+If your agent does not automatically route direct prompts through `RUN_WORKFLOW.md`, use:
+
+```txt
+Read RUN_WORKFLOW.md and execute it using this request: implement login feature
+```
+
+The agent should use the latest direct prompt as the active request, sync it into `WORK_REQUEST.md`, classify it, inspect the repo, generate/update docs, generate tasks, obey the selected execution mode, verify, critique/fix, update logs, and produce a final summary.
 
 ### Step 4: Review, Verify, Commit
 
@@ -173,12 +178,12 @@ Then commit only the verified task-sized change.
 
 ## Recommended Agent Loop
 
-1. Read `WORK_REQUEST.md` and `RUN_WORKFLOW.md`.
-2. Read execution mode, defaulting to `single-task`.
-3. Classify the request.
-4. Inspect repository conventions and commands.
-5. Update `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, and `docs/ARCHITECTURE.md` only as needed.
-6. Generate scoped tasks in `docs/TASKS.md`.
+1. Treat the latest direct prompt as the active request.
+2. Sync the request into `WORK_REQUEST.md`.
+3. Read execution mode, defaulting to `single-task`.
+4. Classify the request.
+5. Inspect repository conventions and commands.
+6. Generate/update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md`.
 7. Execute according to mode: none, one ready task, or sequential ready tasks.
 8. Run verification and update `docs/VERIFY.md`.
 9. Critique and fix only in-scope issues.
@@ -222,6 +227,22 @@ Audit authentication for sensitive data exposure and add tests for any issue fou
 Refactor auth middleware for readability without changing behavior.
 ```
 
+## Zero-Edit Workflow
+
+You can run the workflow without manually editing any docs:
+
+```txt
+generate mern boilerplate
+```
+
+Codex automatically runs:
+
+```txt
+direct prompt -> WORK_REQUEST.md -> SPEC.md -> ARCHITECTURE.md -> TASKS.md -> ACTIVE_TASK.md -> implementation -> VERIFY.md -> critique -> summary
+```
+
+Manual editing remains useful when you want to predefine constraints, execution mode, architecture rules, or detailed acceptance criteria.
+
 ## Git Workflow
 
 Use task-sized branches and commits:
@@ -264,7 +285,13 @@ Keep these files at the project root:
 Most agents can be started with:
 
 ```txt
-Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
+generate mern boilerplate
+```
+
+Or explicitly:
+
+```txt
+Read RUN_WORKFLOW.md and execute it using this request: generate mern boilerplate
 ```
 
 For review-only work:

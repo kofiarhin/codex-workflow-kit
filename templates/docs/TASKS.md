@@ -1,21 +1,25 @@
 # Task Plan
 
-This file controls implementation scope for the work request in `WORK_REQUEST.md`. Agents should generate scoped tasks, execute one task at a time, verify, critique, update logs, and stop or continue only when explicitly allowed by `RUN_WORKFLOW.md`.
+This file controls implementation scope for the active request. Agents should generate it automatically from the latest direct user prompt or `WORK_REQUEST.md`, execute one task at a time, verify, critique, update logs, and stop or continue only when explicitly allowed by `RUN_WORKFLOW.md`.
+
+Users do not need to manually write tasks before asking the agent to work. Manual edits are optional.
 
 Default execution mode is `single-task` unless `WORK_REQUEST.md` explicitly says otherwise.
 
 ## Workflow Rules
 
 1. Classify the request before generating tasks.
-2. Read execution mode from `WORK_REQUEST.md`; use `single-task` if missing.
-3. Create tasks that are small enough to review independently.
-4. Select one active task at a time.
-5. Copy the active task into `docs/ACTIVE_TASK.md`.
-6. Implement only the active task.
-7. Avoid unrelated refactors.
-8. Run or recommend the listed verification commands.
-9. Append verification results to `docs/VERIFY.md`.
-10. Stop if acceptance criteria, risk, or scope are unclear.
+2. Use the latest direct user prompt as the active request when it looks like project work.
+3. Sync the active request into `WORK_REQUEST.md`.
+4. Read execution mode from the direct prompt or `WORK_REQUEST.md`; use `single-task` if missing.
+5. Create tasks that are small enough to review independently.
+6. Select one active task at a time.
+7. Copy the active task into `docs/ACTIVE_TASK.md`.
+8. Implement only the active task.
+9. Avoid unrelated refactors.
+10. Run or recommend the listed verification commands.
+11. Append verification results to `docs/VERIFY.md`.
+12. Stop if acceptance criteria, risk, or scope are unclear.
 
 ## Execution Modes
 
@@ -88,6 +92,12 @@ Notes:
 - `<Optional planning note>`
 
 ## Task Backlog
+
+Generated from active request:
+
+- Source: `<latest direct prompt or WORK_REQUEST.md>`
+- Request: `<Plain-English active request>`
+- Execution mode: `<plan-only / single-task / full-auto>`
 
 ### TASK-001: `<Generated task title>`
 

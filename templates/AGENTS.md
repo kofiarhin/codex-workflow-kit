@@ -27,52 +27,73 @@ Customize placeholders before using this in a production project. MERN is the de
 
 ## Operating Rules
 
-1. For plain-English work requests, always read `WORK_REQUEST.md` and `RUN_WORKFLOW.md` before planning or editing.
-2. Read `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md` before implementation.
-3. Read execution mode from `WORK_REQUEST.md`; if it is missing, assume `single-task`.
-4. Obey execution mode exactly.
-5. `full-auto` is allowed only when explicitly selected.
-6. Never continue through multiple tasks in `single-task` mode.
-7. Classify the request before changing code or docs.
-8. Inspect the repository before generating tasks.
-9. Implement tasks sequentially, one task at a time.
-10. Keep changes scoped to the active task.
-11. Never implement unrelated work.
-12. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-13. Update `docs/ACTIVE_TASK.md` during task execution.
-14. Update `docs/VERIFY.md` after each task.
-15. Do not start a second task until the current task is implemented, verified, critiqued, and documented.
-16. Stop if scope is unclear, risky, destructive, or requires unavailable access.
+1. If the latest user prompt looks like project work, treat it as the active work request and route it through `RUN_WORKFLOW.md`.
+2. Project work includes requests such as `implement`, `fix`, `create`, `generate`, `audit`, `refactor`, `test`, `document`, `deploy`, `review`, or similar software changes.
+3. Automatically sync the active user prompt into `WORK_REQUEST.md`. Do not ask the user to manually edit workflow docs first.
+4. For plain-English work requests, always read `RUN_WORKFLOW.md` before planning or editing.
+5. Read `docs/PROJECT_CONTEXT.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/TASKS.md` before implementation, creating or updating them from the active request as needed.
+6. Read execution mode from the direct prompt or `WORK_REQUEST.md`; if it is missing, assume `single-task`.
+7. Obey execution mode exactly.
+8. `full-auto` is allowed only when explicitly selected.
+9. Never continue through multiple tasks in `single-task` mode.
+10. Classify the request before changing implementation files.
+11. Inspect the repository before generating tasks.
+12. Automatically generate or update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, `docs/TASKS.md`, and `docs/VERIFY.md` as needed.
+13. Implement tasks sequentially, one task at a time.
+14. Keep changes scoped to the active task.
+15. Never implement unrelated work.
+16. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+17. Update `docs/ACTIVE_TASK.md` during task execution.
+18. Update `docs/VERIFY.md` after each task.
+19. Do not start a second task until the current task is implemented, verified, critiqued, and documented.
+20. Stop if scope is unclear, risky, destructive, or requires unavailable access.
+
+## Direct Prompt Routing
+
+When the user types a direct request such as `generate mern boilerplate`, `implement login feature`, or `fix dashboard bug`, do not require manual edits to `WORK_REQUEST.md`, `docs/SPEC.md`, `docs/ARCHITECTURE.md`, or `docs/TASKS.md`.
+
+Instead:
+
+1. Treat the latest user prompt as the primary request source.
+2. Copy that request into `WORK_REQUEST.md`.
+3. Preserve or infer execution mode. If none is stated, use `single-task`.
+4. Run the workflow in `RUN_WORKFLOW.md`.
+5. Generate or update product spec, architecture notes, task breakdown, active task, and verification log automatically.
+6. Execute according to mode.
 
 ## Required Workflow
 
 For a work request:
 
-1. Read `WORK_REQUEST.md` and `RUN_WORKFLOW.md`.
-2. Determine execution mode: `plan-only`, `single-task`, or `full-auto`. Use `single-task` when missing.
-3. Classify the request as `feature`, `bugfix`, `boilerplate`, `security`, `refactor`, `test`, `docs`, `ops`, or `research`.
-4. Check repository status:
+1. Use the latest direct user prompt as the active request when it looks like project work; otherwise read `WORK_REQUEST.md`.
+2. Sync the active request into `WORK_REQUEST.md`.
+3. Read `RUN_WORKFLOW.md`.
+4. Determine execution mode: `plan-only`, `single-task`, or `full-auto`. Use `single-task` when missing.
+5. Classify the request as `feature`, `bugfix`, `boilerplate`, `security`, `refactor`, `test`, `docs`, `ops`, or `research`.
+6. Check repository status:
 
    ```bash
    git status --short
    ```
 
-5. Perform repo intake and update `docs/PROJECT_CONTEXT.md` with durable findings.
-6. Update `docs/SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/DECISIONS.md` only as needed.
-7. Generate or update scoped tasks in `docs/TASKS.md`.
-8. If mode is `plan-only`, stop after task generation and summarize the plan.
-9. If mode is `single-task`, move only the first ready task into `docs/ACTIVE_TASK.md`, implement it, verify it, critique/fix it, update logs, and stop.
-10. If mode is `full-auto`, execute ready tasks sequentially until complete, blocked, risky, unclear, unverified, or outside scope.
-11. Run or recommend validation commands for each executed task.
-12. Critique each executed task and fix only in-scope defects.
-13. Update `docs/VERIFY.md` after each executed task.
-14. Check repository status again:
+7. Perform repo intake and update `docs/PROJECT_CONTEXT.md` with durable findings.
+8. Generate or update `docs/SPEC.md` from the active request and repo context.
+9. Generate or update `docs/ARCHITECTURE.md` from the active request and repo context.
+10. Update `docs/DECISIONS.md` only for meaningful architecture or dependency decisions.
+11. Generate or update scoped tasks in `docs/TASKS.md`.
+12. If mode is `plan-only`, stop after task generation and summarize the plan.
+13. If mode is `single-task`, move only the first ready task into `docs/ACTIVE_TASK.md`, implement it, verify it, critique/fix it, update logs, and stop.
+14. If mode is `full-auto`, execute ready tasks sequentially until complete, blocked, risky, unclear, unverified, or outside scope.
+15. Run or recommend validation commands for each executed task.
+16. Critique each executed task and fix only in-scope defects.
+17. Update `docs/VERIFY.md` after each executed task.
+18. Check repository status again:
 
     ```bash
     git status --short
     ```
 
-15. Summarize results and suggest a commit message.
+19. Summarize results and suggest a commit message.
 
 ## Implementation Boundaries
 

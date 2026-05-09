@@ -1,10 +1,14 @@
 # Work Request
 
-Write one plain-English request below. Keep it short. The workflow will classify it, inspect the repo, update docs, create scoped tasks, and execute according to the selected execution mode.
+This file is auto-managed by the workflow. It stores the latest active work request, usually copied from the user's direct Codex prompt.
+
+Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
+
+The workflow will classify the active request, inspect the repo, generate or update docs, create scoped tasks, and execute according to the selected execution mode.
 
 ## Request
 
-`<Example: Implement login with JWT auth.>`
+`<Auto-synced from latest direct prompt, e.g. Implement login with JWT auth.>`
 
 ## Execution Mode
 

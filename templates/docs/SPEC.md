@@ -1,5 +1,7 @@
 # Product Specification
 
+This file is generated and maintained from the active request, repository context, and product decisions. Users may edit it manually, but manual edits are optional; agents should update it automatically when running `RUN_WORKFLOW.md`.
+
 Project: `<PROJECT_NAME>`
 
 Last updated: `<YYYY-MM-DD>`
@@ -9,6 +11,12 @@ Owner: `<OWNER_OR_TEAM>`
 ## Product Overview
 
 `<Describe what the product is, who it serves, and the main value it provides.>`
+
+## Active Request Summary
+
+- Source: `<latest direct prompt or WORK_REQUEST.md>`
+- Request: `<Plain-English active request>`
+- Generated impact: `<What product behavior, bug, workflow, or capability this request affects>`
 
 ## Goals
 

@@ -1,5 +1,7 @@
 # Architecture Plan
 
+This file is generated and maintained from the active request, repository context, and implementation decisions. Users may edit it manually, but manual edits are optional; agents should update it automatically when running `RUN_WORKFLOW.md`.
+
 Project: `<PROJECT_NAME>`
 
 Last updated: `<YYYY-MM-DD>`
@@ -7,6 +9,13 @@ Last updated: `<YYYY-MM-DD>`
 ## System Overview
 
 `<Describe the application shape, major users, major systems, and data flow.>`
+
+## Active Request Architecture Impact
+
+- Source: `<latest direct prompt or WORK_REQUEST.md>`
+- Request: `<Plain-English active request>`
+- Affected areas: `<Frontend / backend / database / tests / docs / ops / unknown>`
+- Expected architecture change: `<None / minor / significant, with reason>`
 
 ## Folder Structure
 
