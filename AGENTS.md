@@ -17,6 +17,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - `WORK_REQUEST.md`
   - `RUN_WORKFLOW.md`
 - Main workflow memory:
+  - `_handoff/current.md`
   - `_spec/`
   - `_task/`
   - `_progress/progress.md`
@@ -43,8 +44,8 @@ Customize placeholders before using this in a production project. MERN is the de
 9. If the user says `skip questions`, generate a best-effort spec and clearly record assumptions.
 10. No implementation is allowed without a saved spec in `_spec/`.
 11. No implementation is allowed without a saved task plan in `_task/`.
-12. Before planning, read `_progress/progress.md` and the latest relevant file in `_summary/`.
-13. Before touching code for any task, read `_progress/progress.md` and the latest relevant file in `_summary/`.
+12. Before planning, read `_handoff/current.md` if it exists, `_progress/progress.md`, and the latest relevant file in `_summary/`.
+13. Before touching code for any task, read `_handoff/current.md`, `_progress/progress.md`, and the latest relevant file in `_summary/`.
 14. Read `RUN_WORKFLOW.md` before planning or editing.
 15. Read `docs/PROJECT_CONTEXT.md` and relevant supporting docs before implementation, updating them only when durable project facts change.
 16. Generate a timestamped or slugged spec file in `_spec/`, for example `_spec/2026-05-10-add-dark-theme.md`.
@@ -61,12 +62,17 @@ Customize placeholders before using this in a production project. MERN is the de
 27. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
 28. Never skip verification. If verification cannot run, document the reason and the best available manual check.
 29. After each task, append progress to `_progress/progress.md`.
-30. After implementation and before the final summary, create a review file in `_review/`.
-31. After the review is complete, create or append a summary in `_summary/`.
-32. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
-33. Before the final response, run the workflow health check.
-34. Continue to the next task only when the current task is implemented, verified, reviewed, documented, and safe to continue.
-35. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
+30. After each task, update `_handoff/current.md` so it reflects the latest completed task, current phase, blockers, verification status, and next step.
+31. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
+32. The handoff file should allow another agent/session to resume without rereading the entire conversation.
+33. `continue workflow` must start from `_handoff/current.md`.
+34. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
+35. After implementation and before the final summary, create a review file in `_review/`.
+36. After the review is complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
+37. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
+38. Before the final response, run the workflow health check.
+39. Continue to the next task only when the current task is implemented, verified, reviewed, documented, and safe to continue.
+40. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
 
 ## Required Workflow
 
@@ -83,7 +89,7 @@ For a work request:
    git status --short
    ```
 
-7. Read `_progress/progress.md`, the latest relevant `_summary/` entry, and durable supporting docs.
+7. Read `_handoff/current.md` if it exists, `_progress/progress.md`, the latest relevant `_summary/` entry, and durable supporting docs.
 8. Generate a detailed spec in `_spec/`.
 9. Generate a vertical task plan in `_task/`.
 10. If execution is not allowed yet, stop after saving the spec and task plan.
@@ -97,6 +103,7 @@ For a work request:
     - critique the result
     - fix only in-scope defects
     - append progress to `_progress/progress.md`
+    - update `_handoff/current.md`
     - continue only if safe
 13. After all allowed tasks are complete or the workflow stops, create a review file in `_review/`.
 14. After the review, create or append a summary in `_summary/`.
@@ -113,14 +120,16 @@ For a work request:
 
 If the user says `continue workflow`:
 
-1. Read `_progress/progress.md`.
-2. Read the latest relevant file in `_summary/`, if any.
-3. Read the latest file in `_task/`.
-4. Read the spec referenced by that task plan.
-5. Find the next task whose status is not `Done`.
-6. Continue from that task without asking the original intake questions again unless the request, scope, or acceptance criteria are unclear.
-7. Do not regenerate the entire spec unless the request changed.
-8. If every task is `Done`, continue with any missing review, summary, health check, or final response steps.
+1. Read `_handoff/current.md` first and use it as the primary resume source.
+2. Read `_progress/progress.md` to verify completed task history.
+3. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff.
+4. Read the latest relevant file in `_summary/`, if any.
+5. Read the task plan referenced by `_handoff/current.md`, or the latest file in `_task/` if handoff has no task plan.
+6. Read the spec referenced by that task plan.
+7. Find the next task whose status is not `Done`.
+8. Continue from that task without asking the original intake questions again unless the request, scope, or acceptance criteria are unclear.
+9. Do not regenerate the entire spec unless the request changed.
+10. If every task is `Done`, continue with any missing `_review/`, `_summary/`, handoff update, workflow health check, or final response steps.
 
 ## Questioning Rules
 
@@ -233,6 +242,10 @@ Add one visible settings toggle that switches the app between light and dark the
 
 Maintain `_progress/progress.md`.
 
+`_progress/progress.md` is append-only task history. It records what happened over time and is authoritative for completed task history.
+
+`_handoff/current.md` is the live resume state. Keep it updated with the current phase, active files, last completed task, current task, next task, blockers, verification status, and workflow health status.
+
 After each task, append:
 
 - Task ID.
@@ -266,6 +279,8 @@ The review must include:
 
 After the review is complete, create or append a summary in `_summary/`.
 
+`_summary/` is completed workflow history. It records finished workflow runs and should not replace the live state in `_handoff/current.md`.
+
 The summary must include:
 
 - Request.
@@ -283,6 +298,7 @@ The summary must include:
 Before the final response, check:
 
 - Did `WORK_REQUEST.md` sync?
+- Did `_handoff/current.md` exist and reflect the latest workflow state?
 - Did the spec file exist?
 - Did the task plan exist?
 - Was progress updated?
@@ -431,12 +447,14 @@ At the end of a workflow run, report:
 - Files changed.
 - Verification commands and results.
 - Progress updated in `_progress/progress.md`.
+- Handoff updated in `_handoff/current.md`.
 - Review updated in `_review/<file>.md`.
 - Summary updated in `_summary/`.
 - Decisions updated in `_decisions/<file>.md` or `none`.
 - Workflow health status: `Passed`, `Partial`, or `Failed`.
 - Final artifact checklist with exact paths:
   - Work request: `WORK_REQUEST.md`
+  - Handoff: `_handoff/current.md`
   - Spec: `_spec/<file>.md`
   - Task plan: `_task/<file>.md`
   - Progress: `_progress/progress.md`

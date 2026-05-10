@@ -4,6 +4,10 @@ Agents must read this file before planning and before touching code for each tas
 
 Append a new entry after each task. Do not replace previous entries except to correct factual errors.
 
+This file is append-only task history. `_handoff/current.md` is the live resume state for the active workflow, and `_summary/` is completed workflow history.
+
+If `_handoff/current.md` conflicts with this file, trust this file for completed task history and update handoff accordingly.
+
 ## Task Status Transitions
 
 Every task must move through:
@@ -31,3 +35,5 @@ If verification cannot run, record the task as `Needs Human Review`, not `Done`.
 - Review result: `<reviewed / issues found / not reviewed with reason>`
 - Blockers: `<none or details>`
 - Next step: `<next task, review, summary, or stop reason>`
+
+After appending each task entry, update `_handoff/current.md` with the latest current state.

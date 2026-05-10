@@ -27,6 +27,10 @@ This file captures durable repository facts discovered during workflow runs. Kee
 ## Common Commands
 
 ```bash
+# Local development
+npm run dev
+# Frontend dev URL: http://127.0.0.1:5175/
+
 # Test
 npm test
 
@@ -55,6 +59,7 @@ No typecheck script is currently defined.
 - State management conventions: Redux Toolkit for client-owned global state; TanStack Query for server state.
 - Error handling conventions: Current UI uses inline form/dashboard alerts for mutation errors.
 - Profile conventions: User records include an optional `avatarUrl` string; profile avatar updates use the protected `/api/auth/profile` endpoint and store URL strings only.
+- Dev server conventions: Vite client dev server is pinned to `127.0.0.1:5175` with strict port behavior.
 
 ## Architecture Rules
 

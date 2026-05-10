@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute one task at a time -> update _progress -> review in _review -> final summary in _summary -> health check
+request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute one task at a time -> update _progress and _handoff -> review in _review -> final summary in _summary -> update _handoff -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -15,6 +15,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `WORK_REQUEST.md`: Auto-managed record of the latest active request and optional preferences.
 - `RUN_WORKFLOW.md`: The master orchestration prompt that tells the agent how to run the workflow.
 - `AGENTS.md`: Repository operating rules for coding agents.
+- `_handoff/current.md`: Live workflow state used to resume with `continue workflow`.
 - `_spec/`: Saved specs generated after intake questions.
 - `_task/`: Saved vertical task plans generated from specs.
 - `_progress/progress.md`: Append-only task progress log.
@@ -53,6 +54,8 @@ templates/
   WORK_REQUEST.md
   RUN_WORKFLOW.md
   AGENTS.md
+  _handoff/
+    current.md
   _spec/
     README.md
   _task/
@@ -85,7 +88,7 @@ examples/
     ARCHITECTURE.example.md
 ```
 
-The older `docs/SPEC.md`, `docs/TASKS.md`, and `docs/ACTIVE_TASK.md` templates may remain useful for compatibility, but `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, and `_decisions/` are the main workflow memory.
+The older `docs/SPEC.md`, `docs/TASKS.md`, and `docs/ACTIVE_TASK.md` templates may remain useful for compatibility, but `_handoff/`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, and `_decisions/` are the main workflow memory.
 
 ## Install Into A Project
 
@@ -209,6 +212,7 @@ Every final response must include exact artifact paths:
 
 ```txt
 Work request: WORK_REQUEST.md
+Handoff: _handoff/current.md
 Spec: _spec/<file>.md
 Task plan: _task/<file>.md
 Progress: _progress/progress.md
@@ -225,6 +229,20 @@ Use `_decisions/` for meaningful architecture or product decisions only. Routine
 
 Each decision file should include date, decision, context, options considered, selected option, consequences, affected files, and follow-up tasks.
 
+## Handoff / Resume
+
+`_handoff/current.md` stores the live workflow state for the active request. It should name the current request, request ID, phase, active spec, task plan, review and summary files, last completed task, current task, next task, blockers, verification status, workflow health status, suggested next prompt, and notes for continuation.
+
+Use this prompt to resume interrupted work:
+
+```txt
+continue workflow
+```
+
+The agent starts from `_handoff/current.md`, then checks `_progress/progress.md` for completed task history. If handoff and progress disagree, progress is trusted for completed task history and the handoff is updated.
+
+The handoff is updated after each task and after the summary. `_progress/progress.md` is append-only task history, `_handoff/current.md` is current live state, and `_summary/` is completed workflow history.
+
 ## Continue Workflow
 
 Use this prompt to resume an interrupted workflow:
@@ -233,7 +251,7 @@ Use this prompt to resume an interrupted workflow:
 continue workflow
 ```
 
-The agent should read `_progress/progress.md`, the latest `_summary/`, and the latest `_task/`, find the next task that is not `Done`, and continue from that task. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
+The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task that is not `Done`, and continue from that task. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
 
 ## Question Control
 
@@ -265,13 +283,14 @@ Default: `single-task`.
 3. Ask clarifying questions unless the prompt says `skip questions`.
 4. Generate a saved spec in `_spec/`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
-6. Generate vertical tasks in `_task/`.
-7. Execute one task at a time.
-8. Verify and review each task.
-9. Append progress to `_progress/progress.md`.
-10. Write the workflow review in `_review/`.
-11. Write the final summary in `_summary/`.
-12. Run the workflow health check and include the final artifact checklist.
+6. Read or create `_handoff/current.md`.
+7. Generate vertical tasks in `_task/`.
+8. Execute one task at a time.
+9. Verify and review each task.
+10. Append progress to `_progress/progress.md` and update `_handoff/current.md`.
+11. Write the workflow review in `_review/`.
+12. Write the final summary in `_summary/` and update `_handoff/current.md`.
+13. Run the workflow health check and include the final artifact checklist.
 
 ## Request Types
 
@@ -347,7 +366,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> _spec -> _task -> task execution -> _progress -> _review -> _summary -> health check
+direct prompt -> questions -> _spec -> _task -> task execution -> _progress + _handoff -> _review -> _summary -> _handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, success criteria, or detailed acceptance criteria.
@@ -376,7 +395,7 @@ git diff
 Commit only after verification:
 
 ```bash
-git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _spec/ _task/ _progress/ _review/ _summary/ _decisions/ docs/
+git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _handoff/ _spec/ _task/ _progress/ _review/ _summary/ _decisions/ docs/
 git commit -m "docs: add clarified workflow memory"
 ```
 
@@ -389,6 +408,7 @@ Keep these files at the project root:
 - `AGENTS.md`
 - `WORK_REQUEST.md`
 - `RUN_WORKFLOW.md`
+- `_handoff/`
 - `_spec/`
 - `_task/`
 - `_progress/`

@@ -4,6 +4,10 @@ Agents must read this file before planning and before touching code for each tas
 
 Append a new entry after each task. Do not replace previous entries except to correct factual errors.
 
+This file is append-only task history. `_handoff/current.md` is the live resume state for the active workflow, and `_summary/` is completed workflow history.
+
+If `_handoff/current.md` conflicts with this file, trust this file for completed task history and update handoff accordingly.
+
 ## Entry Template
 
 ### `<YYYY-MM-DD HH:MM>` - `<TASK-ID>`
@@ -54,3 +58,22 @@ Append a new entry after each task. Do not replace previous entries except to co
 - Review result: Scope respected. One in-scope UI issue was found and fixed: avatar image fallback now resets when the URL changes.
 - Blockers: none
 - Next step: Stop after single-task execution and write review/summary artifacts.
+
+### 2026-05-11 16:58 - TASK-001
+
+- Status: Done (Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done)
+- Files changed: `WORK_REQUEST.md`, `_spec/2026-05-11-fix-vite-5175-connection-refused.md`, `_task/2026-05-11-fix-vite-5175-connection-refused.md`, `client/vite.config.js`, `docs/PROJECT_CONTEXT.md`
+- Verification result: `npm run build --workspace client` passed; `Invoke-WebRequest -Uri http://127.0.0.1:5175/` returned HTTP 200 with an existing Node listener; `npm run test --workspace client` passed with 1 suite and 4 tests, with existing React Router future-flag warnings.
+- Review result: Scope respected. The change only pins Vite dev server host/port behavior and documents the local URL. No UI output changed; `design-taste-frontend` pre-flight has no applicable UI defects.
+- Blockers: none
+- Next step: Write review and summary artifacts, then final response.
+
+### 2026-05-13 20:08 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `WORK_REQUEST.md`, `_handoff/current.md`, `templates/_handoff/current.md`, `AGENTS.md`, `RUN_WORKFLOW.md`, `README.md`, `templates/AGENTS.md`, `templates/RUN_WORKFLOW.md`, `_progress/progress.md`, `templates/_progress/progress.md`, `_summary/README.md`, `templates/_summary/README.md`, `scripts/install.sh`, `_spec/2026-05-13-add-workflow-handoff-support.md`, `_task/2026-05-13-add-workflow-handoff-support.md`
+- Verification result: `Test-Path _handoff/current.md; Test-Path templates/_handoff/current.md` returned `True` for both files; handoff-field `rg -i` found all expected fields in both handoff files; required-term `rg` found handoff/resume/history wording in the updated docs/templates/script files; prohibited-term `rg` returned no matches in the updated workflow docs/templates/script files; `bash -n scripts/install.sh` passed.
+- Review result: Reviewed. Scope was limited to workflow docs, templates, installer, and workflow memory artifacts. No app implementation files were edited by this task.
+- Blockers: none
+- Next step: Workflow review, summary, handoff final update, health check, then stop.
