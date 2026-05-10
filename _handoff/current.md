@@ -4,35 +4,35 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Add workflow handoff support by creating `_handoff/current.md`, adding a handoff template, and updating workflow docs/templates/install script so `continue workflow` resumes from handoff.
+Add empty state messages to all dashboard cards/sections that can show no data. Use `No data to display yet.` as the default message.
 
 ## Request ID
 
-2026-05-13-add-workflow-handoff-support
+2026-05-13-add-dashboard-empty-states
 
 ## Current Phase
 
-Complete
+Complete.
 
 ## Current Spec File
 
-`_spec/2026-05-13-add-workflow-handoff-support.md`
+`_spec/2026-05-13-add-dashboard-empty-states.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-13-add-workflow-handoff-support.md`
+`_task/2026-05-13-add-dashboard-empty-states.md`
 
 ## Current Review File
 
-`_review/2026-05-13-add-workflow-handoff-support.md`
+`_review/2026-05-13-add-dashboard-empty-states.md`
 
 ## Current Summary File
 
-`_summary/2026-05-13-add-workflow-handoff-support.md`
+`_summary/2026-05-13-add-dashboard-empty-states.md`
 
 ## Last Completed Task
 
-`TASK-001: Add handoff workflow memory`
+`TASK-001: Show dashboard empty messages`
 
 ## Current Task
 
@@ -48,7 +48,7 @@ None.
 
 ## Verification Status
 
-Passed. Handoff files exist, expected fields are present, required handoff/resume wording is documented, prohibited policy wording was not added to workflow docs/templates/script files, and `bash -n scripts/install.sh` passed.
+Passed. `npm run test --workspace client` passed with 1 test file and 5 tests, with existing React Router future-flag warnings; `npm run build --workspace client` passed.
 
 ## Workflow Health Status
 
@@ -60,10 +60,9 @@ Passed.
 
 ## Notes For Continuation
 
-- Workflow completed for `2026-05-13-add-workflow-handoff-support`.
-- Review file: `_review/2026-05-13-add-workflow-handoff-support.md`.
-- Summary file: `_summary/2026-05-13-add-workflow-handoff-support.md`.
-- Do not modify app implementation code.
-- Keep `_progress/progress.md` as append-only task history.
-- Keep `_summary/` as completed workflow history.
-- Keep `_handoff/current.md` as the live resume state.
+- Workflow completed for `2026-05-13-add-dashboard-empty-states`.
+- Review file: `_review/2026-05-13-add-dashboard-empty-states.md`.
+- Summary file: `_summary/2026-05-13-add-dashboard-empty-states.md`.
+- Dashboard empty state was added in `client/src/pages/DashboardPage.jsx`.
+- Focused test coverage was added in `client/test/App.test.jsx`.
+- No blockers remain.

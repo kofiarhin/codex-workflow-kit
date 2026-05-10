@@ -38,11 +38,14 @@ const stackItems = [
   }
 ];
 
+const DASHBOARD_EMPTY_MESSAGE = "No data to display yet.";
+
 export function DashboardPage() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
   const health = useHealth();
   const logoutMutation = useLogout();
+  const hasHealthData = health.data !== undefined && health.data !== null;
 
   async function handleLogout() {
     try {
@@ -115,15 +118,23 @@ export function DashboardPage() {
           {health.isError && (
             <p className="text-rose-200">Error: {health.error.message}</p>
           )}
-          {health.data && (
+          {hasHealthData && (
             <pre className="whitespace-pre-wrap">
               {JSON.stringify(health.data, null, 2)}
             </pre>
+          )}
+          {!health.isLoading && !health.isError && !hasHealthData && (
+            <DashboardEmptyState tone="terminal" />
           )}
         </div>
       </aside>
 
       <div className="grid gap-4 lg:col-span-2 lg:grid-cols-[1fr_1.25fr_0.9fr]">
+        {stackItems.length === 0 && (
+          <article className="animate-rise-in rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <DashboardEmptyState />
+          </article>
+        )}
         {stackItems.map((item, index) => {
           const Icon = item.icon;
           return (
@@ -142,6 +153,19 @@ export function DashboardPage() {
         })}
       </div>
     </section>
+  );
+}
+
+function DashboardEmptyState({ tone = "surface" }) {
+  const classes =
+    tone === "terminal"
+      ? "rounded-md border border-dashed border-white/10 bg-white/5 px-4 py-5 text-center text-sm font-medium text-zinc-300"
+      : "rounded-md border border-dashed border-zinc-200 bg-zinc-50 px-4 py-5 text-center text-sm font-medium text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950/40 dark:text-zinc-400";
+
+  return (
+    <div className={classes} role="status">
+      {DASHBOARD_EMPTY_MESSAGE}
+    </div>
   );
 }
 

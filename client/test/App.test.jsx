@@ -7,12 +7,17 @@ import { AppProviders } from "../src/redux/providers.jsx";
 import { store } from "../src/redux/store.js";
 import { dismissToast, showToast } from "../src/redux/ui/uiSlice.js";
 
-vi.mock("../src/hooks/queries/useHealth.js", () => ({
-  useHealth: () => ({
+const dashboardMocks = vi.hoisted(() => ({
+  healthState: {
     isLoading: false,
     isError: false,
-    data: { status: "ok", service: "api" }
-  })
+    data: { status: "ok", service: "api" },
+    error: null
+  }
+}));
+
+vi.mock("../src/hooks/queries/useHealth.js", () => ({
+  useHealth: () => dashboardMocks.healthState
 }));
 
 const profileMocks = vi.hoisted(() => ({
@@ -44,6 +49,12 @@ describe("App", () => {
     cleanup();
     store.dispatch(clearSession());
     store.dispatch(dismissToast());
+    dashboardMocks.healthState = {
+      isLoading: false,
+      isError: false,
+      data: { status: "ok", service: "api" },
+      error: null
+    };
     profileMocks.currentUserState = {
       isLoading: false,
       isError: false,
@@ -69,6 +80,25 @@ describe("App", () => {
 
     expect(screen.getByText("Forgeboard")).toBeInTheDocument();
     expect(screen.getByText(/full-stack base/i)).toBeInTheDocument();
+  });
+
+  it("renders the dashboard empty state when a card has no data", () => {
+    dashboardMocks.healthState = {
+      isLoading: false,
+      isError: false,
+      data: null,
+      error: null
+    };
+
+    render(
+      <AppProviders>
+        <MemoryRouter>
+          <App />
+        </MemoryRouter>
+      </AppProviders>
+    );
+
+    expect(screen.getByText("No data to display yet.")).toBeInTheDocument();
   });
 
   it("renders dashboard session notifications", () => {
