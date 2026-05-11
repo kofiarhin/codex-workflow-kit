@@ -4,7 +4,7 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one, update `_progress/progress.md`, and write a final summary in `_summary/`.
+The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, update `_progress/progress.md` and `_handoff/current.md` after each task, write a workflow review in `_review/`, and write a final summary in `_summary/`.
 
 ## Request
 
@@ -24,10 +24,10 @@ Default: `ask questions`
 Choose one:
 
 - `plan-only`: ask questions, write spec, write task plan, then stop.
-- `single-task`: ask questions, write spec, write task plan, execute only the first ready task, verify, update progress, write summary, then stop.
-- `full-auto`: ask questions, write spec, write task plan, execute tasks sequentially until complete, blocked, risky, unclear, or unverified.
+- `single-task`: ask questions, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
+- `complete-workflow`: ask questions, write spec, write task plan, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
-Default: `single-task`
+Default: `complete-workflow`
 
 ## Optional Context
 

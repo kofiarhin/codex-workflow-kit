@@ -4,11 +4,11 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Add empty state messages to all dashboard cards/sections that can show no data. Use `No data to display yet.` as the default message.
+Update the workflow execution model so `complete-workflow` is the default execution mode and agents execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
 ## Request ID
 
-2026-05-13-add-dashboard-empty-states
+2026-05-13-update-workflow-execution-model
 
 ## Current Phase
 
@@ -16,23 +16,23 @@ Complete.
 
 ## Current Spec File
 
-`_spec/2026-05-13-add-dashboard-empty-states.md`
+`_spec/2026-05-13-update-workflow-execution-model.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-13-add-dashboard-empty-states.md`
+`_task/2026-05-13-update-workflow-execution-model.md`
 
 ## Current Review File
 
-`_review/2026-05-13-add-dashboard-empty-states.md`
+`_review/2026-05-13-update-workflow-execution-model.md`
 
 ## Current Summary File
 
-`_summary/2026-05-13-add-dashboard-empty-states.md`
+`_summary/2026-05-13-update-workflow-execution-model.md`
 
 ## Last Completed Task
 
-`TASK-001: Show dashboard empty messages`
+`TASK-003: Verify docs-only scope and finalize workflow artifacts`
 
 ## Current Task
 
@@ -48,7 +48,7 @@ None.
 
 ## Verification Status
 
-Passed. `npm run test --workspace client` passed with 1 test file and 5 tests, with existing React Router future-flag warnings; `npm run build --workspace client` passed.
+Passed. Root and template `complete-workflow` checks passed; `single-task` remains explicitly documented; old default/prohibited terms were not found; `git diff --check` passed with line-ending normalization warnings only; changed-file audit showed no app implementation files modified.
 
 ## Workflow Health Status
 
@@ -60,9 +60,9 @@ Passed.
 
 ## Notes For Continuation
 
-- Workflow completed for `2026-05-13-add-dashboard-empty-states`.
-- Review file: `_review/2026-05-13-add-dashboard-empty-states.md`.
-- Summary file: `_summary/2026-05-13-add-dashboard-empty-states.md`.
-- Dashboard empty state was added in `client/src/pages/DashboardPage.jsx`.
-- Focused test coverage was added in `client/test/App.test.jsx`.
-- No blockers remain.
+- Workflow completed for `2026-05-13-update-workflow-execution-model`.
+- Review file: `_review/2026-05-13-update-workflow-execution-model.md`.
+- Summary file: `_summary/2026-05-13-update-workflow-execution-model.md`.
+- Default execution mode is now documented as `complete-workflow` in root workflow docs and templates.
+- `single-task` remains supported only as an explicit optional mode.
+- No app implementation files were modified.

@@ -24,6 +24,16 @@ Allowed terminal states:
 
 If verification cannot run, record the task as `Needs Human Review`, not `Done`.
 
+## Execution Modes
+
+Default execution mode is `complete-workflow`.
+
+- `plan-only`: ask questions, write spec, write task plan, then stop.
+- `single-task`: execute only the next ready task, verify and review it, update artifacts, then stop.
+- `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
+
+Do not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
+
 ## Entry Template
 
 ### `<YYYY-MM-DD HH:MM>` - `<TASK-ID>`

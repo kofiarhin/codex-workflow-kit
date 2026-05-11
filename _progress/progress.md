@@ -87,3 +87,33 @@ If `_handoff/current.md` conflicts with this file, trust this file for completed
 - Review result: Reviewed. Scope was limited to dashboard empty-state UI, focused app test coverage, and required workflow artifacts. The `design-taste-frontend` pre-flight passed for this scoped UI change.
 - Blockers: none
 - Next step: Write workflow review and summary, update handoff final state, run health check, then stop.
+
+### 2026-05-13 21:00 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `WORK_REQUEST.md`, `_handoff/current.md`, `_spec/2026-05-13-update-workflow-execution-model.md`, `_task/2026-05-13-update-workflow-execution-model.md`, `AGENTS.md`, `RUN_WORKFLOW.md`, `README.md`
+- Verification result: `rg "complete-workflow" AGENTS.md RUN_WORKFLOW.md WORK_REQUEST.md README.md` found required root workflow mentions; `rg "single-task" AGENTS.md RUN_WORKFLOW.md WORK_REQUEST.md README.md` confirmed explicit optional `single-task` documentation; `rg "full-auto|Default: \`single-task\`|Stop after default single-task|execute only the first ready" AGENTS.md RUN_WORKFLOW.md WORK_REQUEST.md README.md` returned no matches.
+- Review result: Reviewed. Scope was limited to root workflow docs and active workflow artifacts. No app implementation files were edited.
+- Blockers: none
+- Next step: Continue automatically to `TASK-002: Update workflow templates`.
+
+### 2026-05-13 21:10 - TASK-002
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `templates/AGENTS.md`, `templates/RUN_WORKFLOW.md`, `templates/WORK_REQUEST.md`, `templates/_handoff/current.md`, `templates/_progress/progress.md`, `templates/_task/README.md`, `templates/_summary/README.md`, `_task/2026-05-13-update-workflow-execution-model.md`
+- Verification result: `rg "complete-workflow" templates/AGENTS.md templates/RUN_WORKFLOW.md templates/WORK_REQUEST.md templates/_handoff/current.md templates/_progress/progress.md templates/_task/README.md templates/_summary/README.md` found required template workflow mentions; `rg "single-task" ...` confirmed explicit optional `single-task` documentation; `rg "full-auto|Default: \`single-task\`|execute only the first ready|Stop after default single-task" ...` returned no matches.
+- Review result: Reviewed. Template updates mirror the root workflow model and keep backward-compatible explicit `single-task` mode.
+- Blockers: none
+- Next step: Continue automatically to `TASK-003: Verify docs-only scope and finalize workflow artifacts`.
+
+### 2026-05-13 21:20 - TASK-003
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `_review/2026-05-13-update-workflow-execution-model.md`, `_summary/2026-05-13-update-workflow-execution-model.md`, `_task/2026-05-13-update-workflow-execution-model.md`, `_progress/progress.md`, `_handoff/current.md`
+- Verification result: Root and template `complete-workflow` checks passed; root and template `single-task` compatibility checks passed; old-default/prohibited-term check returned no matches; `git diff --check` passed with line-ending normalization warnings only; `git status --short` showed only workflow docs/templates and workflow artifacts changed.
+- Review result: Reviewed. Final review found no bugs, no scope creep, no security concerns, and no app implementation changes.
+- Blockers: none
+- Next step: Workflow complete; final response.

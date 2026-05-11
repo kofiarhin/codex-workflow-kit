@@ -4,21 +4,39 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one, update `_progress/progress.md`, write a workflow review in `_review/`, and write a final summary in `_summary/`.
+The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, update `_progress/progress.md` and `_handoff/current.md` after each task, write a workflow review in `_review/`, and write a final summary in `_summary/`.
 
 ## Request
 
-Add empty state message to dashboard cards.
+Update the workflow execution model so the default behavior is `complete-workflow` instead of `single-task`.
 
-Add empty state messages to all dashboard cards/sections that can show no data.
+The workflow should:
 
-Default message:
+- Ask clarifying questions first.
+- Generate a detailed spec in `_spec/`.
+- Generate a full vertical task plan in `_task/`.
+- Execute every task in order by default.
+- Verify each task.
+- Review each task.
+- Update `_progress/progress.md` and `_handoff/current.md` after each task.
+- Stop only when all tasks are `Done`, `Blocked`, `Needs Human Review`, risky, unclear, or verification fails.
+- Create final `_review/`, `_summary/`, workflow health check, and final artifact checklist after the full request is complete or stopped.
 
-```txt
-No data to display yet.
-```
+Update workflow templates/docs only. Do not modify app implementation code.
 
-Execution preference: `single-task`.
+Files to update:
+
+- `AGENTS.md`
+- `RUN_WORKFLOW.md`
+- `WORK_REQUEST.md`
+- `README.md`
+- `templates/AGENTS.md`
+- `templates/RUN_WORKFLOW.md`
+- `templates/WORK_REQUEST.md`
+- `templates/_handoff/current.md`
+- `templates/_progress/progress.md`
+- `templates/_task/README.md`
+- `templates/_summary/README.md`
 
 ## Question Preference
 
@@ -34,19 +52,22 @@ Default: `ask questions`
 Choose one:
 
 - `plan-only`: ask questions, write spec, write task plan, then stop.
-- `single-task`: ask questions, write spec, write task plan, execute only the first ready task, verify, update progress, write review, write summary, then stop.
-- `full-auto`: ask questions, write spec, write task plan, execute tasks sequentially until complete, blocked, risky, unclear, or unverified.
+- `single-task`: ask questions, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
+- `complete-workflow`: ask questions, write spec, write task plan, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
-Selected: `single-task`
+Selected: `complete-workflow`
 
-Default: `full-auto`
+Default: `complete-workflow`
 
 ## Optional Context
 
-- Latest direct prompt from user: `add empty state message to dashboard cards`
-- Clarification received: Add empty state messages to all dashboard cards/sections that can show no data. Use `No data to display yet.` as the default message. Proceed with default single-task workflow.
+- Latest direct prompt from user: update workflow execution model from default single-task execution to default complete-workflow execution.
+- Clarification handling: The request names the exact files, required behavior, verification expectations, and out-of-scope boundary. No blocking clarifying question is needed; assumptions are recorded in the saved spec.
+- Verification expectations: confirm root and template workflow files mention `complete-workflow`; confirm `single-task` remains documented as an explicit optional mode; confirm no app implementation files changed; run syntax/check command if applicable.
 
 ## Out Of Scope
 
-- Unrelated dashboard redesign.
+- App implementation code.
 - Deployment changes.
+- Removing existing workflow artifact folders.
+- Removing `single-task` support.

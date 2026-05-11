@@ -14,6 +14,10 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 `<Intake / Spec / Planning / Execution / Review / Summary / Complete / Blocked>`
 
+## Execution Mode
+
+`<complete-workflow by default / plan-only / single-task>`
+
 ## Current Spec File
 
 `<path or none>`
@@ -60,4 +64,7 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Notes For Continuation
 
+- Default execution mode is `complete-workflow`.
+- If the next task is not `Done`, continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached.
+- Use `single-task` only when the user explicitly requested one-task execution.
 - `<what the next agent/session needs to know>`

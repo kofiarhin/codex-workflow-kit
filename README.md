@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute one task at a time -> update _progress and _handoff -> review in _review -> final summary in _summary -> update _handoff -> health check
+request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute all tasks sequentially by default -> update _progress and _handoff after each task -> review in _review -> final summary in _summary -> update _handoff -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -39,7 +39,7 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Save a detailed spec in `_spec/`.
 - Read `_progress/` and `_summary/` before planning.
 - Generate vertical tasks in `_task/`.
-- Execute one Ralph Wiggum-style task at a time.
+- Execute one Ralph Wiggum-style task at a time, continuing through all generated tasks by default.
 - Move each task through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 - Verify every task.
 - Critique and fix in-scope issues.
@@ -119,10 +119,10 @@ bash scripts/install.sh ../my-project
 Example:
 
 ```txt
-add dark theme
+workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, generate a spec, generate a vertical task plan, execute one task at a time, verify, review, update progress, write a workflow review, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, generate a spec, generate a vertical task plan, execute all tasks sequentially, verify and review each task, update progress and handoff after each task, write a workflow review only after the full request is complete or stopped, summarize, and run a health check.
 
 Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is optional, not required.
 
@@ -164,7 +164,7 @@ Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
 
 Allowed terminal states are `Done`, `Blocked`, and `Needs Human Review`. A task cannot be `Done` unless verification was attempted and the result was reviewed. If verification cannot run, the task is `Needs Human Review`, not `Done`.
 
-### Step 5: Execute One Task At A Time
+### Step 5: Execute Tasks Sequentially
 
 Before each task, the agent reads:
 
@@ -175,7 +175,9 @@ _spec/<active-spec>.md
 _task/<active-task-plan>.md
 ```
 
-For each task, the agent inspects relevant code, implements only the current task, verifies, reviews, fixes in-scope defects, appends progress, and continues only if safe.
+Default execution mode is `complete-workflow`, so the agent executes every generated task in order. For each task, the agent inspects relevant code, implements only the current task, verifies, reviews, fixes in-scope defects, appends progress, updates handoff, and continues automatically only when the current task is `Done`.
+
+The workflow stops if a task is `Blocked`, `Needs Human Review`, fails verification, becomes risky or unclear, or requires external access.
 
 ### Step 6: Write Review, Summary, And Health Check
 
@@ -195,6 +197,10 @@ _summary/<date-or-slug>.md
 The review file records request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
 
 The final health check reports `Passed`, `Partial`, or `Failed`.
+
+- `Passed`: all executable tasks completed and required artifacts exist.
+- `Partial`: some tasks remain because of a documented blocker, human-review need, verification gap, or follow-up risk.
+- `Failed`: required artifacts are missing or scope was violated.
 
 Health checks confirm:
 
@@ -251,7 +257,7 @@ Use this prompt to resume an interrupted workflow:
 continue workflow
 ```
 
-The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task that is not `Done`, and continue from that task. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
+The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task that is not `Done`, and continue executing remaining tasks sequentially until every task is complete or a stop condition is reached. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
 
 ## Question Control
 
@@ -271,10 +277,12 @@ When questions are skipped, the agent must generate a best-effort spec and recor
 Direct prompts and `WORK_REQUEST.md` can include an optional execution preference:
 
 - `plan-only`: Ask questions, write spec, write task plan, then stop.
-- `single-task`: Ask questions, write spec, write task plan, execute only the first ready task, verify, review, update progress, write review, write summary, run health check, then stop.
-- `full-auto`: Ask questions, write spec, write task plan, execute tasks sequentially until complete, blocked, risky, unclear, or unverified.
+- `single-task`: Ask questions, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
+- `complete-workflow`: Ask questions, write spec, write task plan, execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
-Default: `single-task`.
+Default: `complete-workflow`.
+
+`single-task` is optional for manual control and must be explicitly requested.
 
 ## Recommended Agent Loop
 
@@ -285,12 +293,13 @@ Default: `single-task`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Read or create `_handoff/current.md`.
 7. Generate vertical tasks in `_task/`.
-8. Execute one task at a time.
+8. Execute every task sequentially by default.
 9. Verify and review each task.
 10. Append progress to `_progress/progress.md` and update `_handoff/current.md`.
-11. Write the workflow review in `_review/`.
-12. Write the final summary in `_summary/` and update `_handoff/current.md`.
-13. Run the workflow health check and include the final artifact checklist.
+11. Continue to the next task automatically only when the current task is `Done`.
+12. Write the workflow review in `_review/` after all executable tasks complete or a stop condition is reached.
+13. Write the final summary in `_summary/` and update `_handoff/current.md`.
+14. Run the workflow health check and include the final artifact checklist.
 
 ## Request Types
 
@@ -346,7 +355,16 @@ Prompt that skips questions:
 skip questions
 Add dark theme to the app.
 Follow RUN_WORKFLOW.md.
-Generate a best-effort spec with assumptions, then create the vertical task plan and execute one task at a time.
+Generate a best-effort spec with assumptions, then create the vertical task plan and execute all tasks in complete-workflow mode.
+```
+
+Prompt that forces single-task mode:
+
+```txt
+Execution preference: single-task.
+Add dark theme to the app.
+Follow RUN_WORKFLOW.md.
+Stop after the next ready task is verified, reviewed, and documented.
 ```
 
 Resume prompt:
@@ -366,7 +384,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> _spec -> _task -> task execution -> _progress + _handoff -> _review -> _summary -> _handoff -> health check
+direct prompt -> questions -> _spec -> _task -> all task execution -> _progress + _handoff after each task -> _review -> _summary -> _handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, success criteria, or detailed acceptance criteria.
@@ -462,6 +480,7 @@ These examples show the expected level of detail. They are not application code.
 - Detailed spec before implementation.
 - Vertical tasks over vague layers.
 - Ralph Wiggum-style steps over broad autonomy.
+- Complete workflow execution by default.
 - Verification over assumptions.
 - Progress after every task.
 - Review before summary.
