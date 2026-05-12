@@ -18,6 +18,8 @@ Each review file must include:
 - Tasks reviewed.
 - Bugs found.
 - Scope creep check.
+- Final diff audit.
+- Failure recovery notes.
 - Missing tests.
 - Security concerns.
 - Architecture concerns.
@@ -29,5 +31,7 @@ Each review file must include:
 - Write the review after task verification and before the final summary.
 - Review the completed work against the saved spec and task plan.
 - Check that scope stayed inside the active request.
+- Include the final diff audit from `git diff --stat` and `git diff`, or document why those commands could not run.
+- Include failure recovery notes for any failed verification, including the failing command, captured error, classification, targeted fix attempt, exact rerun result, and final status.
 - Record missing tests even when they are acceptable for the task.
 - Use the review verdict to decide whether the workflow can proceed to summary, must fix in-scope defects, or needs human review.

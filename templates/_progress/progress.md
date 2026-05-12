@@ -24,6 +24,12 @@ Allowed terminal states:
 
 If verification cannot run, record the task as `Needs Human Review`, not `Done`.
 
+Every task must record explicit acceptance results. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; any `[ ]` or `[~]` result means the task is `Blocked` or `Needs Human Review`.
+
+If verification fails, record the failure recovery protocol result: failing command, captured error, in-scope/unrelated classification, targeted fix attempt, exact rerun result, and final task status.
+
+Dirty worktree protection must be documented before implementation: existing dirty files, files planned for the workflow, and overlap risk.
+
 ## Execution Modes
 
 Default execution mode is `complete-workflow`.
@@ -41,7 +47,10 @@ Do not stop after `TASK-001` unless execution mode is explicitly `single-task` o
 - Status: `<Done / Blocked / Needs Human Review>`
 - Lifecycle transition reached: `<Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done, or terminal stop>`
 - Files changed: `<paths or none>`
+- Dirty worktree protection: `<initial status, planned files, overlap risk>`
+- Acceptance result: `<all criteria [x], or list unmet/partial criteria>`
 - Verification result: `<commands and result, or why verification could not run>`
+- Failure recovery notes: `<none, or failing command/error/classification/fix/rerun/final result>`
 - Review result: `<reviewed / issues found / not reviewed with reason>`
 - Blockers: `<none or details>`
 - Next step: `<next task, review, summary, or stop reason>`

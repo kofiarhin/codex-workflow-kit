@@ -23,6 +23,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - `_progress/progress.md`
   - `_review/`
   - `_summary/`
+  - `_release/`
   - `_decisions/`
 - Supporting docs:
   - `docs/PROJECT_CONTEXT.md`
@@ -68,19 +69,23 @@ Customize placeholders before using this in a production project. MERN is the de
 30. A task cannot move to `Reviewed` unless verification was attempted.
 31. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
 32. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-33. After each task, append progress to `_progress/progress.md`.
-34. After each task, update `_handoff/current.md` so it reflects the latest completed task, current phase, blockers, verification status, and next step.
-35. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
-36. The handoff file should allow another agent/session to resume without rereading the entire conversation.
-37. `continue workflow` must start from `_handoff/current.md`.
-38. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
-39. After all executable tasks are complete or a stop condition is reached, create a review file in `_review/`.
-40. After the review is complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
-41. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
-42. Before the final response, run the workflow health check.
-43. Continue to the next task only when the current task is implemented, verified, reviewed, documented, and safe to continue.
-44. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
-45. Final review and summary must represent the full completed request or documented stop state, not only the first task.
+33. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
+34. If verification fails, follow the failure recovery protocol: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
+35. After each task, append progress to `_progress/progress.md`, including acceptance results and any failure recovery notes.
+36. After each task, update `_handoff/current.md` so it reflects the latest completed task, current phase, blockers, dirty worktree status, verification status, acceptance status, and next step.
+37. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
+38. The handoff file should allow another agent/session to resume without rereading the entire conversation.
+39. `continue workflow` must start from `_handoff/current.md`.
+40. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
+41. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
+42. After all executable tasks are complete or a stop condition is reached, create a review file in `_review/`.
+43. After review, create release notes in `_release/<request-id>.md`.
+44. After release notes are complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
+45. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
+46. Before the final response, run the workflow health check.
+47. Continue to the next task only when the current task is implemented, verified, reviewed, documented, all required acceptance criteria are met, and safe to continue.
+48. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
+49. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
 
 ## Required Workflow
 
@@ -91,12 +96,13 @@ For a work request:
 3. Read `RUN_WORKFLOW.md`.
 4. Ask clarifying questions until there is about 90% understanding, unless the prompt explicitly says `skip questions`.
 5. If questions are skipped, write assumptions into the spec.
-6. Check repository status:
+6. Check repository status for dirty worktree protection:
 
    ```bash
    git status --short
    ```
 
+   Document existing dirty files, files planned for this workflow, and overlap risk. If dirty files overlap with planned files, stop and ask before editing. If dirty files are unrelated, continue but document them. Never overwrite user changes and never clean/reset files unless explicitly instructed.
 7. Read `_handoff/current.md` if it exists, `_progress/progress.md`, the latest relevant `_summary/` entry, and durable supporting docs.
 8. Generate a detailed spec in `_spec/`.
 9. Generate a vertical task plan in `_task/`.
@@ -115,10 +121,19 @@ For a work request:
     - append progress to `_progress/progress.md`
     - update `_handoff/current.md`
     - continue to the next task automatically only when the current task is `Done` and safe
-15. After all allowed tasks are complete or the workflow stops, create a review file in `_review/`.
-16. After the review, create or append a summary in `_summary/`.
-17. Run the workflow health check and mark the result as `Passed`, `Partial`, or `Failed`.
-18. Check repository status again:
+15. Before final review/summary, run the final diff audit:
+
+    ```bash
+    git diff --stat
+    git diff
+    ```
+
+    Document whether the diff matches the saved spec, unrelated files were touched, workflow artifacts were updated correctly, tests were added or updated for changed behavior, scope creep occurred, generated junk or temporary files appeared, and sensitive values or secrets were accidentally added. If either command cannot run, document why.
+16. After all allowed tasks are complete or the workflow stops, create a review file in `_review/`.
+17. After the review, create release notes in `_release/<request-id>.md`.
+18. After release notes, create or append a summary in `_summary/`.
+19. Run the workflow health check and mark the result as `Passed`, `Partial`, or `Failed`.
+20. Check repository status again:
 
     ```bash
     git status --short
@@ -203,6 +218,7 @@ Each task must include:
 - Files likely affected.
 - Checklist.
 - Acceptance criteria.
+- Acceptance result.
 - Verification commands.
 - Stop condition.
 - Out-of-scope items.
@@ -224,6 +240,14 @@ Rules:
 - A task cannot be `Done` unless verification was attempted and the task was reviewed.
 - A task cannot move to `Reviewed` unless verification was attempted.
 - If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+- A task cannot be `Done` unless every required acceptance criterion is checked `[x]`.
+- If any acceptance result is `[ ]` or `[~]`, the task must be `Blocked` or `Needs Human Review`.
+
+Acceptance results use:
+
+- `[x] Criterion met`
+- `[ ] Criterion not met`
+- `[~] Partially met with notes`
 
 Tasks must be vertical slices. Prefer tasks like `TASK-001: Add theme toggle through settings and persist preference` over tasks like `TASK-001: Update frontend`.
 
@@ -263,7 +287,9 @@ After each task, append:
 - Status.
 - Lifecycle transition reached.
 - Files changed.
+- Acceptance result.
 - Verification result.
+- Failure recovery notes, if verification failed.
 - Review result.
 - Blockers.
 - Next step.
@@ -282,13 +308,31 @@ The review must include:
 - Tasks reviewed.
 - Bugs found.
 - Scope creep check.
+- Final diff audit.
+- Failure recovery notes.
 - Missing tests.
 - Security concerns.
 - Architecture concerns.
 - Follow-up tasks.
 - Final review verdict.
 
-After the review is complete, create or append a summary in `_summary/`.
+After the review is complete, create release notes in `_release/<request-id>.md`, then create or append a summary in `_summary/`.
+
+The release note must include:
+
+- Request.
+- User-facing changes.
+- Developer changes.
+- New routes/APIs.
+- New env vars.
+- Database/schema changes.
+- Dependencies added/removed.
+- Test commands run.
+- Known limitations.
+- Follow-up work.
+- Suggested commit message.
+
+If there are no user-facing changes, say so. If there are no new APIs, env vars, dependencies, or schema changes, say `none`.
 
 `_summary/` is completed workflow history. It records finished workflow runs and should not replace the live state in `_handoff/current.md`.
 
@@ -301,6 +345,10 @@ The summary must include:
 - Tasks completed.
 - Files changed.
 - Verification run.
+- Acceptance results.
+- Failure recovery notes.
+- Final diff audit.
+- Release notes file used.
 - Unresolved issues.
 - Next recommended work.
 
@@ -315,6 +363,10 @@ Before the final response, check:
 - Was progress updated?
 - Was the review created?
 - Was the summary created?
+- Were release notes created?
+- Was the final diff audit completed or documented?
+- Was the dirty worktree checked?
+- Were acceptance results completed?
 - Were verification commands run or documented?
 - Was scope respected?
 - Were decisions recorded if needed?
@@ -325,7 +377,9 @@ Final health status must be one of:
 - `Partial`
 - `Failed`
 
-If any required artifact is missing, mark workflow health as `Failed`.
+`Passed` requires a synced work request, spec, task plan, progress, handoff, review, summary, release notes, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+
+If release notes, final diff audit, dirty worktree check, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## Implementation Boundaries
 
@@ -460,6 +514,7 @@ At the end of a workflow run, report:
 - Progress updated in `_progress/progress.md`.
 - Handoff updated in `_handoff/current.md`.
 - Review updated in `_review/<file>.md`.
+- Release notes updated in `_release/<file>.md`.
 - Summary updated in `_summary/`.
 - Decisions updated in `_decisions/<file>.md` or `none`.
 - Workflow health status: `Passed`, `Partial`, or `Failed`.
@@ -470,6 +525,7 @@ At the end of a workflow run, report:
   - Task plan: `_task/<file>.md`
   - Progress: `_progress/progress.md`
   - Review: `_review/<file>.md`
+  - Release notes: `_release/<file>.md`
   - Summary: `_summary/<file>.md`
   - Decisions: `_decisions/<file>.md` or `none`
 - Unresolved issues or recommended next task.

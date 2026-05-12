@@ -117,3 +117,42 @@ If `_handoff/current.md` conflicts with this file, trust this file for completed
 - Review result: Reviewed. Final review found no bugs, no scope creep, no security concerns, and no app implementation changes.
 - Blockers: none
 - Next step: Workflow complete; final response.
+
+### 2026-05-13 02:12 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `WORK_REQUEST.md`, `_spec/2026-05-13-add-workflow-quality-controls.md`, `_task/2026-05-13-add-workflow-quality-controls.md`, `AGENTS.md`, `RUN_WORKFLOW.md`, `README.md`
+- Dirty worktree protection: `git status --short` returned no existing dirty files before implementation; planned files were workflow docs/templates/scripts/artifacts; overlap risk was none.
+- Acceptance result: all TASK-001 criteria checked `[x]`: root docs mention final diff audit, dirty worktree protection, acceptance results, failure recovery protocol, and `_release`.
+- Verification result: `rg "final diff audit|dirty worktree|acceptance result|failure recovery|_release" AGENTS.md RUN_WORKFLOW.md WORK_REQUEST.md README.md` found required root workflow mentions.
+- Failure recovery notes: none; verification passed.
+- Review result: Reviewed. Scope stayed in root workflow docs and workflow run artifacts; no app implementation files were touched by this task.
+- Blockers: none
+- Next step: Continue automatically to `TASK-002: Add quality gates to templates and installer`.
+
+### 2026-05-13 02:18 - TASK-002
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `templates/AGENTS.md`, `templates/RUN_WORKFLOW.md`, `templates/WORK_REQUEST.md`, `templates/_progress/progress.md`, `templates/_summary/README.md`, `templates/_task/README.md`, `templates/_review/README.md`, `templates/_handoff/current.md`, `templates/_release/README.md`, `_release/README.md`, `scripts/install.sh`, `_task/2026-05-13-add-workflow-quality-controls.md`
+- Dirty worktree protection: Initial check before implementation was clean; no overlap risk.
+- Acceptance result: all TASK-002 criteria checked `[x]`: template docs mention final diff audit, dirty worktree protection, acceptance results, failure recovery protocol, and `_release`; installer copies `templates/_release/README.md` to `_release/README.md`.
+- Verification result: template `rg "final diff audit|dirty worktree|acceptance result|failure recovery|_release" ...` found required terms; installer `rg "templates/_release/README.md|_release/README.md|_release/" scripts/install.sh` found copy and completion-message updates; `bash -n scripts/install.sh` passed.
+- Failure recovery notes: none; verification passed.
+- Review result: Reviewed. Template behavior mirrors root workflow docs and installer change is limited to the new release README and message.
+- Blockers: none
+- Next step: Continue automatically to `TASK-003: Finalize workflow artifacts and verify docs-only scope`.
+
+### 2026-05-13 02:29 - TASK-003
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `_task/2026-05-13-add-workflow-quality-controls.md`, `_review/2026-05-13-add-workflow-quality-controls.md`, `_release/2026-05-13-add-workflow-quality-controls.md`, `_summary/2026-05-13-add-workflow-quality-controls.md`, `_progress/progress.md`, `_handoff/current.md`
+- Dirty worktree protection: Initial check before implementation was clean; final status showed workflow docs/templates/scripts/artifacts only and no app implementation files under `client/` or `server/`.
+- Acceptance result: all TASK-003 criteria checked `[x]`: release notes artifact exists, final diff audit is documented, no app implementation files were modified, and workflow health check is complete.
+- Verification result: combined root/template `rg` checks passed; installer copy check passed; `bash -n scripts/install.sh` passed; `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran; `git status --short` showed no app implementation files modified.
+- Failure recovery notes: none; verification passed.
+- Review result: Reviewed. Final diff audit found no unrelated files, no scope creep, no generated junk, and no sensitive values.
+- Blockers: none
+- Next step: Workflow complete; final response.

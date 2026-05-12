@@ -4,7 +4,7 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, update `_progress/progress.md` and `_handoff/current.md` after each task, write a workflow review in `_review/`, and write a final summary in `_summary/`.
+The workflow will ask clarifying questions, run dirty worktree protection, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, record acceptance results, update `_progress/progress.md` and `_handoff/current.md` after each task, run a final diff audit, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
 
 ## Request
 
@@ -41,6 +41,8 @@ Default: `complete-workflow`
 - Constraints: `<Do not change X / must use Y / no new dependencies>`
 - Success criteria: `<How we know this is done>`
 - Preferred verification: `<Test command, manual check, build command>`
+- Dirty worktree notes: `<Existing dirty files, planned files, overlap risk>`
+- Release notes expectations: `<User-facing changes, developer changes, known limitations>`
 
 ## Out Of Scope
 

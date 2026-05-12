@@ -97,6 +97,7 @@ copy_file "$TEMPLATE_ROOT/_spec/README.md" "_spec/README.md"
 copy_file "$TEMPLATE_ROOT/_task/README.md" "_task/README.md"
 copy_file "$TEMPLATE_ROOT/_progress/progress.md" "_progress/progress.md"
 copy_file "$TEMPLATE_ROOT/_review/README.md" "_review/README.md"
+copy_file "$TEMPLATE_ROOT/_release/README.md" "_release/README.md"
 copy_file "$TEMPLATE_ROOT/_summary/README.md" "_summary/README.md"
 copy_file "$TEMPLATE_ROOT/_decisions/README.md" "_decisions/README.md"
 copy_file "$TEMPLATE_ROOT/docs/PROJECT_CONTEXT.md" "docs/PROJECT_CONTEXT.md"
@@ -118,6 +119,6 @@ echo "3. Start your agent with:"
 echo
 echo "   Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md."
 echo
-echo "4. Review _handoff/current.md, _spec/, _task/, _progress/progress.md, _review/, _summary/, _decisions/, and the final response before committing."
+echo "4. Review _handoff/current.md, _spec/, _task/, _progress/progress.md, _review/, _release/, _summary/, _decisions/, and the final response before committing."
 echo
 echo "Existing files were skipped unless --force was used."

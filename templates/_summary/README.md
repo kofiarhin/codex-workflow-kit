@@ -6,7 +6,7 @@ Store completed workflow summaries in this folder.
 
 After implementation and before the final summary, agents must create a review file in `_review/`.
 
-After the review is complete, agents must create or append a summary here. Use timestamped or slugged filenames, for example:
+After the review is complete, agents must create release notes in `_release/`, then create or append a summary here. Use timestamped or slugged filenames, for example:
 
 ```txt
 _summary/2026-05-10-add-dark-theme.md
@@ -22,12 +22,18 @@ Each summary should include:
 - Spec file used.
 - Task plan used.
 - Review file used.
+- Release notes file used.
 - Tasks completed.
 - Files changed.
+- Acceptance results.
 - Verification run.
+- Failure recovery notes.
+- Final diff audit.
 - Workflow health status.
 - Final artifact checklist.
 - Unresolved issues.
 - Next recommended work.
 
 After writing a summary, agents must update `_handoff/current.md` with the summary path, final or current workflow health status, unresolved issues, and suggested next prompt.
+
+Workflow health is `Passed` only when the work request synced, spec exists, task plan exists, progress updated, handoff updated, review created, summary created, release notes created, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.

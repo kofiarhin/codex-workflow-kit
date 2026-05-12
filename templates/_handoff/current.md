@@ -30,6 +30,10 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 `<path or none>`
 
+## Current Release Notes File
+
+`<path or none>`
+
 ## Current Summary File
 
 `<path or none>`
@@ -45,6 +49,14 @@ This file is the live resume state for the active workflow. Keep it current afte
 ## Next Task
 
 `<task id and title, review, summary, health check, or none>`
+
+## Dirty Worktree Status
+
+`<git status --short result, existing dirty files, planned files, overlap risk>`
+
+## Acceptance Status
+
+`<not started / all required criteria met / partial / blocked>`
 
 ## Blockers
 
@@ -67,4 +79,9 @@ This file is the live resume state for the active workflow. Keep it current afte
 - Default execution mode is `complete-workflow`.
 - If the next task is not `Done`, continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached.
 - Use `single-task` only when the user explicitly requested one-task execution.
+- Preserve dirty worktree protection: stop before editing if dirty files overlap with planned files.
+- Preserve acceptance results: no task is `Done` unless every required criterion is checked `[x]`.
+- If verification fails, follow the failure recovery protocol and record the result in progress, review, and summary.
+- Before final review and summary, run or document the final diff audit.
+- Completed workflows must include `_release/<request-id>.md`.
 - `<what the next agent/session needs to know>`

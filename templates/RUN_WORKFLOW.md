@@ -40,7 +40,9 @@ direct user prompt or WORK_REQUEST
 -> critique/fix and review each task
 -> update _progress after each task
 -> update _handoff/current.md after each task
+-> final diff audit
 -> review in _review
+-> release notes in _release
 -> final summary in _summary
 -> update _handoff/current.md
 -> health check
@@ -58,7 +60,7 @@ Read:
 - `_progress/progress.md`, creating it if missing.
 - The latest relevant file in `_summary/`, if any.
 
-If `_handoff/`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is missing, create it before continuing. If `_handoff/current.md` is missing, create it from the handoff template. If `_progress/progress.md` is missing, create it with an initial heading.
+If `_handoff/`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, `_release/`, or `_decisions/` is missing, create it before continuing. If `_handoff/current.md` is missing, create it from the handoff template. If `_progress/progress.md` is missing, create it with an initial heading.
 
 Request source rules:
 
@@ -150,6 +152,10 @@ Inspect the repository before planning changes.
 Required intake:
 
 - Check `git status --short`.
+- Document dirty worktree protection:
+  - Existing dirty files.
+  - Files planned for this workflow.
+  - Overlap risk.
 - Identify package manager and major languages/frameworks.
 - Identify test, lint, build, and typecheck commands from package/config files.
 - Identify existing architecture conventions.
@@ -157,6 +163,13 @@ Required intake:
 - Note constraints, missing tooling, and unknowns.
 
 Update `docs/PROJECT_CONTEXT.md` only with durable findings. Do not turn temporary observations into permanent rules unless they are clear from the repo.
+
+Dirty worktree rules:
+
+- If dirty files overlap with planned files, stop and ask before editing.
+- If dirty files are unrelated, continue but document them in the spec, task plan, `_handoff/current.md`, and `_progress/progress.md`.
+- Never overwrite user changes.
+- Never clean or reset files unless explicitly instructed.
 
 ## 5. Spec Phase
 
@@ -218,6 +231,7 @@ Each task must include:
 - Files likely affected.
 - Checklist.
 - Acceptance criteria.
+- Acceptance result.
 - Verification commands.
 - Stop condition.
 - Out-of-scope items.
@@ -239,6 +253,19 @@ Status rules:
 - A task cannot be `Done` unless verification was attempted and the task was reviewed.
 - A task cannot move to `Reviewed` unless verification was attempted.
 - If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+- A task cannot be `Done` unless every required acceptance criterion is checked `[x]`.
+- If any required acceptance result is `[ ]` or `[~]`, the task must be `Blocked` or `Needs Human Review`.
+
+Acceptance results must use this format:
+
+```md
+Acceptance result:
+- [x] Criterion met
+- [ ] Criterion not met
+- [~] Partially met with notes
+```
+
+Acceptance results must be copied or summarized in `_progress/progress.md`.
 
 Use Ralph Wiggum-style task phrasing: small, literal, concrete steps with simple verbs and clear boundaries.
 
@@ -272,15 +299,17 @@ For each task:
 6. Inspect only the relevant codebase area.
 7. Implement only the current task.
 8. Run verification commands or record why they could not run.
-9. Move the task to `Verified` when verification was attempted and results are documented.
-10. Critique and review the result.
-11. Move the task to `Reviewed` after review.
-12. Fix only in-scope defects.
-13. Re-run relevant verification if fixes were made.
-14. Move the task to `Done` only after verification and review are complete.
-15. Append progress to `_progress/progress.md`.
-16. Update `_handoff/current.md` with the last completed task, current task, next task, blockers, verification status, workflow health status, and suggested next prompt.
-17. Continue to the next task automatically only when the current task is `Done`.
+9. If verification fails, follow the failure recovery protocol in section 8A.
+10. Move the task to `Verified` when verification was attempted and results are documented.
+11. Record acceptance results for every acceptance criterion.
+12. Critique and review the result.
+13. Move the task to `Reviewed` after review.
+14. Fix only in-scope defects.
+15. Re-run relevant verification if fixes were made.
+16. Move the task to `Done` only after verification, review, and all required acceptance results are complete and checked `[x]`.
+17. Append progress to `_progress/progress.md`, including acceptance results and failure recovery notes.
+18. Update `_handoff/current.md` with the last completed task, current task, next task, blockers, dirty worktree status, acceptance status, verification status, workflow health status, and suggested next prompt.
+19. Continue to the next task automatically only when the current task is `Done`.
 
 Do not start the next task if the current task is `Blocked`, `Needs Human Review`, risky, unclear, unverified, outside scope, has unresolved in-scope defects, fails verification, or requires external access.
 
@@ -319,6 +348,27 @@ If commands are missing or cannot run, document the reason in `_progress/progres
 
 If verification cannot run, do not mark the task `Done`. Mark it `Needs Human Review` and stop unless the user explicitly directs a different safe path.
 
+## 8A. Failure Recovery Protocol
+
+When verification fails, follow this fixed recovery protocol:
+
+1. Identify the failing command.
+2. Capture the failing test or error.
+3. Classify the failure as in-scope or unrelated.
+4. Fix only the in-scope failure.
+5. Re-run the exact failing command.
+6. If fixed, continue.
+7. If still failing after a reasonable targeted fix, mark the task `Needs Human Review`.
+8. Update `_progress/progress.md` with the failure, fix attempt, and final result.
+
+Failure recovery rules:
+
+- Do not start broad refactors during failure recovery.
+- Do not change unrelated code to make tests pass.
+- If the failure is unrelated, document it and continue only if the active task is verified another way.
+- If verification cannot prove the task, stop with `Needs Human Review`.
+- Add failure recovery notes to `_progress/progress.md`, `_review/<request-id>.md`, and `_summary/<request-id>.md`.
+
 ## 9. Progress Tracking
 
 Maintain `_progress/progress.md`.
@@ -333,7 +383,9 @@ After each task, append:
 - Status.
 - Lifecycle transition reached.
 - Files changed.
+- Acceptance result.
 - Verification result.
+- Failure recovery notes, if any.
 - Review result.
 - Blockers.
 - Next step.
@@ -342,7 +394,30 @@ Do not rewrite previous progress entries except to correct factual errors.
 
 After each task, update `_handoff/current.md`. Do not leave handoff stale after task execution.
 
-## 10. Review Phase
+## 10. Final Diff Audit
+
+Before final review and summary, inspect the final diff.
+
+Required commands when available:
+
+```bash
+git diff --stat
+git diff
+```
+
+Document:
+
+- Does the diff match the saved spec?
+- Were unrelated files touched?
+- Were workflow artifacts updated correctly?
+- Were tests added or updated for changed behavior?
+- Any accidental scope creep?
+- Any generated junk or temporary files?
+- Any sensitive values/secrets accidentally added?
+
+Add final diff audit results to `_review/<request-id>.md`, `_summary/<request-id>.md`, and the final response. If `git diff` cannot run, document why.
+
+## 11. Review Phase
 
 After implementation and before the final summary, create a review file in `_review/`.
 
@@ -360,6 +435,8 @@ The review must include:
 - Tasks reviewed.
 - Bugs found.
 - Scope creep check.
+- Final diff audit.
+- Failure recovery notes.
 - Missing tests.
 - Security concerns.
 - Architecture concerns.
@@ -368,7 +445,33 @@ The review must include:
 
 If in-scope defects are found, fix them before summary and rerun relevant verification. If defects cannot be fixed safely, stop with `Needs Human Review`.
 
-## 11. Summary Phase
+## 12. Release Notes Phase
+
+After the review is complete and before the final summary, create release notes in `_release/`.
+
+Use the request ID as the filename:
+
+```txt
+_release/<request-id>.md
+```
+
+Each release note must include:
+
+- Request.
+- User-facing changes.
+- Developer changes.
+- New routes/APIs.
+- New env vars.
+- Database/schema changes.
+- Dependencies added/removed.
+- Test commands run.
+- Known limitations.
+- Follow-up work.
+- Suggested commit message.
+
+If there are no user-facing changes, say so. If there are no new APIs, env vars, dependencies, or schema changes, say `none`.
+
+## 13. Summary Phase
 
 After the review is complete, create or append a summary in `_summary/`.
 
@@ -385,6 +488,10 @@ The summary should include:
 - Tasks completed.
 - Files changed.
 - Verification run.
+- Acceptance results.
+- Failure recovery notes.
+- Final diff audit.
+- Release notes file used.
 - Unresolved issues.
 - Next recommended work.
 
@@ -396,7 +503,7 @@ _summary/2026-05-10-add-dark-theme.md
 
 After the summary is written, update `_handoff/current.md` with the summary file, workflow health status if known, unresolved issues, and the suggested next prompt.
 
-## 12. Decision Logs
+## 14. Decision Logs
 
 Use `_decisions/` for meaningful architecture or product decisions only. Do not create decision files for routine edits.
 
@@ -413,7 +520,7 @@ Each decision file must include:
 
 If no meaningful decision file was needed, report decisions as `none` in the final artifact checklist.
 
-## 13. Critique And Fix
+## 15. Critique And Fix
 
 Before finalizing each task, review the result.
 
@@ -429,7 +536,7 @@ Check for:
 
 Fix only defects within the active task. Create follow-up tasks for anything larger.
 
-## 14. Workflow Health Check
+## 16. Workflow Health Check
 
 Before the final response, check:
 
@@ -440,19 +547,23 @@ Before the final response, check:
 - Was progress updated?
 - Was the review created?
 - Was the summary created?
+- Were release notes created?
+- Was the final diff audit completed or documented?
+- Was the dirty worktree checked?
+- Were acceptance results completed?
 - Were verification commands run or documented?
 - Was scope respected?
 - Were decisions recorded if needed?
 
 Final health status:
 
-- `Passed`: all required artifacts exist, all executable tasks are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
+- `Passed`: all required artifacts exist, all executable tasks are complete, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
 - `Partial`: artifacts exist, but some tasks remain because of a documented blocker, human-review need, verification gap, or follow-up risk.
 - `Failed`: any required artifact is missing, scope was not respected, or required verification/review/summary documentation is absent.
 
-If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, final diff audit, dirty worktree check, or acceptance results are missing, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
-## 15. Final Response
+## 17. Final Response
 
 End with:
 
@@ -465,6 +576,7 @@ End with:
 - Progress update location.
 - Handoff update location.
 - Review location.
+- Release notes location.
 - Summary location.
 - Decisions location or `none`.
 - Workflow health status: `Passed`, `Partial`, or `Failed`.
@@ -475,8 +587,10 @@ End with:
   - Task plan: `_task/<file>.md`
   - Progress: `_progress/progress.md`
   - Review: `_review/<file>.md`
+  - Release notes: `_release/<file>.md`
   - Summary: `_summary/<file>.md`
   - Decisions: `_decisions/<file>.md` or `none`
+- Final diff audit result.
 - Known blockers or unresolved issues.
 - Recommended next step.
 - Suggested commit message.

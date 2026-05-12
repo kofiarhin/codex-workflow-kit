@@ -4,35 +4,43 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Update the workflow execution model so `complete-workflow` is the default execution mode and agents execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
+Update the reusable workflow with final diff audit, dirty worktree protection, acceptance checklist results, failure recovery protocol, and release notes artifacts.
 
 ## Request ID
 
-2026-05-13-update-workflow-execution-model
+2026-05-13-add-workflow-quality-controls
 
 ## Current Phase
 
 Complete.
 
+## Execution Mode
+
+complete-workflow
+
 ## Current Spec File
 
-`_spec/2026-05-13-update-workflow-execution-model.md`
+`_spec/2026-05-13-add-workflow-quality-controls.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-13-update-workflow-execution-model.md`
+`_task/2026-05-13-add-workflow-quality-controls.md`
 
 ## Current Review File
 
-`_review/2026-05-13-update-workflow-execution-model.md`
+`_review/2026-05-13-add-workflow-quality-controls.md`
+
+## Current Release Notes File
+
+`_release/2026-05-13-add-workflow-quality-controls.md`
 
 ## Current Summary File
 
-`_summary/2026-05-13-update-workflow-execution-model.md`
+`_summary/2026-05-13-add-workflow-quality-controls.md`
 
 ## Last Completed Task
 
-`TASK-003: Verify docs-only scope and finalize workflow artifacts`
+`TASK-003: Finalize workflow artifacts and verify docs-only scope`
 
 ## Current Task
 
@@ -40,7 +48,15 @@ None. Workflow tasks are complete.
 
 ## Next Task
 
-None. Start a new request or use `continue workflow` to inspect this completed workflow state.
+None. Review and commit when ready.
+
+## Dirty Worktree Status
+
+Initial `git status --short` before implementation returned no existing dirty files. Final status showed only workflow docs/templates/scripts and workflow artifacts changed. No app implementation files under `client/` or `server/` were modified.
+
+## Acceptance Status
+
+TASK-001, TASK-002, and TASK-003 acceptance results are complete and all required criteria are checked `[x]`.
 
 ## Blockers
 
@@ -48,7 +64,7 @@ None.
 
 ## Verification Status
 
-Passed. Root and template `complete-workflow` checks passed; `single-task` remains explicitly documented; old default/prohibited terms were not found; `git diff --check` passed with line-ending normalization warnings only; changed-file audit showed no app implementation files modified.
+Passed. Root and template term checks passed; installer release copy check passed; `bash -n scripts/install.sh` passed; `git diff --check` passed with line-ending normalization warnings only; final diff audit ran with `git diff --stat` and `git diff`; changed-file audit showed no app implementation files modified.
 
 ## Workflow Health Status
 
@@ -60,9 +76,9 @@ Passed.
 
 ## Notes For Continuation
 
-- Workflow completed for `2026-05-13-update-workflow-execution-model`.
-- Review file: `_review/2026-05-13-update-workflow-execution-model.md`.
-- Summary file: `_summary/2026-05-13-update-workflow-execution-model.md`.
-- Default execution mode is now documented as `complete-workflow` in root workflow docs and templates.
-- `single-task` remains supported only as an explicit optional mode.
-- No app implementation files were modified.
+- Workflow completed for `2026-05-13-add-workflow-quality-controls`.
+- Review file: `_review/2026-05-13-add-workflow-quality-controls.md`.
+- Release notes file: `_release/2026-05-13-add-workflow-quality-controls.md`.
+- Summary file: `_summary/2026-05-13-add-workflow-quality-controls.md`.
+- Decisions: none.
+- Suggested commit message: `docs: add workflow quality-control gates`.

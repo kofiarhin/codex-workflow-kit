@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> spec in _spec -> vertical plan/tasks in _task -> execute all tasks sequentially by default -> update _progress and _handoff after each task -> review in _review -> final summary in _summary -> update _handoff -> health check
+request -> questions -> dirty worktree check -> spec in _spec -> vertical plan/tasks in _task -> execute all tasks sequentially by default -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -20,6 +20,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `_task/`: Saved vertical task plans generated from specs.
 - `_progress/progress.md`: Append-only task progress log.
 - `_review/`: Required workflow reviews written after implementation and before summaries.
+- `_release/`: Release notes for completed workflow runs.
 - `_summary/`: Workflow completion summaries.
 - `_decisions/`: Decision logs for meaningful architecture or product decisions.
 - `docs/PROJECT_CONTEXT.md`: Durable facts about stack, commands, conventions, constraints, and architecture rules.
@@ -41,10 +42,15 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Generate vertical tasks in `_task/`.
 - Execute one Ralph Wiggum-style task at a time, continuing through all generated tasks by default.
 - Move each task through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
+- Protect dirty worktrees by checking `git status --short`, documenting existing dirty files, planned files, and overlap risk before implementation.
+- Record explicit acceptance checklist results for every task.
+- Follow a fixed failure recovery protocol when verification fails.
 - Verify every task.
 - Critique and fix in-scope issues.
 - Append progress after each task.
+- Run a final diff audit with `git diff --stat` and `git diff` before review and summary.
 - Write a review in `_review/`.
+- Write release notes in `_release/`.
 - Produce a final summary, workflow health status, final artifact checklist, and suggested commit message.
 
 ## Repository Structure
@@ -63,6 +69,8 @@ templates/
   _progress/
     progress.md
   _review/
+    README.md
+  _release/
     README.md
   _summary/
     README.md
@@ -88,7 +96,7 @@ examples/
     ARCHITECTURE.example.md
 ```
 
-The older `docs/SPEC.md`, `docs/TASKS.md`, and `docs/ACTIVE_TASK.md` templates may remain useful for compatibility, but `_handoff/`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, and `_decisions/` are the main workflow memory.
+The older `docs/SPEC.md`, `docs/TASKS.md`, and `docs/ACTIVE_TASK.md` templates may remain useful for compatibility, but `_handoff/`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_release/`, `_summary/`, and `_decisions/` are the main workflow memory.
 
 ## Install Into A Project
 
@@ -122,7 +130,7 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, generate a spec, generate a vertical task plan, execute all tasks sequentially, verify and review each task, update progress and handoff after each task, write a workflow review only after the full request is complete or stopped, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, run dirty worktree protection, generate a spec, generate a vertical task plan, execute all tasks sequentially, verify and review each task, record acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
 
 Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is optional, not required.
 
@@ -154,7 +162,7 @@ _task/<date-or-slug>.md
 
 The spec captures the request, answers, assumptions, requirements, edge cases, constraints, success criteria, and out-of-scope work.
 
-The task plan breaks the spec into vertical slices. Each task includes objective, likely files, checklist, acceptance criteria, verification commands, stop condition, and out-of-scope items.
+The task plan breaks the spec into vertical slices. Each task includes objective, likely files, checklist, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
 
 Tasks must use this status flow:
 
@@ -162,7 +170,16 @@ Tasks must use this status flow:
 Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
 ```
 
-Allowed terminal states are `Done`, `Blocked`, and `Needs Human Review`. A task cannot be `Done` unless verification was attempted and the result was reviewed. If verification cannot run, the task is `Needs Human Review`, not `Done`.
+Allowed terminal states are `Done`, `Blocked`, and `Needs Human Review`. A task cannot be `Done` unless verification was attempted, the result was reviewed, and every required acceptance criterion is checked `[x]`. If any acceptance result is `[ ]` or `[~]`, the task is `Blocked` or `Needs Human Review`.
+
+Acceptance results use:
+
+```md
+Acceptance result:
+- [x] Criterion met
+- [ ] Criterion not met
+- [~] Partially met with notes
+```
 
 ### Step 5: Execute Tasks Sequentially
 
@@ -177,7 +194,7 @@ _task/<active-task-plan>.md
 
 Default execution mode is `complete-workflow`, so the agent executes every generated task in order. For each task, the agent inspects relevant code, implements only the current task, verifies, reviews, fixes in-scope defects, appends progress, updates handoff, and continues automatically only when the current task is `Done`.
 
-The workflow stops if a task is `Blocked`, `Needs Human Review`, fails verification, becomes risky or unclear, or requires external access.
+If verification fails, the agent follows the failure recovery protocol: identify the failing command, capture the error, classify it as in-scope or unrelated, fix only in-scope failures, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery cannot prove the task. The workflow stops if a task is `Blocked`, `Needs Human Review`, fails verification, becomes risky or unclear, or requires external access.
 
 ### Step 6: Write Review, Summary, And Health Check
 
@@ -187,14 +204,26 @@ After each task, the agent appends to:
 _progress/progress.md
 ```
 
+Before the final review and summary, the agent runs the final diff audit:
+
+```bash
+git diff --stat
+git diff
+```
+
+The audit documents whether the diff matches the saved spec, unrelated files were touched, workflow artifacts were updated correctly, tests were added or updated for changed behavior, accidental scope creep occurred, generated junk or temporary files appeared, or sensitive values/secrets were added.
+
 After the workflow completes, the agent creates or appends:
 
 ```txt
 _review/<date-or-slug>.md
+_release/<date-or-slug>.md
 _summary/<date-or-slug>.md
 ```
 
-The review file records request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
+The review file records request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, final diff audit, failure recovery notes, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
+
+The release notes file records request, user-facing changes, developer changes, new routes/APIs, new env vars, database/schema changes, dependencies added/removed, test commands run, known limitations, follow-up work, and suggested commit message. If none apply, the file says `none` or states that there are no user-facing changes.
 
 The final health check reports `Passed`, `Partial`, or `Failed`.
 
@@ -205,12 +234,15 @@ The final health check reports `Passed`, `Partial`, or `Failed`.
 Health checks confirm:
 
 - `WORK_REQUEST.md` synced.
-- Spec, task plan, progress, review, and summary artifacts exist.
+- Spec, task plan, progress, review, release notes, and summary artifacts exist.
+- Dirty worktree protection ran.
+- Acceptance results were completed.
+- Final diff audit was completed or documented.
 - Verification commands ran or were documented.
 - Scope was respected.
 - Decisions were recorded when needed.
 
-If any required artifact is missing, health is `Failed`.
+If release notes, final diff audit, dirty worktree check, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
 
 ## Final Artifact Checklist
 
@@ -223,6 +255,7 @@ Spec: _spec/<file>.md
 Task plan: _task/<file>.md
 Progress: _progress/progress.md
 Review: _review/<file>.md
+Release notes: _release/<file>.md
 Summary: _summary/<file>.md
 Decisions: _decisions/<file>.md or none
 ```
@@ -292,14 +325,16 @@ Default: `complete-workflow`.
 4. Generate a saved spec in `_spec/`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Read or create `_handoff/current.md`.
-7. Generate vertical tasks in `_task/`.
+7. Generate vertical tasks in `_task/` with acceptance result fields.
 8. Execute every task sequentially by default.
-9. Verify and review each task.
+9. Verify and review each task, using the failure recovery protocol for failed verification.
 10. Append progress to `_progress/progress.md` and update `_handoff/current.md`.
 11. Continue to the next task automatically only when the current task is `Done`.
-12. Write the workflow review in `_review/` after all executable tasks complete or a stop condition is reached.
-13. Write the final summary in `_summary/` and update `_handoff/current.md`.
-14. Run the workflow health check and include the final artifact checklist.
+12. Run the final diff audit.
+13. Write the workflow review in `_review/` after all executable tasks complete or a stop condition is reached.
+14. Write release notes in `_release/`.
+15. Write the final summary in `_summary/` and update `_handoff/current.md`.
+16. Run the workflow health check and include the final artifact checklist.
 
 ## Request Types
 
@@ -384,7 +419,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> _spec -> _task -> all task execution -> _progress + _handoff after each task -> _review -> _summary -> _handoff -> health check
+direct prompt -> questions -> dirty worktree check -> _spec -> _task -> all task execution -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, success criteria, or detailed acceptance criteria.
@@ -413,7 +448,7 @@ git diff
 Commit only after verification:
 
 ```bash
-git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _handoff/ _spec/ _task/ _progress/ _review/ _summary/ _decisions/ docs/
+git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _handoff/ _spec/ _task/ _progress/ _review/ _release/ _summary/ _decisions/ docs/
 git commit -m "docs: add clarified workflow memory"
 ```
 
@@ -431,6 +466,7 @@ Keep these files at the project root:
 - `_task/`
 - `_progress/`
 - `_review/`
+- `_release/`
 - `_summary/`
 - `_decisions/`
 - `docs/`
@@ -451,6 +487,7 @@ For review-only work:
 
 ```txt
 Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _spec/, _task/, _progress/progress.md, _review/, _summary/, and _decisions/. Report bugs, regressions, missing tests, and scope creep first. Do not edit files.
+Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _spec/, _task/, _progress/progress.md, _review/, _release/, _summary/, and _decisions/. Report bugs, regressions, missing tests, final diff audit gaps, acceptance result gaps, and scope creep first. Do not edit files.
 ```
 
 ## Customizing For Other Stacks
@@ -462,6 +499,7 @@ To use this kit outside MERN:
 - Update folder structure and architecture rules in `docs/ARCHITECTURE.md`.
 - Replace verification commands in generated `_task/` plans.
 - Keep the same questions, spec, vertical tasks, progress, review, summary, decisions, and health-check loop.
+- Keep the same dirty worktree protection, acceptance results, failure recovery protocol, final diff audit, release notes, and health-check loop.
 
 ## Example MERN SaaS Workflow
 
@@ -482,8 +520,13 @@ These examples show the expected level of detail. They are not application code.
 - Ralph Wiggum-style steps over broad autonomy.
 - Complete workflow execution by default.
 - Verification over assumptions.
+- Dirty worktree protection before edits.
+- Acceptance results before `Done`.
+- Failure recovery without broad refactors.
 - Progress after every task.
+- Final diff audit before review.
 - Review before summary.
+- Release notes before summary.
 - Summary after every workflow.
 - Health check before final response.
 - Reusable across stacks.
