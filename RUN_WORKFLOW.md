@@ -6,7 +6,7 @@ This is the master orchestration prompt for a reusable AI engineering workflow. 
 
 Use the latest direct user prompt as the primary request source when it looks like project work. Sync it into `WORK_REQUEST.md`, then execute this workflow exactly.
 
-Before touching code, ask focused clarifying questions until you reach about 90% understanding. If the user explicitly says `skip questions`, generate a best-effort spec and record assumptions.
+Before touching code, ask focused clarifying questions until you reach about 90% understanding. If the user explicitly says `skip questions`, generate a best-effort detailed spec and record assumptions.
 
 Default execution mode is `complete-workflow`. Do not stop after `TASK-001` unless the user explicitly selected `single-task` or a stop condition is reached.
 
@@ -18,7 +18,7 @@ Execution modes:
 
 Do not implement without:
 
-1. A saved spec in `_spec/`.
+1. A saved detailed spec in `_spec/`.
 2. A saved vertical task plan in `_task/`.
 3. A current read of `_handoff/current.md`.
 4. A current read of `_progress/progress.md`.
@@ -174,7 +174,7 @@ Dirty worktree rules:
 
 ## 5. Spec Phase
 
-Generate a detailed spec from the active request, the answers, and repo context.
+Generate a detailed, implementation-aware execution blueprint from the active request, intake answers, repo intake, dirty worktree status, handoff/progress context, latest relevant summary, and durable project docs.
 
 Save the spec in `_spec/` using a timestamped or slugged filename:
 
@@ -182,25 +182,142 @@ Save the spec in `_spec/` using a timestamped or slugged filename:
 _spec/2026-05-10-add-dark-theme.md
 ```
 
-The spec must include:
+The spec must be detailed but not padded. Use `Not applicable` for irrelevant sections instead of deleting them.
 
-- Request summary.
-- Date.
-- Source prompt.
-- Questions asked and answers received.
-- Assumptions.
-- Goal.
-- Non-goals.
-- Users.
-- Functional requirements.
-- UI expectations, when relevant.
-- API expectations, when relevant.
-- Data model expectations, when relevant.
-- Edge cases.
-- Constraints.
-- Success criteria.
-- Out-of-scope items.
-- Open questions.
+Detailed spec required sections:
+
+1. Metadata:
+   - Spec filename.
+   - Date.
+   - Request ID or slug.
+   - Request source.
+   - Execution mode.
+   - Request classification.
+   - Scope level.
+   - Risk level.
+2. Original Request:
+   - Raw user request.
+   - Normalized request.
+   - Source prompt or `WORK_REQUEST.md` reference.
+3. Questions And Answers:
+   - Questions asked.
+   - Answers received.
+   - Questions skipped because user said `skip questions`.
+   - Remaining open questions.
+4. Problem Definition:
+   - Problem being solved.
+   - Why it matters.
+   - Current pain point.
+   - Expected value.
+5. Current State Analysis:
+   - Existing behavior.
+   - Existing architecture/components involved.
+   - Existing files/modules likely involved.
+   - Existing data flow.
+   - Existing API/UI/CLI/workflow behavior, when relevant.
+   - Existing tests or verification coverage, when known.
+6. Desired End State:
+   - Expected final behavior.
+   - User-facing outcome.
+   - Developer-facing outcome.
+   - System/workflow outcome.
+   - Backward compatibility expectations.
+7. Scope:
+   - In scope.
+   - Out of scope.
+   - Non-goals.
+   - Explicit boundaries.
+8. Users And Use Cases:
+   - Primary users.
+   - Secondary users.
+   - Main use cases.
+   - Edge use cases.
+9. Functional Requirements:
+   - Concrete required behaviors.
+   - Inputs.
+   - Outputs.
+   - State changes.
+   - Error states.
+   - Permissions/auth expectations, when relevant.
+10. Non-Functional Requirements:
+   - Performance expectations.
+   - Reliability expectations.
+   - Security/privacy expectations.
+   - Accessibility expectations, when relevant.
+   - Maintainability expectations.
+   - DX expectations.
+11. Affected Surfaces:
+   - Files likely affected.
+   - Directories likely affected.
+   - UI surfaces.
+   - API routes.
+   - Components.
+   - Services.
+   - Database/schema.
+   - Config/env vars.
+   - Tests.
+   - Docs.
+   - Workflow artifacts.
+12. Dependency And Integration Map:
+   - Internal dependencies.
+   - External packages/services.
+   - Integration points.
+   - Ordering constraints.
+   - Migration/setup requirements.
+13. Data And State Impact:
+   - Data models.
+   - Database changes.
+   - State management changes.
+   - Cache/session/local storage impact.
+   - Backward compatibility impact.
+14. UX / API / Workflow Expectations:
+   - UX expectations, if relevant.
+   - API contract expectations, if relevant.
+   - CLI/workflow behavior, if relevant.
+   - Error handling expectations.
+   - Empty/loading/success/failure states, if relevant.
+15. Execution Strategy:
+   - Recommended implementation approach.
+   - Suggested sequencing.
+   - Safe rollout/migration approach.
+   - Files to inspect before editing.
+   - Decisions to avoid until more evidence exists.
+16. Verification Strategy:
+   - Required automated checks.
+   - Required manual checks.
+   - Test types needed.
+   - Build/lint/typecheck expectations.
+   - Acceptance evidence required.
+   - What counts as proof of completion.
+17. Acceptance Criteria:
+   - Checklist format only.
+   - Concrete, measurable, verifiable items.
+   - Behavior and artifact/documentation criteria when relevant.
+18. Edge Cases And Failure Modes:
+   - Edge cases.
+   - Failure modes.
+   - Regression risks.
+   - Recovery expectations.
+19. Risks And Mitigations:
+   - Technical risks.
+   - Product/UX risks.
+   - Security risks.
+   - Scope risks.
+   - Mitigation plan for each risk.
+20. Assumptions:
+   - Explicit assumptions.
+   - Confidence level where useful.
+   - What should be revisited if assumptions are wrong.
+21. Open Questions:
+   - Blocking questions.
+   - Non-blocking questions.
+   - How each question affects execution.
+22. Task Extraction Notes:
+   - Suggested vertical task boundaries.
+   - Suggested first task.
+   - Suggested task ordering.
+   - Areas that should not become separate tasks.
+   - How the 3-pass Build -> Refine -> Polish loop should apply.
 
 No implementation may happen until this file exists.
 
@@ -211,10 +328,10 @@ Before planning, read:
 - `_handoff/current.md`, if it exists.
 - `_progress/progress.md`.
 - The latest relevant `_summary/` entry.
-- The saved spec in `_spec/`.
+- The saved detailed spec in `_spec/`.
 - Relevant durable docs in `docs/`.
 
-Generate a vertical implementation plan from the saved spec.
+Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes.
 
 Save the task breakdown in `_task/` using a timestamped or slugged filename that matches the spec when practical:
 
@@ -577,6 +694,7 @@ Before the final response, check:
 - Did `WORK_REQUEST.md` sync?
 - Did `_handoff/current.md` exist and reflect the latest live resume state?
 - Did the spec file exist?
+- Did the spec include every required detailed spec section, or was any missing section repaired before planning?
 - Did the task plan exist?
 - Was progress updated?
 - Was the review created?
@@ -592,11 +710,11 @@ Before the final response, check:
 
 Final health status:
 
-- `Passed`: all required artifacts exist, all executable tasks are complete, all required iteration evidence is present, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
+- `Passed`: all required artifacts exist, the detailed spec exists with all required sections, all executable tasks are complete, all required iteration evidence is present, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
 - `Partial`: artifacts exist, but some tasks remain because of a documented blocker, human-review need, verification gap, or follow-up risk.
-- `Failed`: any required artifact is missing, scope was not respected, or required verification/review/summary documentation is absent.
+- `Failed`: any required artifact is missing, the detailed spec is missing required sections and planning proceeded anyway, scope was not respected, or required verification/review/summary documentation is absent.
 
-If release notes, final diff audit, dirty worktree check, iteration evidence, or acceptance results are missing, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, final diff audit, dirty worktree check, required detailed spec sections, iteration evidence, or acceptance results are missing, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## 17. Final Response
 

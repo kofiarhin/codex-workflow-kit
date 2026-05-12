@@ -9,7 +9,7 @@ Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
 
 Follow AGENTS.md.
 Ask clarifying questions until about 90% understanding before touching code unless the request says "skip questions".
-Generate a saved spec in _spec/, generate a vertical task plan in _task/ with an Iteration plan, execute one Ralph Wiggum-style task at a time through Build -> Refine -> Polish, record iteration evidence in _progress/progress.md, write a final summary in _summary/, then provide a final response and suggested commit message.
+Generate a saved detailed spec in _spec/, generate a vertical task plan in _task/ from that spec with an Iteration plan, execute one Ralph Wiggum-style task at a time through Build -> Refine -> Polish, record iteration evidence in _progress/progress.md, write a final summary in _summary/, then provide a final response and suggested commit message.
 ```
 
 ## Direct Request With Questions
@@ -20,7 +20,7 @@ Use this as the active request:
 
 Follow RUN_WORKFLOW.md.
 First ask focused clarifying questions about goal, users, exact behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope work.
-Do not touch code until questions are answered, a spec is saved in _spec/, and a task plan is saved in _task/.
+Do not touch code until questions are answered, a detailed spec is saved in _spec/, and a task plan derived from it is saved in _task/.
 ```
 
 ## Direct Request That Skips Questions
@@ -32,8 +32,8 @@ Use this as the active request:
 skip questions
 
 Follow RUN_WORKFLOW.md.
-Generate a best-effort spec in _spec/ and clearly list assumptions.
-Generate a vertical task plan in _task/.
+Generate a best-effort detailed spec in _spec/ and clearly list assumptions.
+Generate a vertical task plan in _task/ from that spec.
 Before implementation, read _progress/progress.md and the latest relevant _summary/ entry.
 Then execute tasks one at a time through the full Build -> Refine -> Polish hardening loop only if safe.
 ```
@@ -63,31 +63,169 @@ Do not inspect or edit implementation code yet.
 ## Spec Generation
 
 ```txt
-Using the active request and the answers so far, generate a detailed spec.
+Using the active request, intake answers, repo intake, dirty worktree status, _handoff/current.md, _progress/progress.md, the latest relevant _summary/ entry, and durable project docs, generate a detailed, implementation-aware execution blueprint.
 
 Save it in _spec/ with a timestamped or slugged filename, for example:
 _spec/2026-05-10-add-dark-theme.md
 
-Include:
-- Request summary
-- Date
-- Source prompt
-- Questions asked and answers received
-- Assumptions
-- Goal
-- Non-goals
-- Users
-- Functional requirements
-- UI expectations, if relevant
-- API expectations, if relevant
-- Data model expectations, if relevant
-- Edge cases
-- Constraints
-- Success criteria
-- Out-of-scope items
-- Open questions
+The spec must be detailed but not padded. Use "Not applicable" for irrelevant sections instead of deleting them.
+
+Include these required sections:
+1. Metadata
+   - Spec filename
+   - Date
+   - Request ID or slug
+   - Request source
+   - Execution mode
+   - Request classification
+   - Scope level
+   - Risk level
+2. Original Request
+   - Raw user request
+   - Normalized request
+   - Source prompt or WORK_REQUEST reference
+3. Questions And Answers
+   - Questions asked
+   - Answers received
+   - Questions skipped because user said skip questions
+   - Remaining open questions
+4. Problem Definition
+   - Problem being solved
+   - Why it matters
+   - Current pain point
+   - Expected value
+5. Current State Analysis
+   - Existing behavior
+   - Existing architecture/components involved
+   - Existing files/modules likely involved
+   - Existing data flow
+   - Existing API/UI/CLI/workflow behavior, when relevant
+   - Existing tests or verification coverage, when known
+6. Desired End State
+   - Expected final behavior
+   - User-facing outcome
+   - Developer-facing outcome
+   - System/workflow outcome
+   - Backward compatibility expectations
+7. Scope
+   - In scope
+   - Out of scope
+   - Non-goals
+   - Explicit boundaries
+8. Users And Use Cases
+   - Primary users
+   - Secondary users
+   - Main use cases
+   - Edge use cases
+9. Functional Requirements
+   - Concrete required behaviors
+   - Inputs
+   - Outputs
+   - State changes
+   - Error states
+   - Permissions/auth expectations, when relevant
+10. Non-Functional Requirements
+   - Performance expectations
+   - Reliability expectations
+   - Security/privacy expectations
+   - Accessibility expectations, when relevant
+   - Maintainability expectations
+   - DX expectations
+11. Affected Surfaces
+   - Files likely affected
+   - Directories likely affected
+   - UI surfaces
+   - API routes
+   - Components
+   - Services
+   - Database/schema
+   - Config/env vars
+   - Tests
+   - Docs
+   - Workflow artifacts
+12. Dependency And Integration Map
+   - Internal dependencies
+   - External packages/services
+   - Integration points
+   - Ordering constraints
+   - Migration/setup requirements
+13. Data And State Impact
+   - Data models
+   - Database changes
+   - State management changes
+   - Cache/session/local storage impact
+   - Backward compatibility impact
+14. UX / API / Workflow Expectations
+   - UX expectations, if relevant
+   - API contract expectations, if relevant
+   - CLI/workflow behavior, if relevant
+   - Error handling expectations
+   - Empty/loading/success/failure states, if relevant
+15. Execution Strategy
+   - Recommended implementation approach
+   - Suggested sequencing
+   - Safe rollout/migration approach
+   - Files to inspect before editing
+   - Decisions to avoid until more evidence exists
+16. Verification Strategy
+   - Required automated checks
+   - Required manual checks
+   - Test types needed
+   - Build/lint/typecheck expectations
+   - Acceptance evidence required
+   - What counts as proof of completion
+17. Acceptance Criteria
+   - Checklist format only
+   - Concrete, measurable, verifiable items
+   - Include both behavior and artifact/documentation criteria when relevant
+18. Edge Cases And Failure Modes
+   - Edge cases
+   - Failure modes
+   - Regression risks
+   - Recovery expectations
+19. Risks And Mitigations
+   - Technical risks
+   - Product/UX risks
+   - Security risks
+   - Scope risks
+   - Mitigation plan for each risk
+20. Assumptions
+   - Explicit assumptions
+   - Confidence level where useful
+   - What should be revisited if assumptions are wrong
+21. Open Questions
+   - Blocking questions
+   - Non-blocking questions
+   - How each question affects execution
+22. Task Extraction Notes
+   - Suggested vertical task boundaries
+   - Suggested first task
+   - Suggested task ordering
+   - Areas that should not become separate tasks
+   - How the 3-pass Build -> Refine -> Polish loop should apply
+
+If the user said skip questions, generate the best possible detailed spec and clearly record assumptions and open questions.
 
 Do not implement code.
+```
+
+## Spec Quality Review
+
+```txt
+Review the saved _spec/ file before task planning.
+
+Confirm:
+1. All 22 required detailed spec sections are present.
+2. Irrelevant sections say "Not applicable" instead of being deleted.
+3. The spec is based on the active request, intake answers, repo intake, dirty worktree status, handoff/progress context, latest relevant summary, and durable project docs.
+4. Current State Analysis explains existing behavior, affected files/modules, data flow, workflow/API/UI behavior when relevant, and known verification coverage.
+5. Desired End State, Scope, Functional Requirements, Non-Functional Requirements, Affected Surfaces, Dependency And Integration Map, Data And State Impact, UX/API/Workflow Expectations, Execution Strategy, Verification Strategy, Acceptance Criteria, Edge Cases, Risks, Assumptions, Open Questions, and Task Extraction Notes are specific enough for planning.
+6. Acceptance Criteria are checklist-only, concrete, measurable, and verifiable.
+7. Task Extraction Notes identify likely vertical task boundaries, suggested first task, ordering, areas not to split out, and how Build -> Refine -> Polish applies.
+8. No open question blocks safe planning.
+
+If required sections are missing or too vague, repair the spec before generating _task/.
+If planning proceeds with missing required sections, workflow health must be Partial or Failed depending on severity.
 ```
 
 ## Request Classification
@@ -137,7 +275,22 @@ Do not implement the request yet.
 ## Vertical Task Generation
 
 ```txt
-Using WORK_REQUEST.md, the saved _spec/ file, _progress/progress.md, the latest relevant _summary/ entry, and durable docs, generate a vertical task plan in _task/.
+Using WORK_REQUEST.md, the saved detailed _spec/ file, _progress/progress.md, the latest relevant _summary/ entry, _handoff/current.md, and durable docs, generate a vertical task plan in _task/.
+
+Before writing tasks, extract task boundaries from the detailed spec, especially:
+1. Affected Surfaces.
+2. Dependency And Integration Map.
+3. Data And State Impact.
+4. UX / API / Workflow Expectations.
+5. Execution Strategy.
+6. Verification Strategy.
+7. Acceptance Criteria.
+8. Edge Cases And Failure Modes.
+9. Risks And Mitigations.
+10. Assumptions and Open Questions.
+11. Task Extraction Notes.
+
+Do not plan from the raw request alone. If the detailed spec is missing required sections or is not complete enough to plan from, repair the spec or stop before task planning.
 
 Each task must include:
 - Task ID
@@ -163,6 +316,7 @@ Each iteration plan must include:
 
 Tasks must be vertical slices, not vague layers.
 Use Ralph Wiggum-style task phrasing: small, literal, concrete, sequential.
+Do not split out areas the detailed spec says should not become separate tasks.
 
 Do not implement code.
 ```
@@ -359,14 +513,15 @@ Produce the final workflow summary and create or append it in _summary/.
 Include:
 1. Original work request.
 2. Spec file used.
-3. Task plan used.
-4. Tasks completed.
-5. Iteration evidence summary.
-6. Files changed.
-7. Verification commands and results.
-8. Unresolved issues or blockers.
-9. Recommended next work.
-10. Suggested commit message.
+3. Whether the detailed spec was complete or had gaps, including any missing required sections and whether they were repaired before planning.
+4. Task plan used.
+5. Tasks completed.
+6. Iteration evidence summary.
+7. Files changed.
+8. Verification commands and results.
+9. Unresolved issues or blockers.
+10. Recommended next work.
+11. Suggested commit message.
 
 Do not claim a commit was made unless one was actually created.
 ```

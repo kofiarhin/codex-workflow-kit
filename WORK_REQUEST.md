@@ -4,75 +4,108 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will ask clarifying questions, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, update `_progress/progress.md` and `_handoff/current.md` after each task, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
+The workflow will ask clarifying questions, generate a saved detailed spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, update `_progress/progress.md` and `_handoff/current.md` after each task, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
 
 ## Request
 
-Update this workflow kit to support a required 3-pass task hardening loop for every executable task.
+Update the workflow kit so the Spec Phase generates a much more detailed, implementation-aware execution blueprint before task planning.
 
-Every executable task must run through:
+Upgrade the existing Spec Phase from a lightweight brief into a detailed execution blueprint that helps the agent understand:
 
-1. Iteration 1 - Build: implement the smallest working vertical slice, run verification, review against acceptance criteria, and record issues/gaps/next refinement target.
-2. Iteration 2 - Refine: fix issues from Build and improve correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency; run verification and review again.
-3. Iteration 3 - Polish: perform final cleanup and hardening, remove rough edges, tighten tests/docs/types/error handling where relevant, confirm no regressions, run final verification, and produce the final task verdict.
+- what is being solved
+- why it matters
+- how the current system works
+- what should change
+- what must not change
+- which files/surfaces may be affected
+- what risks exist
+- how verification will prove completion
+- how the later vertical task plan should be derived
 
-Each iteration must include documented evidence:
-
-- Goal.
-- Changes made.
-- Verification command and result.
-- Review findings.
-- Acceptance status.
-- Remaining issues.
-- Next action.
-
-Update workflow documentation and templates so tasks can no longer be marked `Done` after a single execute -> verify -> review pass. A task cannot be `Done` until the full Build -> Refine -> Polish loop is complete and all required acceptance criteria are checked `[x]`, unless a documented stop condition forces `Blocked` or `Needs Human Review`.
+Do not generate app code. Only update workflow docs/templates/artifacts.
 
 ## Files Requested
 
-- `AGENTS.md`
 - `RUN_WORKFLOW.md`
-- `README.md`
-- `docs/PROMPTS.md`
 - `templates/RUN_WORKFLOW.md`
+- `docs/PROMPTS.md`
 - `templates/docs/PROMPTS.md`
-- `_handoff/current.md`
-- `_progress/progress.md`
-- Relevant template README files under:
-  - `templates/_task/`
-  - `templates/_progress/`
-  - `templates/_handoff/`
-  - `templates/_review/`
-  - `templates/_summary/`
-  - `templates/_release/`
-  - `_task/`
-  - `_progress/`
-  - `_handoff/`
-  - `_review/`
-  - `_summary/`
-  - `_release/`
+- `_spec/README.md`
+- `templates/_spec/README.md`
+- `README.md`
+- Relevant current workflow artifacts under `_review/`, `_summary/`, `_release/`, `_progress/`, or `_handoff/` if this workflow run requires documenting the change.
+
+## Required Detailed Spec Sections
+
+The spec template must include at least:
+
+1. Metadata
+2. Original Request
+3. Questions And Answers
+4. Problem Definition
+5. Current State Analysis
+6. Desired End State
+7. Scope
+8. Users And Use Cases
+9. Functional Requirements
+10. Non-Functional Requirements
+11. Affected Surfaces
+12. Dependency And Integration Map
+13. Data And State Impact
+14. UX / API / Workflow Expectations
+15. Execution Strategy
+16. Verification Strategy
+17. Acceptance Criteria
+18. Edge Cases And Failure Modes
+19. Risks And Mitigations
+20. Assumptions
+21. Open Questions
+22. Task Extraction Notes
+
+Use `Not applicable` for irrelevant sections instead of deleting them.
+
+## Prompt Documentation Requirements
+
+Update `docs/PROMPTS.md` and `templates/docs/PROMPTS.md`:
+
+- Replace the current `Spec Generation` prompt with a detailed spec-generation prompt using the required sections.
+- Add a reusable `Spec Quality Review` prompt that checks whether a saved spec is complete enough for task planning.
+- Update `Vertical Task Generation` so tasks are explicitly extracted from the detailed spec, especially affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes.
+- Update `Final Summary` so it reports whether the detailed spec was complete or had gaps.
 
 ## Acceptance Criteria
 
-- The workflow clearly requires Build -> Refine -> Polish for every executable task.
-- The task plan template includes per-iteration fields.
-- Progress tracking records each iteration separately.
-- Handoff can resume from the current task and current iteration.
-- Health check fails or becomes `Partial` if iteration evidence is missing.
-- Final response includes iteration evidence summary.
-- Existing concepts remain intact: spec first, vertical task plan, dirty worktree protection, acceptance results, failure recovery, final diff audit, review, release notes, summary, handoff, health check.
-- No unrelated behavior or app code is changed.
+- `RUN_WORKFLOW.md` requires the expanded detailed spec before planning.
+- `templates/RUN_WORKFLOW.md` mirrors the same requirement.
+- `_spec/README.md` documents the new detailed spec structure.
+- `templates/_spec/README.md` mirrors it.
+- `docs/PROMPTS.md` includes the updated Spec Generation prompt.
+- `templates/docs/PROMPTS.md` mirrors it.
+- `README.md` describes the spec phase as a detailed execution blueprint.
+- Planning Phase explicitly derives tasks from the detailed spec.
+- Health Check validates required spec sections.
+- Existing 3-pass task hardening loop remains intact.
+- Existing execution modes remain intact.
+- No unrelated workflow behavior is removed.
 
 ## Verification
 
-- Search the repo for old single-pass language like `verify and review each task` and update it where it now needs iteration-loop language.
-- Search for all mentions of task execution and confirm they now reference the 3-pass hardening loop where appropriate.
+- Search for old lightweight spec wording and replace it where needed:
+  - `Request summary`
+  - `Goal`
+  - `Non-goals`
+  - `Functional requirements`
+  - `Success criteria`
+  - `Open questions`
+- Confirm those terms are no longer the entire spec structure and are now part of the larger detailed spec.
+- Search for `Spec Phase`, `Spec Generation`, `Vertical Task Generation`, and `Health Check` and confirm they reference the detailed spec.
 - Run available formatting/lint/test commands if present.
-- Run `git diff --stat` and `git diff`.
+- Run `git diff --stat`.
+- Run `git diff`.
 
 ## Question Preference
 
-The user provided detailed requirements, acceptance criteria, files, and verification expectations. No blocking clarifying question is needed; assumptions are recorded in the saved spec.
+The user provided detailed required files, sections, rules, acceptance criteria, verification expectations, and execution preference. No blocking clarifying question is needed; assumptions are recorded in the saved spec.
 
 ## Optional Execution Preference
 
@@ -90,6 +123,7 @@ Default: `complete-workflow`
 
 - App implementation code under `client/` or `server/`.
 - Deployment changes.
-- New runtime dependencies.
+- Runtime dependency changes.
 - Removing existing execution modes.
+- Removing the existing Build -> Refine -> Polish task hardening loop.
 - Removing existing workflow gates or artifacts.

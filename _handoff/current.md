@@ -4,11 +4,11 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Update this workflow kit to support a required 3-pass task hardening loop for every executable task.
+Update the workflow kit so the Spec Phase generates a detailed, implementation-aware execution blueprint before task planning.
 
 ## Request ID
 
-2026-05-15-add-3-pass-task-hardening-loop
+2026-05-15-add-detailed-spec-blueprint
 
 ## Current Phase
 
@@ -20,27 +20,27 @@ complete-workflow
 
 ## Current Spec File
 
-`_spec/2026-05-15-add-3-pass-task-hardening-loop.md`
+`_spec/2026-05-15-add-detailed-spec-blueprint.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-15-add-3-pass-task-hardening-loop.md`
+`_task/2026-05-15-add-detailed-spec-blueprint.md`
 
 ## Current Review File
 
-`_review/2026-05-15-add-3-pass-task-hardening-loop.md`
+`_review/2026-05-15-add-detailed-spec-blueprint.md`
 
 ## Current Release Notes File
 
-`_release/2026-05-15-add-3-pass-task-hardening-loop.md`
+`_release/2026-05-15-add-detailed-spec-blueprint.md`
 
 ## Current Summary File
 
-`_summary/2026-05-15-add-3-pass-task-hardening-loop.md`
+`_summary/2026-05-15-add-detailed-spec-blueprint.md`
 
 ## Last Completed Task
 
-`TASK-003: Update README and finalize workflow evidence`
+`TASK-003: Update README and finalize workflow artifacts`
 
 ## Current Task
 
@@ -74,7 +74,7 @@ None.
 
 ## Verification Status
 
-Passed. Required old single-pass language search returned no matches; required 3-pass/iteration evidence search passed; prompt mirror check passed; `npm test` passed; `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran; `git status --short` showed no app implementation files modified.
+Passed. Required detailed-spec searches passed; old lightweight-term search confirms those terms are no longer the entire spec structure; prompt mirror check passed; `npm test` passed; `npm run build` passed; `git diff --check` reported line-ending normalization warnings only; `git diff --stat` and `git diff` ran.
 
 ## Workflow Health Status
 
@@ -86,9 +86,9 @@ Passed.
 
 ## Notes For Continuation
 
-- Workflow completed for `2026-05-15-add-3-pass-task-hardening-loop`.
-- Review file: `_review/2026-05-15-add-3-pass-task-hardening-loop.md`.
-- Release notes file: `_release/2026-05-15-add-3-pass-task-hardening-loop.md`.
-- Summary file: `_summary/2026-05-15-add-3-pass-task-hardening-loop.md`.
+- Workflow completed for `2026-05-15-add-detailed-spec-blueprint`.
+- Review file: `_review/2026-05-15-add-detailed-spec-blueprint.md`.
+- Release notes file: `_release/2026-05-15-add-detailed-spec-blueprint.md`.
+- Summary file: `_summary/2026-05-15-add-detailed-spec-blueprint.md`.
 - Decisions: none.
-- Suggested commit message: `docs: require three-pass task hardening loop`.
+- Suggested commit message: `docs: require detailed spec blueprint before planning`.

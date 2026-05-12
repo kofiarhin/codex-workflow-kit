@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> dirty worktree check -> spec in _spec -> vertical plan/tasks in _task -> execute each task through Build -> Refine -> Polish -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
+request -> questions -> dirty worktree check -> detailed execution blueprint in _spec -> vertical plan/tasks derived from the blueprint in _task -> execute each task through Build -> Refine -> Polish -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -16,8 +16,8 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `RUN_WORKFLOW.md`: The master orchestration prompt that tells the agent how to run the workflow.
 - `AGENTS.md`: Repository operating rules for coding agents.
 - `_handoff/current.md`: Live workflow state used to resume with `continue workflow`.
-- `_spec/`: Saved specs generated after intake questions.
-- `_task/`: Saved vertical task plans generated from specs.
+- `_spec/`: Saved detailed execution blueprints generated after intake questions and repo intake.
+- `_task/`: Saved vertical task plans generated from detailed specs.
 - `_progress/progress.md`: Append-only task progress log.
 - `_review/`: Required workflow reviews written after implementation and before summaries.
 - `_release/`: Release notes for completed workflow runs.
@@ -37,9 +37,9 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 
 - Ask clarifying questions before implementation.
 - Build about 90% understanding of goal, users, behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope work.
-- Save a detailed spec in `_spec/`.
+- Save a detailed, implementation-aware execution blueprint in `_spec/`.
 - Read `_progress/` and `_summary/` before planning.
-- Generate vertical tasks in `_task/`.
+- Generate vertical tasks in `_task/` from the detailed spec's affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes.
 - Execute one Ralph Wiggum-style task at a time through Build -> Refine -> Polish, continuing through all generated tasks by default.
 - Move each task through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 - Protect dirty worktrees by checking `git status --short`, documenting existing dirty files, planned files, and overlap risk before implementation.
@@ -129,7 +129,7 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, run dirty worktree protection, generate a spec, generate a vertical task plan, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, run dirty worktree protection, generate a detailed execution blueprint spec, generate a vertical task plan from that blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
 
 Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is optional, not required.
 
@@ -159,9 +159,9 @@ _spec/<date-or-slug>.md
 _task/<date-or-slug>.md
 ```
 
-The spec captures the request, answers, assumptions, requirements, edge cases, constraints, success criteria, and out-of-scope work.
+The spec is a detailed, implementation-aware execution blueprint. It captures metadata, the original and normalized request, questions and answers, problem definition, current state analysis, desired end state, scope, users and use cases, functional and non-functional requirements, affected surfaces, dependencies and integrations, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases and failure modes, risks and mitigations, assumptions, open questions, and task extraction notes. Irrelevant sections should say `Not applicable` instead of being deleted.
 
-The task plan breaks the spec into vertical slices. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
+The task plan breaks the detailed spec into vertical slices. It should derive tasks especially from affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
 
 Each task iteration records goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
 
@@ -242,6 +242,7 @@ Health checks confirm:
 
 - `WORK_REQUEST.md` synced.
 - Spec, task plan, progress, review, release notes, and summary artifacts exist.
+- The detailed spec includes every required section, or missing sections were repaired before planning.
 - Dirty worktree protection ran.
 - Acceptance results were completed.
 - Iteration evidence was completed for every executable task.
@@ -311,15 +312,15 @@ skip questions
 add dark theme for the app
 ```
 
-When questions are skipped, the agent must generate a best-effort spec and record assumptions before planning or implementation.
+When questions are skipped, the agent must generate the best possible detailed spec and record assumptions/open questions before planning or implementation.
 
 ## Execution Preferences
 
 Direct prompts and `WORK_REQUEST.md` can include an optional execution preference:
 
-- `plan-only`: Ask questions, write spec, write task plan, then stop.
-- `single-task`: Ask questions, write spec, write task plan, execute only the next ready task through the full Build -> Refine -> Polish loop, update artifacts, then stop.
-- `complete-workflow`: Ask questions, write spec, write task plan, execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each task completes Build -> Refine -> Polish before the next starts.
+- `plan-only`: Ask questions, write the detailed spec, write the task plan derived from it, then stop.
+- `single-task`: Ask questions, write the detailed spec, write the task plan derived from it, execute only the next ready task through the full Build -> Refine -> Polish loop, update artifacts, then stop.
+- `complete-workflow`: Ask questions, write the detailed spec, write the task plan derived from it, execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each task completes Build -> Refine -> Polish before the next starts.
 
 Default: `complete-workflow`.
 
@@ -330,10 +331,10 @@ Default: `complete-workflow`.
 1. Treat the latest direct prompt as the active request.
 2. Sync the request into `WORK_REQUEST.md`.
 3. Ask clarifying questions unless the prompt says `skip questions`.
-4. Generate a saved spec in `_spec/`.
+4. Generate a saved detailed execution blueprint in `_spec/`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Read or create `_handoff/current.md`.
-7. Generate vertical tasks in `_task/` with acceptance result fields and per-iteration fields.
+7. Generate vertical tasks in `_task/` from the detailed spec, with acceptance result fields and per-iteration fields.
 8. Execute every task sequentially by default.
 9. Run each executable task through Build -> Refine -> Polish, using the failure recovery protocol inside the iteration where verification fails.
 10. Append iteration evidence to `_progress/progress.md` and update `_handoff/current.md`.
@@ -389,7 +390,7 @@ Prompt with questions:
 ```txt
 Add dark theme to the app.
 Follow RUN_WORKFLOW.md.
-Ask clarifying questions first, then generate the spec in _spec/ and the vertical task plan in _task/.
+Ask clarifying questions first, then generate the detailed spec in _spec/ and the vertical task plan derived from it in _task/.
 ```
 
 Prompt that skips questions:
@@ -398,7 +399,7 @@ Prompt that skips questions:
 skip questions
 Add dark theme to the app.
 Follow RUN_WORKFLOW.md.
-Generate a best-effort spec with assumptions, then create the vertical task plan and execute all tasks in complete-workflow mode.
+Generate a best-effort detailed spec with assumptions, then create the vertical task plan from it and execute all tasks in complete-workflow mode.
 ```
 
 Prompt that forces single-task mode:
@@ -427,10 +428,10 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> dirty worktree check -> _spec -> _task -> all task execution through Build -> Refine -> Polish -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
+direct prompt -> questions -> dirty worktree check -> detailed _spec -> spec-derived _task -> all task execution through Build -> Refine -> Polish -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
 ```
 
-Manual editing remains useful when you want to predefine constraints, architecture rules, success criteria, or detailed acceptance criteria.
+Manual editing remains useful when you want to predefine constraints, architecture rules, detailed current-state notes, success criteria, or acceptance criteria.
 
 ## Git Workflow
 
@@ -506,7 +507,7 @@ To use this kit outside MERN:
 - Fill in discovered conventions in `docs/PROJECT_CONTEXT.md`.
 - Update folder structure and architecture rules in `docs/ARCHITECTURE.md`.
 - Replace verification commands in generated `_task/` plans.
-- Keep the same questions, spec, vertical tasks, progress, review, summary, decisions, and health-check loop.
+- Keep the same questions, detailed spec, vertical tasks, progress, review, summary, decisions, and health-check loop.
 - Keep the same dirty worktree protection, acceptance results, failure recovery protocol, final diff audit, release notes, and health-check loop.
 
 ## Example MERN SaaS Workflow
@@ -523,7 +524,7 @@ These examples show the expected level of detail. They are not application code.
 
 - Ask before building.
 - Plain English request in.
-- Detailed spec before implementation.
+- Detailed execution blueprint before task planning and implementation.
 - Vertical tasks over vague layers.
 - Ralph Wiggum-style steps over broad autonomy.
 - Build -> Refine -> Polish before `Done`.

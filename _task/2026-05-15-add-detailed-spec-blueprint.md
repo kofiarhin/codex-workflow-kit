@@ -1,0 +1,186 @@
+# Task Plan: Add Detailed Spec Blueprint To Workflow Kit
+
+- Spec file used: `_spec/2026-05-15-add-detailed-spec-blueprint.md`
+- Planning date: 2026-05-15
+- Progress files read: `_progress/progress.md`
+- Summary files read: `_summary/2026-05-15-add-3-pass-task-hardening-loop.md`
+- Handoff file read: `_handoff/current.md`
+- Execution mode: `complete-workflow`
+- Dirty worktree protection: `git status --short` returned no existing dirty files before implementation. Planned files are workflow docs, templates, and workflow run artifacts. Overlap risk is none.
+
+## Task List
+
+### TASK-001: Require detailed spec blueprint in workflow docs
+
+- Status: Done
+- Objective: Update the authoritative workflow and spec memory docs so the Spec Phase requires the detailed 22-section execution blueprint before task planning.
+- Files likely affected:
+  - `RUN_WORKFLOW.md`
+  - `templates/RUN_WORKFLOW.md`
+  - `_spec/README.md`
+  - `templates/_spec/README.md`
+  - `_task/2026-05-15-add-detailed-spec-blueprint.md`
+- Checklist:
+  - [x] Replace the lightweight Spec Phase field list with the detailed spec blueprint requirements.
+  - [x] Require the spec to be based on active request, intake answers, repo intake, dirty worktree status, handoff/progress context, and durable docs.
+  - [x] Require `Not applicable` for irrelevant detailed spec sections.
+  - [x] Make Planning Phase derive tasks from detailed spec sections.
+  - [x] Make Health Check validate required spec sections.
+  - [x] Mirror root changes in template workflow docs and spec README.
+- Iteration plan:
+  - Iteration 1 - Build:
+    - Goal: Add the minimum detailed spec blueprint language to root/template workflow and spec memory docs.
+    - Changes made: Replaced the lightweight Spec Phase field list in `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md`; rewrote `_spec/README.md` and `templates/_spec/README.md` with the 22-section detailed spec blueprint.
+    - Verification command/result: `rg "Detailed Spec Required Sections|Metadata|Current State Analysis|Task Extraction Notes|Not applicable" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md _spec/README.md templates/_spec/README.md` passed; `rg "Build -> Refine -> Polish|complete-workflow|single-task|plan-only" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` passed; old lightweight-term search returned matches only in unrelated intake/task wording or as subfields of the larger spec structure.
+    - Review findings: Core requirements were present; old terms were not serving as the entire spec structure.
+    - Acceptance status: Complete for Build.
+    - Remaining issues: Needed mirror and health/planning wording confirmation.
+    - Next action: Run Refine checks.
+  - Iteration 2 - Refine:
+    - Goal: Fix mismatches between root/template files and strengthen planning/health-check wording.
+    - Changes made: No additional edits required after review; confirmed Planning Phase derives tasks from detailed spec sections and Health Check validates required sections.
+    - Verification command/result: `rg -n "Generate a detailed, implementation-aware execution blueprint|Generate a vertical implementation plan from the saved detailed spec|required detailed spec sections|detailed spec exists with all required sections" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` passed.
+    - Review findings: Planning and health-check references were explicit in both root and template workflow docs.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: Needed final mirror check.
+    - Next action: Run Polish checks.
+  - Iteration 3 - Polish:
+    - Goal: Confirm old lightweight field wording is not the whole spec structure and the 3-pass loop remains intact.
+    - Changes made: No additional edits required; confirmed root/template workflow docs and spec README files mirror each other.
+    - Verification command/result: `git diff --no-index -- RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` and `git diff --no-index -- _spec/README.md templates/_spec/README.md` returned no content differences, with line-ending warnings only.
+    - Review findings: No remaining TASK-001 issues; 3-pass hardening and execution modes remain intact.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: Continue to `TASK-002`.
+- Acceptance criteria:
+  - [x] `RUN_WORKFLOW.md` requires the expanded detailed spec before planning.
+  - [x] `templates/RUN_WORKFLOW.md` mirrors the same requirement.
+  - [x] `_spec/README.md` documents the new detailed spec structure.
+  - [x] `templates/_spec/README.md` mirrors it.
+  - [x] Planning Phase explicitly derives tasks from the detailed spec.
+  - [x] Health Check validates required spec sections.
+  - [x] Existing execution modes and 3-pass task hardening remain intact.
+- Acceptance result:
+  - [x] All criteria met.
+- Verification commands:
+  - `rg "Detailed Spec Required Sections|Metadata|Current State Analysis|Task Extraction Notes|Not applicable" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md _spec/README.md templates/_spec/README.md`
+  - `rg "Build -> Refine -> Polish|complete-workflow|single-task|plan-only" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md`
+  - `rg "Request summary|Goal|Non-goals|Functional requirements|Success criteria|Open questions" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md _spec/README.md templates/_spec/README.md`
+- Stop condition: stop if root/template workflow docs cannot be reconciled without changing unrelated workflow behavior.
+- Out-of-scope items: app code, deployment config, dependencies, historical artifact rewrites.
+
+### TASK-002: Add detailed spec prompts and quality review
+
+- Status: Done
+- Objective: Update reusable prompt docs and template prompt docs so agents can generate, review, use, and summarize the detailed spec blueprint.
+- Files likely affected:
+  - `docs/PROMPTS.md`
+  - `templates/docs/PROMPTS.md`
+  - `_task/2026-05-15-add-detailed-spec-blueprint.md`
+- Checklist:
+  - [x] Replace `Spec Generation` prompt with a detailed 22-section prompt.
+  - [x] Add `Spec Quality Review` prompt.
+  - [x] Update `Vertical Task Generation` to extract tasks from detailed spec sections.
+  - [x] Update `Final Summary` to report spec completeness or gaps.
+  - [x] Keep `docs/PROMPTS.md` and `templates/docs/PROMPTS.md` mirrored.
+- Iteration plan:
+  - Iteration 1 - Build:
+    - Goal: Add the requested prompt sections and detailed extraction guidance.
+    - Changes made: Replaced the `Spec Generation` prompt in `docs/PROMPTS.md` and `templates/docs/PROMPTS.md`; added `Spec Quality Review`; updated `Vertical Task Generation`; updated `Final Summary`.
+    - Verification command/result: `rg "## Spec Generation|## Spec Quality Review|## Vertical Task Generation|## Final Summary" docs/PROMPTS.md templates/docs/PROMPTS.md` passed.
+    - Review findings: Required prompt headings are present in root and template prompt docs.
+    - Acceptance status: Complete for Build.
+    - Remaining issues: Needed section-content and mirror verification.
+    - Next action: Run Refine checks.
+  - Iteration 2 - Refine:
+    - Goal: Tighten prompt wording so it references affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes.
+    - Changes made: No additional edits required after review; confirmed task generation and quality review name the requested detailed spec sections.
+    - Verification command/result: `rg "Affected Surfaces|Execution Strategy|Verification Strategy|Risks And Mitigations|Task Extraction Notes|spec complete|spec gaps|detailed spec" docs/PROMPTS.md templates/docs/PROMPTS.md` passed.
+    - Review findings: Vertical Task Generation now extracts from detailed spec sections; Final Summary reports whether the detailed spec was complete or had gaps.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: Needed final mirror check.
+    - Next action: Run Polish checks.
+  - Iteration 3 - Polish:
+    - Goal: Confirm prompt docs mirror each other and final summary includes spec completeness reporting.
+    - Changes made: No additional edits required.
+    - Verification command/result: `git diff --no-index -- docs/PROMPTS.md templates/docs/PROMPTS.md` returned no content differences, with line-ending warnings only.
+    - Review findings: Prompt docs are mirrored and satisfy the detailed spec prompt requirements.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: Continue to `TASK-003`.
+- Acceptance criteria:
+  - [x] `docs/PROMPTS.md` includes the updated Spec Generation prompt.
+  - [x] `templates/docs/PROMPTS.md` mirrors it.
+  - [x] Both prompt docs include a reusable Spec Quality Review prompt.
+  - [x] Vertical Task Generation explicitly derives tasks from detailed spec sections.
+  - [x] Final Summary reports whether the detailed spec was complete or had gaps.
+- Acceptance result:
+  - [x] All criteria met.
+- Verification commands:
+  - `rg "## Spec Generation|## Spec Quality Review|## Vertical Task Generation|## Final Summary" docs/PROMPTS.md templates/docs/PROMPTS.md`
+  - `rg "Affected Surfaces|Execution Strategy|Verification Strategy|Risks And Mitigations|Task Extraction Notes|spec complete|spec gaps" docs/PROMPTS.md templates/docs/PROMPTS.md`
+  - `git diff --no-index -- docs/PROMPTS.md templates/docs/PROMPTS.md`
+- Stop condition: stop if root and template prompt docs cannot remain mirrored.
+- Out-of-scope items: changing unrelated prompts except where needed to preserve the detailed spec workflow.
+
+### TASK-003: Update README and finalize workflow artifacts
+
+- Status: Done
+- Objective: Update public README workflow descriptions, verify the complete docs-only change, and create review, release, summary, progress, and handoff artifacts.
+- Files likely affected:
+  - `README.md`
+  - `_progress/progress.md`
+  - `_handoff/current.md`
+  - `_review/2026-05-15-add-detailed-spec-blueprint.md`
+  - `_release/2026-05-15-add-detailed-spec-blueprint.md`
+  - `_summary/2026-05-15-add-detailed-spec-blueprint.md`
+  - `_task/2026-05-15-add-detailed-spec-blueprint.md`
+- Checklist:
+  - [x] Describe the Spec Phase as a detailed execution blueprint in `README.md`.
+  - [x] Confirm old lightweight spec wording is no longer the entire spec structure.
+  - [x] Confirm Spec Phase, Spec Generation, Vertical Task Generation, and Health Check reference detailed spec behavior.
+  - [x] Run available verification commands.
+  - [x] Run final diff audit.
+  - [x] Update progress, handoff, review, release notes, and summary.
+- Iteration plan:
+  - Iteration 1 - Build:
+    - Goal: Update README to explain the detailed spec blueprint and task derivation.
+    - Changes made: Updated `README.md` pipeline, artifact descriptions, usage flow, Step 4, health checks, execution preferences, recommended loop, test prompts, zero-edit workflow, customization guidance, and design principles to describe the detailed execution blueprint and spec-derived task planning.
+    - Verification command/result: `rg "Spec Phase|Spec Generation|Vertical Task Generation|Health Check|detailed spec|execution blueprint" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md docs/PROMPTS.md templates/docs/PROMPTS.md _spec/README.md templates/_spec/README.md README.md` passed.
+    - Review findings: README now describes the detailed blueprint; a few prompt/workflow references still used generic saved-spec wording.
+    - Acceptance status: Partial during Build.
+    - Remaining issues: Tighten generic saved-spec wording where it mattered.
+    - Next action: Run Refine updates and searches.
+  - Iteration 2 - Refine:
+    - Goal: Run required searches and fix any missing detailed-spec references or old lightweight-only wording.
+    - Changes made: Updated prompt and workflow references from generic saved/best-effort spec language to detailed spec language where needed.
+    - Verification command/result: Required old lightweight-term search passed with remaining matches only in intake questions, iteration/task fields, or as subfields of the larger detailed spec structure. Detailed-spec and 3-pass preservation searches passed. Prompt mirror check passed with line-ending warnings only.
+    - Review findings: Spec Phase, Spec Generation, Vertical Task Generation, and Health Check now reference detailed spec behavior. Existing execution modes and 3-pass hardening remained intact.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: Needed final automated commands and diff audit.
+    - Next action: Run Polish verification.
+  - Iteration 3 - Polish:
+    - Goal: Run final tests/diff audit and complete workflow artifacts.
+    - Changes made: Ran final verification and created review, release notes, summary, progress, and handoff updates.
+    - Verification command/result: `npm test` passed; `npm run build` passed; `git diff --check` reported line-ending normalization warnings only; `git diff --stat` and `git diff` ran for final audit.
+    - Review findings: No app implementation files were changed; diff matches saved spec; no secrets or generated junk found.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: Final response.
+- Acceptance criteria:
+  - [x] `README.md` describes the spec phase as a detailed execution blueprint.
+  - [x] Existing 3-pass task hardening loop remains intact.
+  - [x] Existing execution modes remain intact.
+  - [x] No unrelated workflow behavior is removed.
+  - [x] Final workflow artifacts are updated for this run.
+- Acceptance result:
+  - [x] All criteria met.
+- Verification commands:
+  - `rg "Request summary|Goal|Non-goals|Functional requirements|Success criteria|Open questions" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md docs/PROMPTS.md templates/docs/PROMPTS.md _spec/README.md templates/_spec/README.md README.md`
+  - `rg "Spec Phase|Spec Generation|Vertical Task Generation|Health Check|detailed spec|execution blueprint" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md docs/PROMPTS.md templates/docs/PROMPTS.md _spec/README.md templates/_spec/README.md README.md`
+  - `rg "Build -> Refine -> Polish|Iteration 1|Iteration 2|Iteration 3" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md README.md docs/PROMPTS.md templates/docs/PROMPTS.md`
+  - `npm test`
+  - `git diff --stat`
+  - `git diff`
+- Stop condition: stop if verification finds missing required spec sections or unrelated app code changes that cannot be safely corrected.
+- Out-of-scope items: app implementation, deployment, dependencies, unrelated workflow features.

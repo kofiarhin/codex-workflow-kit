@@ -220,3 +220,54 @@ If verification fails during any iteration, record the failure recovery protocol
 - Review result: Reviewed. Final diff audit found no unrelated files, no scope creep, no generated junk, and no sensitive values.
 - Blockers: none.
 - Next step: Workflow complete; final response.
+
+### 2026-05-15 00:00 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `_spec/README.md`, `templates/_spec/README.md`, `_task/2026-05-15-add-detailed-spec-blueprint.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Planned files are workflow docs, templates, and workflow run artifacts only. Overlap risk was none.
+- Iteration evidence:
+  - Iteration 1 - Build: Added the detailed spec blueprint requirements to root/template workflow docs and spec memory docs. Verification for detailed section terms passed; execution mode and 3-pass loop search passed; old lightweight terms only remained as subfields or unrelated intake/task wording. Acceptance was complete for Build; next action was Refine.
+  - Iteration 2 - Refine: Confirmed Planning Phase derives tasks from detailed spec sections and Health Check validates required spec sections. Verification with targeted `rg -n` passed. Acceptance was complete for Refine; next action was Polish.
+  - Iteration 3 - Polish: Confirmed `RUN_WORKFLOW.md` mirrors `templates/RUN_WORKFLOW.md` and `_spec/README.md` mirrors `templates/_spec/README.md` with `git diff --no-index`; both returned no content differences, with line-ending warnings only. Final verdict: Done.
+- Acceptance result: all TASK-001 criteria checked `[x]`.
+- Verification result: Detailed spec section search passed; execution mode/3-pass preservation search passed; planning and health-check detailed-spec search passed; mirror checks passed with line-ending warnings only.
+- Failure recovery notes: none.
+- Review result: Reviewed. Scope stayed within workflow docs, spec memory docs, and active task artifact updates; no app implementation files were edited.
+- Blockers: none.
+- Next step: Continue automatically to `TASK-002: Add detailed spec prompts and quality review`.
+
+### 2026-05-15 00:00 - TASK-002
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`, `_task/2026-05-15-add-detailed-spec-blueprint.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Planned files are workflow docs, templates, and workflow run artifacts only. Overlap risk was none.
+- Iteration evidence:
+  - Iteration 1 - Build: Replaced the Spec Generation prompt with a detailed 22-section prompt, added Spec Quality Review, updated Vertical Task Generation, and updated Final Summary in root and template prompt docs. Verification for prompt headings passed. Acceptance was complete for Build; next action was Refine.
+  - Iteration 2 - Refine: Confirmed prompts reference affected surfaces, execution strategy, verification strategy, risks, task extraction notes, detailed spec completeness, and spec gaps. Targeted `rg` verification passed. Acceptance was complete for Refine; next action was Polish.
+  - Iteration 3 - Polish: Confirmed `docs/PROMPTS.md` and `templates/docs/PROMPTS.md` mirror each other with `git diff --no-index`, which returned no content differences with line-ending warnings only. Final verdict: Done.
+- Acceptance result: all TASK-002 criteria checked `[x]`.
+- Verification result: Prompt heading checks passed; detailed spec section/extraction search passed; prompt mirror check passed with line-ending warnings only.
+- Failure recovery notes: none.
+- Review result: Reviewed. Scope stayed within prompt docs and active task artifact updates; no app implementation files were edited.
+- Blockers: none.
+- Next step: Continue automatically to `TASK-003: Update README and finalize workflow artifacts`.
+
+### 2026-05-15 00:00 - TASK-003
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`, `_task/2026-05-15-add-detailed-spec-blueprint.md`, `_progress/progress.md`, `_handoff/current.md`, `_review/2026-05-15-add-detailed-spec-blueprint.md`, `_release/2026-05-15-add-detailed-spec-blueprint.md`, `_summary/2026-05-15-add-detailed-spec-blueprint.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Final planned scope remains workflow docs, templates, and workflow artifacts only.
+- Iteration evidence:
+  - Iteration 1 - Build: Updated README to describe the detailed execution blueprint and spec-derived task planning. Detailed-spec search passed. Review found a few generic saved-spec references in prompts/workflow docs. Acceptance was partial; next action was Refine.
+  - Iteration 2 - Refine: Tightened generic saved-spec wording where it mattered and reran required searches. Old lightweight-term search returned matches only as detailed-spec subfields or unrelated intake/task iteration wording; detailed-spec/Spec Phase/Spec Generation/Vertical Task Generation/Health Check search passed; 3-pass/execution-mode preservation search passed; prompt mirror check passed with line-ending warnings only. Acceptance was complete for Refine; next action was Polish.
+  - Iteration 3 - Polish: `npm test` passed; `npm run build` passed; `git diff --check` reported line-ending normalization warnings only; `git diff --stat` and `git diff` ran. Final workflow artifacts were created. Final verdict: Done.
+- Acceptance result: all TASK-003 criteria checked `[x]`.
+- Verification result: Required searches passed; `npm test` passed; `npm run build` passed; `git diff --check` had line-ending warnings only; `git diff --stat` and `git diff` ran for final audit.
+- Failure recovery notes: none.
+- Review result: Reviewed. No bugs, scope creep, app implementation edits, generated junk, or sensitive values found.
+- Blockers: none.
+- Next step: Workflow complete; final response.
