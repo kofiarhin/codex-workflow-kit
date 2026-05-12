@@ -8,13 +8,26 @@ This file is append-only task history. `_handoff/current.md` is the live resume 
 
 If `_handoff/current.md` conflicts with this file, trust this file for completed task history and update handoff accordingly.
 
+Every executable task must complete Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`. Record separate evidence for each iteration: goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
+
+If verification fails during any iteration, record the failure recovery protocol result inside that iteration.
+
 ## Entry Template
 
 ### `<YYYY-MM-DD HH:MM>` - `<TASK-ID>`
 
-- Status: `<Done / Blocked / Needs review>`
+- Status: `<Done / Blocked / Needs Human Review>`
+- Lifecycle transition reached: `<Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done, or terminal stop>`
 - Files changed: `<paths or none>`
+- Dirty worktree protection: `<initial status, planned files, overlap risk>`
+- Iteration evidence:
+  - Iteration 1 - Build: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 2 - Refine: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 3 - Polish: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, final verdict>`
+- Acceptance result: `<all criteria [x], or list unmet/partial criteria>`
 - Verification result: `<commands and result>`
+- Failure recovery notes: `<none, or failing command/error/classification/fix/rerun/final result>`
+- Review result: `<reviewed / issues found / not reviewed with reason>`
 - Blockers: `<none or details>`
 - Next step: `<next task, summary, or stop reason>`
 
@@ -155,4 +168,55 @@ If `_handoff/current.md` conflicts with this file, trust this file for completed
 - Failure recovery notes: none; verification passed.
 - Review result: Reviewed. Final diff audit found no unrelated files, no scope creep, no generated junk, and no sensitive values.
 - Blockers: none
+- Next step: Workflow complete; final response.
+
+### 2026-05-15 00:00 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `AGENTS.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `_task/2026-05-15-add-3-pass-task-hardening-loop.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Planned files are workflow docs, prompt docs, template docs, relevant workflow README files, and workflow artifacts for this request. Overlap risk was none.
+- Iteration evidence:
+  - Iteration 1 - Build: Added the smallest coherent Build -> Refine -> Polish requirement to core workflow docs. Verification `rg "Build -> Refine -> Polish|Iteration 1|Iteration 2|Iteration 3|iteration evidence|Iteration plan" AGENTS.md RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` passed; old single-pass phrase search returned no matches. Review found resume and stop-condition wording needed refinement. Acceptance was partial; next action was Refine.
+  - Iteration 2 - Refine: Added current-iteration resume language and clarified unresolved verification failure after recovery as the stop condition. Verification `rg "Build -> Refine -> Polish|Iteration 1|Iteration 2|Iteration 3|iteration evidence|Iteration plan|current iteration" AGENTS.md RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` passed; old single-pass phrase search returned no matches. Review found core docs aligned; next action was Polish.
+  - Iteration 3 - Polish: Confirmed no-regression wording and final task verdict. Verification `rg "Build -> Refine -> Polish|Iteration 1|Iteration 2|Iteration 3|iteration evidence|Iteration plan|current iteration|iteration-level failure recovery" AGENTS.md RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` passed; old single-pass phrase search returned no matches. Review found no remaining TASK-001 issues.
+- Acceptance result: all TASK-001 criteria checked `[x]`.
+- Verification result: Core workflow 3-pass term checks passed; old single-pass phrase checks returned no matches in `AGENTS.md`, `RUN_WORKFLOW.md`, and `templates/RUN_WORKFLOW.md`.
+- Failure recovery notes: none.
+- Review result: Reviewed. Scope stayed within core workflow docs and active task artifact updates; no app implementation files were edited.
+- Blockers: none.
+- Next step: Continue automatically to `TASK-002: Add 3-pass loop to prompts and workflow memory templates`.
+
+### 2026-05-15 00:00 - TASK-002
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`, `_task/README.md`, `templates/_task/README.md`, `_progress/progress.md`, `templates/_progress/progress.md`, `_handoff/current.md`, `templates/_handoff/current.md`, `_review/README.md`, `templates/_review/README.md`, `_summary/README.md`, `templates/_summary/README.md`, `_release/README.md`, `templates/_release/README.md`, `_task/2026-05-15-add-3-pass-task-hardening-loop.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Planned files are workflow docs, prompt docs, template docs, relevant workflow README files, and workflow artifacts for this request. Overlap risk was none.
+- Iteration evidence:
+  - Iteration 1 - Build: Added requested hardening-loop prompt sections and memory-template evidence fields. Verification for requested prompt headings passed; iteration evidence search passed, but old-phrase search found one remaining old `single-task` phrase in `templates/_task/README.md`. Acceptance was partial; next action was Refine.
+  - Iteration 2 - Refine: Updated the remaining old phrase and tightened progress entry status wording. Old-phrase search returned no matches; iteration evidence search passed across prompt docs and workflow memory readmes/templates. Acceptance appeared complete; next action was Polish.
+  - Iteration 3 - Polish: Confirmed `docs/PROMPTS.md` and `templates/docs/PROMPTS.md` are mirrored. `git diff --no-index -- docs/PROMPTS.md templates/docs/PROMPTS.md` returned no content differences; prompt heading search and iteration evidence search passed. Final verdict: Done.
+- Acceptance result: all TASK-002 criteria checked `[x]`.
+- Verification result: Prompt heading checks passed; prompt mirror check passed; iteration evidence coverage checks passed; old single-pass phrase checks returned no matches in the checked prompt/template files.
+- Failure recovery notes: none.
+- Review result: Reviewed. Scope stayed within prompt docs, workflow memory templates, and active workflow artifacts; no app implementation files were edited.
+- Blockers: none.
+- Next step: Continue automatically to `TASK-003: Update README and finalize workflow evidence`.
+
+### 2026-05-15 00:00 - TASK-003
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `README.md`, `_task/2026-05-15-add-3-pass-task-hardening-loop.md`, `_progress/progress.md`, `_handoff/current.md`, `_review/2026-05-15-add-3-pass-task-hardening-loop.md`, `_release/2026-05-15-add-3-pass-task-hardening-loop.md`, `_summary/2026-05-15-add-3-pass-task-hardening-loop.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Final status showed workflow docs/templates/artifacts only and no app implementation files under `client/` or `server/`.
+- Iteration evidence:
+  - Iteration 1 - Build: Updated README overview, usage, task planning, sequential execution, handoff/resume, execution preferences, recommended loop, zero-edit workflow, and design principles. Verification old single-pass language search returned no matches in the requested file set; 3-pass/iteration evidence search passed. Review found one single-task example still needed updated wording. Acceptance was partial; next action was Refine.
+  - Iteration 2 - Refine: Updated the single-task example and final response wording. Verification old single-pass language search returned no matches; 3-pass/iteration evidence search passed; `git status --short` showed no app implementation files. Acceptance appeared complete; next action was Polish.
+  - Iteration 3 - Polish: Ran final verification and created final workflow artifacts. `npm test` passed; `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran; `git status --short` showed docs/templates/artifacts only. Final verdict: Done.
+- Acceptance result: all TASK-003 criteria checked `[x]`.
+- Verification result: README/search verification passed; `npm test` passed; `git diff --check` passed with line-ending warnings only; `git diff --stat` and `git diff` ran for final audit.
+- Failure recovery notes: none.
+- Review result: Reviewed. Final diff audit found no unrelated files, no scope creep, no generated junk, and no sensitive values.
+- Blockers: none.
 - Next step: Workflow complete; final response.

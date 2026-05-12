@@ -4,11 +4,11 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Update the reusable workflow with final diff audit, dirty worktree protection, acceptance checklist results, failure recovery protocol, and release notes artifacts.
+Update this workflow kit to support a required 3-pass task hardening loop for every executable task.
 
 ## Request ID
 
-2026-05-13-add-workflow-quality-controls
+2026-05-15-add-3-pass-task-hardening-loop
 
 ## Current Phase
 
@@ -20,31 +20,35 @@ complete-workflow
 
 ## Current Spec File
 
-`_spec/2026-05-13-add-workflow-quality-controls.md`
+`_spec/2026-05-15-add-3-pass-task-hardening-loop.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-13-add-workflow-quality-controls.md`
+`_task/2026-05-15-add-3-pass-task-hardening-loop.md`
 
 ## Current Review File
 
-`_review/2026-05-13-add-workflow-quality-controls.md`
+`_review/2026-05-15-add-3-pass-task-hardening-loop.md`
 
 ## Current Release Notes File
 
-`_release/2026-05-13-add-workflow-quality-controls.md`
+`_release/2026-05-15-add-3-pass-task-hardening-loop.md`
 
 ## Current Summary File
 
-`_summary/2026-05-13-add-workflow-quality-controls.md`
+`_summary/2026-05-15-add-3-pass-task-hardening-loop.md`
 
 ## Last Completed Task
 
-`TASK-003: Finalize workflow artifacts and verify docs-only scope`
+`TASK-003: Update README and finalize workflow evidence`
 
 ## Current Task
 
 None. Workflow tasks are complete.
+
+## Current Iteration
+
+None. All executable tasks completed Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
 
 ## Next Task
 
@@ -52,11 +56,17 @@ None. Review and commit when ready.
 
 ## Dirty Worktree Status
 
-Initial `git status --short` before implementation returned no existing dirty files. Final status showed only workflow docs/templates/scripts and workflow artifacts changed. No app implementation files under `client/` or `server/` were modified.
+Initial `git status --short` before implementation returned no existing dirty files. Final status shows workflow docs/templates/artifacts only and no app implementation files under `client/` or `server/`.
 
 ## Acceptance Status
 
 TASK-001, TASK-002, and TASK-003 acceptance results are complete and all required criteria are checked `[x]`.
+
+## Iteration Evidence Status
+
+- TASK-001: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete.
+- TASK-002: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete.
+- TASK-003: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete.
 
 ## Blockers
 
@@ -64,7 +74,7 @@ None.
 
 ## Verification Status
 
-Passed. Root and template term checks passed; installer release copy check passed; `bash -n scripts/install.sh` passed; `git diff --check` passed with line-ending normalization warnings only; final diff audit ran with `git diff --stat` and `git diff`; changed-file audit showed no app implementation files modified.
+Passed. Required old single-pass language search returned no matches; required 3-pass/iteration evidence search passed; prompt mirror check passed; `npm test` passed; `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran; `git status --short` showed no app implementation files modified.
 
 ## Workflow Health Status
 
@@ -76,9 +86,9 @@ Passed.
 
 ## Notes For Continuation
 
-- Workflow completed for `2026-05-13-add-workflow-quality-controls`.
-- Review file: `_review/2026-05-13-add-workflow-quality-controls.md`.
-- Release notes file: `_release/2026-05-13-add-workflow-quality-controls.md`.
-- Summary file: `_summary/2026-05-13-add-workflow-quality-controls.md`.
+- Workflow completed for `2026-05-15-add-3-pass-task-hardening-loop`.
+- Review file: `_review/2026-05-15-add-3-pass-task-hardening-loop.md`.
+- Release notes file: `_release/2026-05-15-add-3-pass-task-hardening-loop.md`.
+- Summary file: `_summary/2026-05-15-add-3-pass-task-hardening-loop.md`.
 - Decisions: none.
-- Suggested commit message: `docs: add workflow quality-control gates`.
+- Suggested commit message: `docs: require three-pass task hardening loop`.

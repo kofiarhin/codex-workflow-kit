@@ -13,7 +13,7 @@ Default execution mode is `complete-workflow`: after the task plan is created, e
 Execution modes:
 
 - `plan-only`: ask questions, write spec, write task plan, then stop.
-- `single-task`: execute only the next ready task, verify and review it, update artifacts, then stop.
+- `single-task`: execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
 - `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
 Use `single-task` only when the user explicitly asks for controlled one-task execution.
@@ -25,11 +25,22 @@ Each task must include:
 - Objective.
 - Files likely affected.
 - Checklist.
+- Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
 - Acceptance criteria.
 - Acceptance result.
 - Verification commands.
 - Stop condition.
 - Out-of-scope items.
+
+Each iteration plan must include:
+
+- Goal.
+- Changes made.
+- Verification command/result.
+- Review findings.
+- Acceptance status.
+- Remaining issues.
+- Next action.
 
 ## Task Status Transitions
 
@@ -47,11 +58,12 @@ Allowed terminal states:
 
 Rules:
 
-- A task cannot be `Done` unless verification was attempted and the task was reviewed.
+- A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
 - A task cannot move to `Reviewed` unless verification was attempted.
 - If verification cannot run, the task can be `Needs Human Review`, not `Done`.
 - A task cannot be `Done` unless every required acceptance criterion is checked `[x]`.
 - If any acceptance result is `[ ]` or `[~]`, the task must be `Blocked` or `Needs Human Review`.
+- If required iteration evidence is missing, the task cannot be `Done` and workflow health must be `Partial` or `Failed`.
 
 Acceptance results use:
 
@@ -66,7 +78,7 @@ Copy or summarize acceptance results in `_progress/progress.md`.
 
 Tasks should be Ralph Wiggum-style: small, literal, sequential, and easy to verify.
 
-Continue to the next task automatically only when the current task is `Done`. Stop if a task is `Blocked`, `Needs Human Review`, fails verification, becomes risky or unclear, or requires external access.
+Continue to the next task automatically only when the current task is `Done` after Build -> Refine -> Polish. Stop if a task is `Blocked`, `Needs Human Review`, remains failed after iteration-level failure recovery, becomes risky or unclear, or requires external access.
 
 ## Dirty Worktree Protection
 

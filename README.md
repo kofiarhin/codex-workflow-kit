@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> dirty worktree check -> spec in _spec -> vertical plan/tasks in _task -> execute all tasks sequentially by default -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
+request -> questions -> dirty worktree check -> spec in _spec -> vertical plan/tasks in _task -> execute each task through Build -> Refine -> Polish -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -40,13 +40,12 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Save a detailed spec in `_spec/`.
 - Read `_progress/` and `_summary/` before planning.
 - Generate vertical tasks in `_task/`.
-- Execute one Ralph Wiggum-style task at a time, continuing through all generated tasks by default.
+- Execute one Ralph Wiggum-style task at a time through Build -> Refine -> Polish, continuing through all generated tasks by default.
 - Move each task through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 - Protect dirty worktrees by checking `git status --short`, documenting existing dirty files, planned files, and overlap risk before implementation.
 - Record explicit acceptance checklist results for every task.
 - Follow a fixed failure recovery protocol when verification fails.
-- Verify every task.
-- Critique and fix in-scope issues.
+- Verify, critique, and harden every task in three documented passes.
 - Append progress after each task.
 - Run a final diff audit with `git diff --stat` and `git diff` before review and summary.
 - Write a review in `_review/`.
@@ -130,7 +129,7 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, run dirty worktree protection, generate a spec, generate a vertical task plan, execute all tasks sequentially, verify and review each task, record acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, run dirty worktree protection, generate a spec, generate a vertical task plan, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
 
 Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is optional, not required.
 
@@ -162,7 +161,9 @@ _task/<date-or-slug>.md
 
 The spec captures the request, answers, assumptions, requirements, edge cases, constraints, success criteria, and out-of-scope work.
 
-The task plan breaks the spec into vertical slices. Each task includes objective, likely files, checklist, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
+The task plan breaks the spec into vertical slices. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
+
+Each task iteration records goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
 
 Tasks must use this status flow:
 
@@ -170,7 +171,7 @@ Tasks must use this status flow:
 Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
 ```
 
-Allowed terminal states are `Done`, `Blocked`, and `Needs Human Review`. A task cannot be `Done` unless verification was attempted, the result was reviewed, and every required acceptance criterion is checked `[x]`. If any acceptance result is `[ ]` or `[~]`, the task is `Blocked` or `Needs Human Review`.
+Allowed terminal states are `Done`, `Blocked`, and `Needs Human Review`. A task cannot be `Done` unless Build, Refine, and Polish are complete, verification was attempted and reviewed in each iteration, and every required acceptance criterion is checked `[x]`. If any acceptance result is `[ ]` or `[~]`, the task is `Blocked` or `Needs Human Review`.
 
 Acceptance results use:
 
@@ -192,9 +193,15 @@ _spec/<active-spec>.md
 _task/<active-task-plan>.md
 ```
 
-Default execution mode is `complete-workflow`, so the agent executes every generated task in order. For each task, the agent inspects relevant code, implements only the current task, verifies, reviews, fixes in-scope defects, appends progress, updates handoff, and continues automatically only when the current task is `Done`.
+Default execution mode is `complete-workflow`, so the agent executes every generated task in order. For each task, the agent inspects relevant code and runs the required hardening loop:
 
-If verification fails, the agent follows the failure recovery protocol: identify the failing command, capture the error, classify it as in-scope or unrelated, fix only in-scope failures, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery cannot prove the task. The workflow stops if a task is `Blocked`, `Needs Human Review`, fails verification, becomes risky or unclear, or requires external access.
+1. Build the smallest working vertical slice, verify, review, and record gaps.
+2. Refine correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency, then verify and review again.
+3. Polish remaining rough edges, confirm no regressions, run final verification, and produce the final task verdict.
+
+Progress records each iteration separately, handoff records the current task and current iteration, and the agent continues automatically only when the current task is `Done`.
+
+If verification fails during any iteration, the agent follows the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify it as in-scope or unrelated, fix only in-scope failures, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery cannot prove the task. The workflow stops if a task is `Blocked`, `Needs Human Review`, remains failed after recovery, becomes risky or unclear, or requires external access.
 
 ### Step 6: Write Review, Summary, And Health Check
 
@@ -223,12 +230,12 @@ _summary/<date-or-slug>.md
 
 The review file records request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, final diff audit, failure recovery notes, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
 
-The release notes file records request, user-facing changes, developer changes, new routes/APIs, new env vars, database/schema changes, dependencies added/removed, test commands run, known limitations, follow-up work, and suggested commit message. If none apply, the file says `none` or states that there are no user-facing changes.
+The release notes file records request, user-facing changes, developer changes, iteration evidence summary, new routes/APIs, new env vars, database/schema changes, dependencies added/removed, test commands run, known limitations, follow-up work, and suggested commit message. If none apply, the file says `none` or states that there are no user-facing changes.
 
 The final health check reports `Passed`, `Partial`, or `Failed`.
 
-- `Passed`: all executable tasks completed and required artifacts exist.
-- `Partial`: some tasks remain because of a documented blocker, human-review need, verification gap, or follow-up risk.
+- `Passed`: all executable tasks completed, required iteration evidence exists, and required artifacts exist.
+- `Partial`: some tasks remain because of a documented blocker, human-review need, verification gap, missing iteration evidence, or follow-up risk.
 - `Failed`: required artifacts are missing or scope was violated.
 
 Health checks confirm:
@@ -237,16 +244,17 @@ Health checks confirm:
 - Spec, task plan, progress, review, release notes, and summary artifacts exist.
 - Dirty worktree protection ran.
 - Acceptance results were completed.
+- Iteration evidence was completed for every executable task.
 - Final diff audit was completed or documented.
 - Verification commands ran or were documented.
 - Scope was respected.
 - Decisions were recorded when needed.
 
-If release notes, final diff audit, dirty worktree check, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
+If release notes, final diff audit, dirty worktree check, iteration evidence, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
 
 ## Final Artifact Checklist
 
-Every final response must include exact artifact paths:
+Every final response must include an iteration evidence summary and exact artifact paths:
 
 ```txt
 Work request: WORK_REQUEST.md
@@ -270,7 +278,7 @@ Each decision file should include date, decision, context, options considered, s
 
 ## Handoff / Resume
 
-`_handoff/current.md` stores the live workflow state for the active request. It should name the current request, request ID, phase, active spec, task plan, review and summary files, last completed task, current task, next task, blockers, verification status, workflow health status, suggested next prompt, and notes for continuation.
+`_handoff/current.md` stores the live workflow state for the active request. It should name the current request, request ID, phase, active spec, task plan, review and summary files, last completed task, current task, current iteration, next task, blockers, iteration evidence status, verification status, workflow health status, suggested next prompt, and notes for continuation.
 
 Use this prompt to resume interrupted work:
 
@@ -278,7 +286,7 @@ Use this prompt to resume interrupted work:
 continue workflow
 ```
 
-The agent starts from `_handoff/current.md`, then checks `_progress/progress.md` for completed task history. If handoff and progress disagree, progress is trusted for completed task history and the handoff is updated.
+The agent starts from `_handoff/current.md`, then checks `_progress/progress.md` for completed task and iteration history. If handoff and progress disagree, progress is trusted for completed task history and the handoff is updated.
 
 The handoff is updated after each task and after the summary. `_progress/progress.md` is append-only task history, `_handoff/current.md` is current live state, and `_summary/` is completed workflow history.
 
@@ -290,7 +298,7 @@ Use this prompt to resume an interrupted workflow:
 continue workflow
 ```
 
-The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task that is not `Done`, and continue executing remaining tasks sequentially until every task is complete or a stop condition is reached. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
+The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task and current iteration that is not `Done`, and continue executing remaining tasks sequentially until every task is complete or a stop condition is reached. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
 
 ## Question Control
 
@@ -310,8 +318,8 @@ When questions are skipped, the agent must generate a best-effort spec and recor
 Direct prompts and `WORK_REQUEST.md` can include an optional execution preference:
 
 - `plan-only`: Ask questions, write spec, write task plan, then stop.
-- `single-task`: Ask questions, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
-- `complete-workflow`: Ask questions, write spec, write task plan, execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
+- `single-task`: Ask questions, write spec, write task plan, execute only the next ready task through the full Build -> Refine -> Polish loop, update artifacts, then stop.
+- `complete-workflow`: Ask questions, write spec, write task plan, execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each task completes Build -> Refine -> Polish before the next starts.
 
 Default: `complete-workflow`.
 
@@ -325,10 +333,10 @@ Default: `complete-workflow`.
 4. Generate a saved spec in `_spec/`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Read or create `_handoff/current.md`.
-7. Generate vertical tasks in `_task/` with acceptance result fields.
+7. Generate vertical tasks in `_task/` with acceptance result fields and per-iteration fields.
 8. Execute every task sequentially by default.
-9. Verify and review each task, using the failure recovery protocol for failed verification.
-10. Append progress to `_progress/progress.md` and update `_handoff/current.md`.
+9. Run each executable task through Build -> Refine -> Polish, using the failure recovery protocol inside the iteration where verification fails.
+10. Append iteration evidence to `_progress/progress.md` and update `_handoff/current.md`.
 11. Continue to the next task automatically only when the current task is `Done`.
 12. Run the final diff audit.
 13. Write the workflow review in `_review/` after all executable tasks complete or a stop condition is reached.
@@ -399,7 +407,7 @@ Prompt that forces single-task mode:
 Execution preference: single-task.
 Add dark theme to the app.
 Follow RUN_WORKFLOW.md.
-Stop after the next ready task is verified, reviewed, and documented.
+Stop after the next ready task completes Build -> Refine -> Polish, has iteration evidence recorded, and is documented.
 ```
 
 Resume prompt:
@@ -419,7 +427,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> dirty worktree check -> _spec -> _task -> all task execution -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
+direct prompt -> questions -> dirty worktree check -> _spec -> _task -> all task execution through Build -> Refine -> Polish -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, success criteria, or detailed acceptance criteria.
@@ -518,6 +526,7 @@ These examples show the expected level of detail. They are not application code.
 - Detailed spec before implementation.
 - Vertical tasks over vague layers.
 - Ralph Wiggum-style steps over broad autonomy.
+- Build -> Refine -> Polish before `Done`.
 - Complete workflow execution by default.
 - Verification over assumptions.
 - Dirty worktree protection before edits.

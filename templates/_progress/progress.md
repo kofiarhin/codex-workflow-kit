@@ -26,7 +26,9 @@ If verification cannot run, record the task as `Needs Human Review`, not `Done`.
 
 Every task must record explicit acceptance results. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; any `[ ]` or `[~]` result means the task is `Blocked` or `Needs Human Review`.
 
-If verification fails, record the failure recovery protocol result: failing command, captured error, in-scope/unrelated classification, targeted fix attempt, exact rerun result, and final task status.
+Every executable task must complete Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`. Record separate evidence for each iteration: goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
+
+If verification fails during any iteration, record the failure recovery protocol result inside that iteration: failing command, captured error, in-scope/unrelated classification, targeted fix attempt, exact rerun result, and final task status.
 
 Dirty worktree protection must be documented before implementation: existing dirty files, files planned for the workflow, and overlap risk.
 
@@ -35,8 +37,8 @@ Dirty worktree protection must be documented before implementation: existing dir
 Default execution mode is `complete-workflow`.
 
 - `plan-only`: ask questions, write spec, write task plan, then stop.
-- `single-task`: execute only the next ready task, verify and review it, update artifacts, then stop.
-- `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
+- `single-task`: execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
+- `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each executable task must complete the full 3-pass hardening loop before the next task starts.
 
 Do not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
 
@@ -48,6 +50,10 @@ Do not stop after `TASK-001` unless execution mode is explicitly `single-task` o
 - Lifecycle transition reached: `<Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done, or terminal stop>`
 - Files changed: `<paths or none>`
 - Dirty worktree protection: `<initial status, planned files, overlap risk>`
+- Iteration evidence:
+  - Iteration 1 - Build: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 2 - Refine: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 3 - Polish: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, final verdict>`
 - Acceptance result: `<all criteria [x], or list unmet/partial criteria>`
 - Verification result: `<commands and result, or why verification could not run>`
 - Failure recovery notes: `<none, or failing command/error/classification/fix/rerun/final result>`

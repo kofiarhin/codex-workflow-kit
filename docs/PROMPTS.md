@@ -9,7 +9,7 @@ Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
 
 Follow AGENTS.md.
 Ask clarifying questions until about 90% understanding before touching code unless the request says "skip questions".
-Generate a saved spec in _spec/, generate a vertical task plan in _task/, execute one Ralph Wiggum-style task at a time, verify, critique/fix, update _progress/progress.md, write a final summary in _summary/, then provide a final response and suggested commit message.
+Generate a saved spec in _spec/, generate a vertical task plan in _task/ with an Iteration plan, execute one Ralph Wiggum-style task at a time through Build -> Refine -> Polish, record iteration evidence in _progress/progress.md, write a final summary in _summary/, then provide a final response and suggested commit message.
 ```
 
 ## Direct Request With Questions
@@ -35,7 +35,7 @@ Follow RUN_WORKFLOW.md.
 Generate a best-effort spec in _spec/ and clearly list assumptions.
 Generate a vertical task plan in _task/.
 Before implementation, read _progress/progress.md and the latest relevant _summary/ entry.
-Then execute tasks one at a time only if safe.
+Then execute tasks one at a time through the full Build -> Refine -> Polish hardening loop only if safe.
 ```
 
 ## Intake Questions
@@ -145,10 +145,21 @@ Each task must include:
 - Objective
 - Files likely affected
 - Checklist
+- Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish
 - Acceptance criteria
+- Acceptance result
 - Verification commands
 - Stop condition
 - Out-of-scope items
+
+Each iteration plan must include:
+- Goal
+- Changes made
+- Verification command/result
+- Review findings
+- Acceptance status
+- Remaining issues
+- Next action
 
 Tasks must be vertical slices, not vague layers.
 Use Ralph Wiggum-style task phrasing: small, literal, concrete, sequential.
@@ -156,12 +167,108 @@ Use Ralph Wiggum-style task phrasing: small, literal, concrete, sequential.
 Do not implement code.
 ```
 
+## 3-Pass Task Hardening Loop
+
+```txt
+Follow AGENTS.md and RUN_WORKFLOW.md.
+
+Run the active executable task through the required 3-pass hardening loop:
+
+1. Iteration 1 - Build: implement the smallest working vertical slice, run verification, review against acceptance criteria, and record issues, gaps, failed checks, and the next refinement target.
+2. Iteration 2 - Refine: fix issues found in Build, improve correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency, run verification again, review again, and record what improved and what remains.
+3. Iteration 3 - Polish: perform final cleanup and hardening, remove rough edges, tighten tests/docs/types/error handling where relevant, confirm no regressions, run final verification, and produce the final task verdict.
+
+For each iteration, record:
+- Goal
+- Changes made
+- Verification command/result
+- Review findings
+- Acceptance status
+- Remaining issues
+- Next action
+
+Do not mark the task Done until all three iterations are complete and all required acceptance criteria are checked [x], unless a documented stop condition forces Blocked or Needs Human Review.
+```
+
+## Iteration 1 Build Pass
+
+```txt
+Run Iteration 1 - Build for the active task.
+
+Goal:
+Implement the smallest working vertical slice that satisfies the core task intent.
+
+Required evidence:
+- Changes made
+- Verification command/result
+- Review findings against acceptance criteria
+- Acceptance status
+- Issues, gaps, or failed checks
+- Next refinement target
+
+If verification fails, run the failure recovery protocol inside this iteration and document the result.
+```
+
+## Iteration 2 Refine Pass
+
+```txt
+Run Iteration 2 - Refine for the active task.
+
+Goal:
+Fix issues found in Iteration 1 and improve correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency.
+
+Required evidence:
+- Changes made
+- Verification command/result
+- Review findings
+- Acceptance status
+- What improved
+- What remains
+- Next action for Polish
+
+If verification fails, run the failure recovery protocol inside this iteration and document the result.
+```
+
+## Iteration 3 Polish Pass
+
+```txt
+Run Iteration 3 - Polish for the active task.
+
+Goal:
+Complete final cleanup and hardening, remove rough edges, tighten tests/docs/types/error handling where relevant, confirm no regressions, and produce the final task verdict.
+
+Required evidence:
+- Changes made
+- Final verification command/result
+- Final review findings
+- Final acceptance status
+- Remaining issues, or none
+- Final task verdict
+
+Do not mark the task Done unless all required acceptance criteria are checked [x].
+```
+
+## Iteration Evidence Review
+
+```txt
+Review iteration evidence for the active task.
+
+Confirm:
+1. Iteration 1 Build has goal, changes, verification, review findings, acceptance status, remaining issues, and next action.
+2. Iteration 2 Refine has goal, changes, verification, review findings, acceptance status, remaining issues, and next action.
+3. Iteration 3 Polish has goal, changes, verification, review findings, acceptance status, remaining issues, and final verdict.
+4. Failure recovery, if used, is documented inside the iteration where verification failed.
+5. Final acceptance criteria are all checked [x], or the task is Blocked/Needs Human Review.
+
+Report missing evidence before the task is marked Done.
+```
+
 ## Single-Task Execution
 
 ```txt
 Follow AGENTS.md and RUN_WORKFLOW.md.
 
-Execute exactly one task:
+Execute exactly one task through the full 3-pass hardening loop:
 <TASK-ID> - <TASK_TITLE>
 
 Before editing:
@@ -173,10 +280,11 @@ Before editing:
 - Inspect only relevant files.
 
 After editing:
-- Run or recommend verification commands.
-- Critique the result.
+- Complete Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+- Run or recommend verification commands in each iteration.
+- Critique the result in each iteration.
 - Fix only in-scope defects.
-- Append to _progress/progress.md with task ID, status, files changed, verification result, blockers, and next step.
+- Append to _progress/progress.md with task ID, status, files changed, iteration evidence, verification result, blockers, and next step.
 - Create or append the relevant _summary/ entry if the workflow stops here.
 - Check git status again.
 
@@ -192,17 +300,18 @@ For each checklist item:
 1. Say what file or behavior you are checking.
 2. Make only the change needed for the current item.
 3. Stop if the next action would expand scope.
-4. Verify the task acceptance criteria.
-5. Update _progress/progress.md before moving on.
+4. Verify the task acceptance criteria inside the current iteration.
+5. Record iteration evidence before moving on.
+6. Update _progress/progress.md before moving on.
 
 No bundled refactors.
-No second task until this task is verified, critiqued, and logged.
+No second task until this task completes Build -> Refine -> Polish and the iteration evidence is logged.
 ```
 
 ## Critique Loop
 
 ```txt
-Review the active task result as a senior engineer.
+Review the active task result and iteration evidence as a senior engineer.
 
 Use the saved _spec/ file, saved _task/ plan, _progress/progress.md, and the current diff.
 
@@ -214,6 +323,7 @@ Prioritize:
 5. Test gaps.
 6. Scope creep.
 7. Unnecessary complexity.
+8. Missing Build, Refine, or Polish evidence.
 
 Return findings with file and line references where possible.
 Fix only defects inside the current task scope.
@@ -224,7 +334,7 @@ Fix only defects inside the current task scope.
 ```txt
 Follow AGENTS.md.
 
-The verification for the active task failed:
+The verification for the active task failed during this iteration:
 <COMMAND>
 
 Failure summary:
@@ -236,7 +346,7 @@ Do not refactor unrelated code.
 After the fix:
 - Re-run the failing command if possible.
 - Run directly related tests.
-- Append the result to _progress/progress.md.
+- Append the result to the current iteration evidence and _progress/progress.md.
 - Update the final _summary/ entry if the workflow is complete.
 - Summarize the root cause and fix.
 ```
@@ -251,11 +361,12 @@ Include:
 2. Spec file used.
 3. Task plan used.
 4. Tasks completed.
-5. Files changed.
-6. Verification commands and results.
-7. Unresolved issues or blockers.
-8. Recommended next work.
-9. Suggested commit message.
+5. Iteration evidence summary.
+6. Files changed.
+7. Verification commands and results.
+8. Unresolved issues or blockers.
+9. Recommended next work.
+10. Suggested commit message.
 
 Do not claim a commit was made unless one was actually created.
 ```
