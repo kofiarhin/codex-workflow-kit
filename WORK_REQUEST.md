@@ -8,80 +8,108 @@ The workflow will ask clarifying questions, generate a saved detailed spec in `_
 
 ## Request
 
-Fix the failed detailed-spec workflow update.
+Update codex-workflow-kit to support parallel multi-agent execution.
 
-Upgrade the Spec Phase into a detailed implementation-aware execution blueprint. The previous update did not fully replace lightweight spec guidance; remaining workflow docs still treat specs as short briefs in some places.
+Goal: add an orchestrator + worker-agent workflow where tasks can be claimed and executed in parallel when safe.
 
-## Required Files To Read
+Current behavior:
 
-- `AGENTS.md`
+- `complete-workflow` executes all tasks sequentially.
+- `single-task` executes one task.
+- Every task runs Build -> Refine -> Polish.
+
+New behavior:
+
+- Keep existing sequential behavior as fallback.
+- Add parallel execution support with default worker agents: 3, minimum parallel workers: 2 when 2+ parallel-safe tasks exist, maximum worker agents: 5, and fallback to 1 worker only when dependency/file-lock safety requires it.
+
+## Requested Files
+
 - `RUN_WORKFLOW.md`
+- `templates/RUN_WORKFLOW.md`
 - `README.md`
 - `docs/PROMPTS.md`
-- `templates/RUN_WORKFLOW.md`
 - `templates/docs/PROMPTS.md`
-- `_spec/README.md`
-- `templates/_spec/README.md`
 - `_task/README.md`
 - `templates/_task/README.md`
-- `_progress/progress.md`
 - `_handoff/current.md`
+- `templates/_handoff/current.md`
+- `_progress/progress.md`
+- `templates/_progress/progress.md`
 
-## Requested Changes
+Add new parallel templates if useful:
 
-- `RUN_WORKFLOW.md`: require the detailed spec phase, require saving it before task planning, require task planning to derive from it, require health check validation of all detailed spec sections, and preserve the 3-pass Build -> Refine -> Polish loop.
-- `templates/RUN_WORKFLOW.md`: mirror `RUN_WORKFLOW.md`.
-- `_spec/README.md`: replace the lightweight spec template with the exact detailed spec template from the user request.
-- `templates/_spec/README.md`: mirror `_spec/README.md`.
-- `docs/PROMPTS.md`: replace old Spec Generation, add Spec Quality Review, update Vertical Task Generation to extract tasks from the detailed spec, and update Final Summary to report spec completeness/gaps.
-- `templates/docs/PROMPTS.md`: mirror `docs/PROMPTS.md`.
-- `README.md`: describe the spec phase as a detailed execution blueprint and make clear planning happens after, and is derived from, that detailed spec.
-- Relevant workflow documentation, templates, prompts, and workflow artifacts may be updated as needed to remove remaining lightweight spec guidance.
+- `_parallel/README.md`
+- `_parallel/claims.md`
+- `_parallel/locks.md`
+- `_parallel/agent-status.md`
+- `templates/_parallel/README.md`
+- `templates/_parallel/claims.md`
+- `templates/_parallel/locks.md`
+- `templates/_parallel/agent-status.md`
 
-## Detailed Spec Rules
+## Required Workflow Model
 
-- Use the exact 22-section detailed spec structure from the user request.
-- Use `Not applicable` for irrelevant sections. Do not delete required sections.
-- The detailed spec must be saved before task planning.
-- The task plan must cite or reference the detailed spec sections it was derived from.
-- Health check must be `Partial` or `Failed` if the detailed spec is missing required sections.
-- Final response must mention the detailed spec file used and whether the spec had gaps.
+1. Orchestrator Phase
+   - Intake, detailed spec, and task plan remain orchestrator-owned.
+   - Orchestrator ranks tasks by priority.
+   - Orchestrator marks tasks as parallel-safe or not.
+   - Orchestrator detects dependencies and file overlap.
+   - Orchestrator creates/updates task queue, claims file, locks file, and handoff.
+2. Task Metadata
+   - Every task must include Priority, Parallel safe, Depends on, Blocks, File locks, Claim status, Claimed by, Agent role, and Merge risk.
+3. Agent Pool Rules
+   - Recommended/default worker count is 3.
+   - Spawn/use at least 2 workers when there are 2+ parallel-safe unblocked tasks.
+   - Never use more than 5 workers.
+   - Use fewer workers when tasks conflict, share files, or depend on each other.
+   - Use 1 worker only when parallel safety fails.
+   - A worker can claim exactly one task at a time.
+   - No two workers may claim tasks with overlapping file locks.
+   - P0 tasks are claimed before P1, P1 before P2.
+   - Among same-priority tasks, pick the task with lowest dependency risk and lowest merge risk first.
+4. Worker Agent Rules
+   - Each worker reads AGENTS.md, RUN_WORKFLOW.md, the saved spec, task plan, `_parallel/claims.md`, `_parallel/locks.md`, `_progress/progress.md`, and `_handoff/current.md`.
+   - Each worker claims one unclaimed high-priority parallel-safe task, records the claim before editing, runs Build -> Refine -> Polish, updates progress, marks final status, releases locks only after final status is recorded, and stops after one task.
+   - Workers do not run final global review/release/summary unless acting as orchestrator.
+5. Locking Rules
+   - File locks must be declared before editing.
+   - If a task needs a locked file owned by another agent, the worker must stop or choose another task.
+   - If unexpected file overlap appears, worker stops and marks needs-review.
+   - Locks are released only after worker records final task status.
+6. Orchestrator Merge/Review Phase
+   - After workers finish, the orchestrator reads all task outputs, checks claims and locks, runs final diff audit, resolves conflicts or creates follow-up tasks, runs final verification, writes review/release/summary/handoff/health check.
+   - Health check must fail/partial if claims, locks, iteration evidence, or merge review are missing.
+7. Execution Modes
+   - Preserve `plan-only`, `single-task`, and `complete-workflow`.
+   - Add `parallel-workflow`, `parallel-worker`, and `parallel-orchestrator`.
+8. Prompts
+   - Add reusable prompts for Parallel Orchestrator Planning, Parallel Worker Claim Task, Parallel Worker Execute Claimed Task, Parallel Lock Conflict Review, Parallel Merge Review, and Parallel Health Check.
+9. Health Check
+   - Validate task priorities, parallel-safe flags, dependencies, file locks, claims, no overlapping active file locks, Build -> Refine -> Polish evidence, orchestrator merge review, and final verification.
 
-## Preserve
+## Acceptance Criteria
 
-- Existing execution modes: `plan-only`, `single-task`, and `complete-workflow`.
-- Dirty worktree protection.
-- Acceptance tracking.
-- Failure recovery.
-- Handoff.
-- Progress.
-- Review.
-- Release notes.
-- Summary.
-- Final health check.
-- Existing 3-pass Build -> Refine -> Polish task hardening loop.
+- Existing sequential `complete-workflow` still works.
+- New `parallel-workflow` mode is documented.
+- New `parallel-worker` mode is documented.
+- New `parallel-orchestrator` mode is documented.
+- Task template includes priority, parallel safety, dependencies, locks, claim status, claimed by, and merge risk.
+- README explains default 3 workers, minimum 2, maximum 5, fallback 1.
+- Prompts include copy-paste-ready parallel orchestrator and worker prompts.
+- Installer templates include any new `_parallel` files.
+- No app/runtime code is changed.
 
 ## Verification
 
-Run these searches and ensure the results are updated correctly:
-
-```bash
-grep -R "Request summary" .
-grep -R "Spec Phase" .
-grep -R "Spec Generation" .
-grep -R "Vertical Task Generation" .
-grep -R "Health Check" .
-grep -R "detailed spec" .
-```
-
-Then run available formatting/lint/test commands if present.
-
-Finally run:
-
-```bash
-git diff --stat
-git diff
-```
+- `rg "complete-workflow"` confirms sequential behavior remains intact.
+- `rg "parallel-workflow"` confirms new mode is documented.
+- `rg "parallel-worker"` confirms worker mode is documented.
+- `rg "default worker"` confirms default is 3.
+- `rg "maximum"` confirms max workers is 5.
+- `rg "file locks"` confirms lock rules exist.
+- Run available lint/format checks if present.
+- Run `git diff --stat` and `git diff`.
 
 ## Execution Preference
 
@@ -91,4 +119,4 @@ git diff
 
 - Do not change app/runtime code.
 - Do not commit changes.
-- Only update workflow documentation, templates, prompts, and relevant workflow artifacts.
+- Only update workflow documentation, templates, prompts, installer support for templates, and relevant workflow artifacts.

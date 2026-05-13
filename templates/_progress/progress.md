@@ -39,6 +39,9 @@ Default execution mode is `complete-workflow`.
 - `plan-only`: ask questions, write spec, write task plan, then stop.
 - `single-task`: execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
 - `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each executable task must complete the full 3-pass hardening loop before the next task starts.
+- `parallel-workflow`: orchestrator plans tasks, creates queue/claims/locks, assigns safe tasks to worker agents, then performs merge review and final artifacts.
+- `parallel-worker`: worker claims and executes exactly one eligible parallel-safe task, records final status, releases locks, and stops.
+- `parallel-orchestrator`: orchestrator validates queue/claims/locks, reviews worker outputs, runs final verification, and completes final artifacts.
 
 Do not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
 
@@ -50,6 +53,10 @@ Do not stop after `TASK-001` unless execution mode is explicitly `single-task` o
 - Lifecycle transition reached: `<Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done, or terminal stop>`
 - Files changed: `<paths or none>`
 - Dirty worktree protection: `<initial status, planned files, overlap risk>`
+- Parallel metadata: `Priority=<P0/P1/P2>; Parallel safe=<yes/no>; Depends on=<task ids or none>; Blocks=<task ids or none>; File locks=<paths>; Claim status=<unclaimed/claimed/in-progress/done/blocked/needs-review>; Claimed by=<agent>; Agent role=<role>; Merge risk=<low/medium/high>`
+- Parallel claim/lock status: `<claim recorded, active locks, released locks, unexpected overlap, or not applicable for sequential mode>`
+- Worker status: `<orchestrator/worker id, one claimed task, current iteration, final status, or not applicable>`
+- Merge review status: `<pending/passed/needs-review/failed/not applicable>`
 - Iteration evidence:
   - Iteration 1 - Build: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
   - Iteration 2 - Refine: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`

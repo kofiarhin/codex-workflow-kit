@@ -1,0 +1,259 @@
+# Task Plan: Add Parallel Multi-Agent Workflow
+
+- Spec file used: `_spec/2026-05-15-add-parallel-multi-agent-workflow.md`
+- Planning date: 2026-05-15
+- Progress and summary files read: `_progress/progress.md`, `_summary/2026-05-15-fix-detailed-spec-workflow-update.md`
+- Handoff read: `_handoff/current.md`
+- Detailed spec sections used: Current State Analysis, Desired End State, Scope, Functional Requirements, Affected Surfaces, Dependency And Integration Map, Data And State Impact, UX/API/Workflow Expectations, Execution Strategy, Verification Strategy, Acceptance Criteria, Edge Cases And Failure Modes, Risks And Mitigations, Assumptions, Open Questions, Task Extraction Notes.
+
+## Task Queue
+
+### TASK-001: Add canonical parallel workflow model and templates
+
+- Status: Done
+- Priority: P0
+- Parallel safe: no
+- Depends on: saved spec and task plan
+- Blocks: TASK-002, TASK-003, TASK-004
+- File locks: `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `_parallel/README.md`, `_parallel/claims.md`, `_parallel/locks.md`, `_parallel/agent-status.md`, `templates/_parallel/README.md`, `templates/_parallel/claims.md`, `templates/_parallel/locks.md`, `templates/_parallel/agent-status.md`
+- Claim status: done
+- Claimed by: orchestrator
+- Agent role: orchestrator
+- Merge risk: medium
+- Objective: Add canonical orchestrator/worker parallel execution rules and create root/template `_parallel` memory files.
+- Detailed spec sections used or referenced: 6, 9, 11, 12, 14, 15, 17, 18, 19, 22.
+- Files likely affected: `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `_parallel/*`, `templates/_parallel/*`.
+- Checklist:
+  - [ ] Preserve existing `complete-workflow` sequential fallback wording.
+  - [ ] Add `parallel-workflow`, `parallel-worker`, and `parallel-orchestrator`.
+  - [ ] Add orchestrator, worker, pool, locking, merge/review, and health rules.
+  - [ ] Add root and template `_parallel` files.
+- Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish:
+  - Iteration 1 - Build:
+    - Goal: Add the first complete parallel model and template files.
+    - Changes made: Added parallel execution modes, orchestrator/worker phases, locking and merge-review rules to root/template workflow docs; added root/template `_parallel` files.
+    - Verification command/result: `rg "complete-workflow|parallel-workflow|parallel-worker|parallel-orchestrator|default worker|file locks" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md _parallel templates/_parallel` passed; root/template `_parallel` mirror checks returned no content differences with line-ending warnings only.
+    - Review findings: Build pass covered required model; worker-count wording needed exact default/minimum/maximum/fallback terms.
+    - Acceptance status: Partial during Build.
+    - Remaining issues: Exact worker-count terms needed refinement.
+    - Next action: Refine worker-count wording.
+  - Iteration 2 - Refine:
+    - Goal: Tighten fallback, worker-count, lock, and merge-review wording.
+    - Changes made: Reworded canonical worker pool rules to say `Default worker agents: 3`, `Minimum parallel workers`, `Maximum worker agents: 5`, and `Fallback worker count`.
+    - Verification command/result: Targeted `rg` check passed for exact worker-count and parallel mode terms.
+    - Review findings: Root and template workflow docs remain aligned; sequential fallback remains explicit.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: None identified.
+    - Next action: Polish with mirror and file-existence checks.
+  - Iteration 3 - Polish:
+    - Goal: Confirm root/template consistency and no missing required terms.
+    - Changes made: Confirmed root/template workflow docs and root/template `_parallel` files match.
+    - Verification command/result: `git diff --no-index -- RUN_WORKFLOW.md templates/RUN_WORKFLOW.md` returned no content differences with line-ending warnings only; `Get-ChildItem _parallel,templates/_parallel -File` confirmed all 8 files exist.
+    - Review findings: No remaining TASK-001 issues.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: TASK-002.
+- Acceptance criteria:
+  - [ ] Sequential `complete-workflow` fallback remains documented.
+  - [ ] New parallel execution modes are documented in root and template workflow docs.
+  - [ ] Worker count rules and file lock rules are documented.
+  - [ ] `_parallel` root/template files exist.
+- Acceptance result:
+  - [x] Sequential `complete-workflow` fallback remains documented.
+  - [x] New parallel execution modes are documented in root and template workflow docs.
+  - [x] Worker count rules and file lock rules are documented.
+  - [x] `_parallel` root/template files exist.
+- Verification commands:
+  - `rg "complete-workflow|parallel-workflow|parallel-worker|parallel-orchestrator|default worker|file locks" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md _parallel templates/_parallel`
+  - `git diff --no-index -- RUN_WORKFLOW.md templates/RUN_WORKFLOW.md`
+- Stop condition: Stop if canonical and template workflow docs cannot be kept aligned or if scope would require runtime code.
+- Out-of-scope items: Runtime agent scheduler, app code, dependency changes.
+
+### TASK-002: Add parallel metadata to task, progress, and handoff docs
+
+- Status: Done
+- Priority: P0
+- Parallel safe: no
+- Depends on: TASK-001
+- Blocks: TASK-003, TASK-004
+- File locks: `_task/README.md`, `templates/_task/README.md`, `_progress/progress.md`, `templates/_progress/progress.md`, `_handoff/current.md`, `templates/_handoff/current.md`
+- Claim status: done
+- Claimed by: orchestrator
+- Agent role: orchestrator
+- Merge risk: medium
+- Objective: Update workflow memory docs/templates so task plans, progress, and handoff record parallel metadata, claims, locks, worker status, and merge review status.
+- Detailed spec sections used or referenced: 9, 11, 13, 14, 16, 17, 18, 22.
+- Files likely affected: `_task/README.md`, `templates/_task/README.md`, `_progress/progress.md`, `templates/_progress/progress.md`, `_handoff/current.md`, `templates/_handoff/current.md`.
+- Checklist:
+  - [ ] Add required task metadata fields.
+  - [ ] Add claim and file-lock status fields to progress template.
+  - [ ] Add parallel queue, claim, lock, worker, and merge-review status to handoff.
+  - [ ] Preserve Build -> Refine -> Polish evidence requirements.
+- Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish:
+  - Iteration 1 - Build:
+    - Goal: Add metadata fields to task/progress/handoff docs.
+    - Changes made: Added parallel execution modes and required task metadata fields to root/template task memory docs; added parallel metadata, claim/lock, worker, and merge-review evidence fields to progress docs; added parallel status sections to handoff docs.
+    - Verification command/result: `rg "Priority|Parallel safe|Depends on|Blocks|File locks|Claim status|Claimed by|Agent role|Merge risk" _task/README.md templates/_task/README.md` passed; `rg "claims|locks|worker|merge review|parallel" _progress/progress.md templates/_progress/progress.md _handoff/current.md templates/_handoff/current.md` passed.
+    - Review findings: Build pass covered required fields; root progress intentionally differs from template due append-only history.
+    - Acceptance status: Complete for Build.
+    - Remaining issues: Need targeted mirror/status verification.
+    - Next action: Refine.
+  - Iteration 2 - Refine:
+    - Goal: Align root/template memory docs and clarify conflict behavior.
+    - Changes made: Confirmed task README root/template mirror and handoff parallel status coverage.
+    - Verification command/result: `git diff --no-index -- _task/README.md templates/_task/README.md` returned no content differences with line-ending warnings only; handoff parallel status `rg` passed.
+    - Review findings: Task metadata and handoff status sections are aligned.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: None.
+    - Next action: Polish.
+  - Iteration 3 - Polish:
+    - Goal: Confirm metadata appears in both root and template memory docs.
+    - Changes made: Confirmed progress root/template include required parallel metadata and merge-review fields.
+    - Verification command/result: `rg "Parallel metadata|Parallel claim/lock status|Worker status|Merge review status|claims|locks|worker|merge review" _progress/progress.md templates/_progress/progress.md` passed.
+    - Review findings: No remaining TASK-002 issues.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: TASK-003.
+- Acceptance criteria:
+  - [ ] Task template includes priority, parallel safety, dependencies, file locks, claim status, claimed by, agent role, and merge risk.
+  - [ ] Progress template records claims, locks, worker, and merge review evidence.
+  - [ ] Handoff template records parallel queue, claims, locks, worker status, and merge review.
+- Acceptance result:
+  - [x] Task template includes priority, parallel safety, dependencies, file locks, claim status, claimed by, agent role, and merge risk.
+  - [x] Progress template records claims, locks, worker, and merge review evidence.
+  - [x] Handoff template records parallel queue, claims, locks, worker status, and merge review.
+- Verification commands:
+  - `rg "Priority|Parallel safe|Depends on|Blocks|File locks|Claim status|Claimed by|Agent role|Merge risk" _task/README.md templates/_task/README.md`
+  - `rg "claims|locks|worker|merge review|parallel" _progress/progress.md templates/_progress/progress.md _handoff/current.md templates/_handoff/current.md`
+- Stop condition: Stop if changes would conflict with append-only progress history in a destructive way.
+- Out-of-scope items: Rewriting historical progress entries.
+
+### TASK-003: Add parallel README, prompts, and installer support
+
+- Status: Done
+- Priority: P1
+- Parallel safe: no
+- Depends on: TASK-001, TASK-002
+- Blocks: TASK-004
+- File locks: `README.md`, `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`, `scripts/install.sh`
+- Claim status: done
+- Claimed by: orchestrator
+- Agent role: orchestrator
+- Merge risk: medium
+- Objective: Document parallel modes and worker-count rules in README, add copy-paste-ready prompts, and install new `_parallel` templates.
+- Detailed spec sections used or referenced: 6, 9, 11, 12, 15, 16, 17, 22.
+- Files likely affected: `README.md`, `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`, `scripts/install.sh`.
+- Checklist:
+  - [ ] README explains default 3 workers, minimum 2, maximum 5, fallback 1.
+  - [ ] Prompts include required parallel orchestrator/worker/conflict/merge/health prompts.
+  - [ ] Template prompts mirror root prompts.
+  - [ ] Installer copies new `templates/_parallel` files.
+- Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish:
+  - Iteration 1 - Build:
+    - Goal: Add parallel README/prompts/installer coverage.
+    - Changes made: Added README `_parallel` coverage, optional parallel workflow documentation, parallel execution mode descriptions, worker-count rules, and recommended loop wording; added required parallel prompt sections to root/template prompt docs; updated installer to copy new `_parallel` templates.
+    - Verification command/result: `rg "default worker|Default worker|minimum|Minimum|maximum|Maximum|fallback|Fallback" README.md` passed; required parallel prompt heading `rg` passed; `bash -n scripts/install.sh` passed; installer `_parallel` copy `rg` passed.
+    - Review findings: Build pass covered requested surfaces; requested lowercase grep phrases needed an exact lowercase sentence.
+    - Acceptance status: Partial during Build.
+    - Remaining issues: Add exact lowercase worker-count phrase.
+    - Next action: Refine.
+  - Iteration 2 - Refine:
+    - Goal: Confirm prompts are copy-paste-ready and worker-count terms are exact.
+    - Changes made: Added exact lowercase README sentence covering `default worker`, `minimum`, `maximum`, and `fallback`.
+    - Verification command/result: `rg "default worker|minimum|maximum|fallback" README.md` passed.
+    - Review findings: README now satisfies exact requested grep terms.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: None.
+    - Next action: Polish.
+  - Iteration 3 - Polish:
+    - Goal: Confirm root/template prompt mirror and installer syntax.
+    - Changes made: Confirmed root/template prompt docs mirror and parallel modes are present in README/prompts.
+    - Verification command/result: `git diff --no-index -- docs/PROMPTS.md templates/docs/PROMPTS.md` returned no content differences with line-ending warnings only; `rg "parallel-workflow|parallel-worker|parallel-orchestrator" README.md docs/PROMPTS.md templates/docs/PROMPTS.md scripts/install.sh` passed.
+    - Review findings: No remaining TASK-003 issues.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: TASK-004.
+- Acceptance criteria:
+  - [ ] README includes required worker counts.
+  - [ ] Required parallel prompts exist in root and template prompt docs.
+  - [ ] Installer copies all new `_parallel` template files.
+- Acceptance result:
+  - [x] README includes required worker counts.
+  - [x] Required parallel prompts exist in root and template prompt docs.
+  - [x] Installer copies all new `_parallel` template files.
+- Verification commands:
+  - `rg "default worker|minimum|maximum|fallback" README.md`
+  - `rg "Parallel Orchestrator Planning|Parallel Worker Claim Task|Parallel Worker Execute Claimed Task|Parallel Lock Conflict Review|Parallel Merge Review|Parallel Health Check" docs/PROMPTS.md templates/docs/PROMPTS.md`
+  - `bash -n scripts/install.sh`
+- Stop condition: Stop if prompt docs cannot be mirrored or installer support is unsafe.
+- Out-of-scope items: Adding runtime CLI options.
+
+### TASK-004: Verify and finalize parallel workflow update
+
+- Status: Done
+- Priority: P1
+- Parallel safe: no
+- Depends on: TASK-001, TASK-002, TASK-003
+- Blocks: final response
+- File locks: `_task/2026-05-15-add-parallel-multi-agent-workflow.md`, `_progress/progress.md`, `_handoff/current.md`, `_review/2026-05-15-add-parallel-multi-agent-workflow.md`, `_release/2026-05-15-add-parallel-multi-agent-workflow.md`, `_summary/2026-05-15-add-parallel-multi-agent-workflow.md`
+- Claim status: done
+- Claimed by: orchestrator
+- Agent role: orchestrator
+- Merge risk: low
+- Objective: Run required verification, final diff audit, and create final workflow artifacts.
+- Detailed spec sections used or referenced: 16, 17, 18, 19, 22.
+- Files likely affected: task plan, progress, handoff, review, release, summary.
+- Checklist:
+  - [ ] Run requested `rg` checks.
+  - [ ] Run available test/build checks.
+  - [ ] Run final diff audit.
+  - [ ] Create review, release notes, summary, and final handoff.
+- Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish:
+  - Iteration 1 - Build:
+    - Goal: Run requested search checks and fix any in-scope gaps.
+    - Changes made: Ran requested search checks for `complete-workflow`, `parallel-workflow`, `parallel-worker`, `default worker`, `maximum`, and `file locks` with `.git` and `node_modules` excluded for full-tree searches.
+    - Verification command/result: All requested `rg` checks passed.
+    - Review findings: Search results confirm sequential fallback remains documented and new parallel modes/worker counts/lock rules are documented.
+    - Acceptance status: Complete for Build.
+    - Remaining issues: Run available repo verification.
+    - Next action: Refine.
+  - Iteration 2 - Refine:
+    - Goal: Run available repo verification and fix docs-only gaps.
+    - Changes made: Ran available repo checks.
+    - Verification command/result: `npm test` passed; `npm run build` passed; `git diff --check` passed with line-ending normalization warnings only.
+    - Review findings: Existing React Router future-flag warnings appeared during client tests; no in-scope test failures.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: None.
+    - Next action: Polish.
+  - Iteration 3 - Polish:
+    - Goal: Run final diff audit and write final artifacts.
+    - Changes made: Ran final diff audit and wrote final review, release notes, summary, progress, and handoff.
+    - Verification command/result: `git diff --stat`, `git diff`, and `git status --short client server` ran; status confirmed no app/runtime files under `client/` or `server/` changed.
+    - Review findings: Diff matches docs/template spec; untracked additions are expected `_parallel`, spec, and task files; no secrets or generated junk found.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: Final response.
+- Acceptance criteria:
+  - [ ] All user acceptance criteria are met.
+  - [ ] Verification commands ran or are documented.
+  - [ ] Final diff audit documents no app/runtime code changed.
+  - [ ] Review, release notes, summary, and handoff are current.
+- Acceptance result:
+  - [x] All user acceptance criteria are met.
+  - [x] Verification commands ran or are documented.
+  - [x] Final diff audit documents no app/runtime code changed.
+  - [x] Review, release notes, summary, and handoff are current.
+- Verification commands:
+  - `rg "complete-workflow" RUN_WORKFLOW.md templates/RUN_WORKFLOW.md README.md _task/README.md templates/_task/README.md`
+  - `rg "parallel-workflow" .`
+  - `rg "parallel-worker" .`
+  - `rg "default worker" .`
+  - `rg "maximum" .`
+  - `rg "file locks" .`
+  - `npm test`
+  - `npm run build`
+  - `git diff --check`
+  - `git diff --stat`
+  - `git diff`
+- Stop condition: Stop if verification fails for an in-scope reason that cannot be fixed without expanding scope.
+- Out-of-scope items: Commit, runtime app changes.

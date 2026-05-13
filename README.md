@@ -18,6 +18,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `_handoff/current.md`: Live workflow state used to resume with `continue workflow`.
 - `_spec/`: Saved detailed execution blueprints generated after intake questions and repo intake.
 - `_task/`: Saved vertical task plans generated from detailed specs.
+- `_parallel/`: Optional parallel workflow coordination files for task claims, file locks, and worker status.
 - `_progress/progress.md`: Append-only task progress log.
 - `_review/`: Required workflow reviews written after implementation and before summaries.
 - `_release/`: Release notes for completed workflow runs.
@@ -65,6 +66,11 @@ templates/
     README.md
   _task/
     README.md
+  _parallel/
+    README.md
+    claims.md
+    locks.md
+    agent-status.md
   _progress/
     progress.md
   _review/
@@ -203,6 +209,26 @@ Progress records each iteration separately, handoff records the current task and
 
 If verification fails during any iteration, the agent follows the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify it as in-scope or unrelated, fix only in-scope failures, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery cannot prove the task. The workflow stops if a task is `Blocked`, `Needs Human Review`, remains failed after recovery, becomes risky or unclear, or requires external access.
 
+### Optional Parallel Workflow
+
+Sequential `complete-workflow` remains the fallback and still executes tasks one at a time. Use parallel modes only when the orchestrator can prove tasks are parallel-safe, unblocked, and have non-overlapping file locks.
+
+Parallel execution uses:
+
+- `parallel-workflow`: orchestrator plans tasks, creates `_parallel/claims.md`, `_parallel/locks.md`, and `_parallel/agent-status.md`, assigns safe tasks to workers, then performs merge review and final artifacts.
+- `parallel-worker`: worker claims exactly one eligible task, records claim and file locks before editing, completes Build -> Refine -> Polish, records final status, releases locks, and stops.
+- `parallel-orchestrator`: orchestrator validates queue, claims, locks, worker outputs, merge review, final verification, review, release notes, summary, handoff, and health check.
+
+Worker pool rules:
+
+- The default worker count is 3; the minimum parallel worker count is 2 when 2 or more safe tasks exist; the maximum worker count is 5; fallback is 1 when safety requires it.
+- Default worker agents: 3.
+- Minimum parallel workers: 2 when 2 or more parallel-safe unblocked tasks exist with non-overlapping file locks.
+- Maximum worker agents: 5.
+- Fallback worker count: 1 only when dependency or file-lock safety requires sequential execution.
+
+No two workers may claim tasks with overlapping file locks. P0 tasks are claimed before P1 tasks, and P1 tasks before P2 tasks. Among same-priority tasks, choose the lowest dependency risk and lowest merge risk first.
+
 ### Step 6: Write Review, Summary, And Health Check
 
 After each task, the agent appends to:
@@ -321,6 +347,9 @@ Direct prompts and `WORK_REQUEST.md` can include an optional execution preferenc
 - `plan-only`: Ask questions, write the detailed spec, write the task plan derived from it, then stop.
 - `single-task`: Ask questions, write the detailed spec, write the task plan derived from it, execute only the next ready task through the full Build -> Refine -> Polish loop, update artifacts, then stop.
 - `complete-workflow`: Ask questions, write the detailed spec, write the task plan derived from it, execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each task completes Build -> Refine -> Polish before the next starts.
+- `parallel-workflow`: Ask questions, write the detailed spec, write the task plan derived from it, create queue/claims/locks, use up to the safe worker count, then complete merge review and final artifacts.
+- `parallel-worker`: Claim and execute one eligible parallel-safe task only, then stop.
+- `parallel-orchestrator`: Manage queue, validate claims/locks, merge worker outputs, run final verification, and complete final artifacts.
 
 Default: `complete-workflow`.
 
@@ -335,7 +364,7 @@ Default: `complete-workflow`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Read or create `_handoff/current.md`.
 7. Generate vertical tasks in `_task/` from the detailed spec, with acceptance result fields and per-iteration fields.
-8. Execute every task sequentially by default.
+8. Execute every task sequentially by default, or use `parallel-workflow` only when dependencies and file locks are safe.
 9. Run each executable task through Build -> Refine -> Polish, using the failure recovery protocol inside the iteration where verification fails.
 10. Append iteration evidence to `_progress/progress.md` and update `_handoff/current.md`.
 11. Continue to the next task automatically only when the current task is `Done`.

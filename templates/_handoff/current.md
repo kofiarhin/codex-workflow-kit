@@ -16,7 +16,7 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Execution Mode
 
-`<complete-workflow by default / plan-only / single-task>`
+`<complete-workflow by default / plan-only / single-task / parallel-workflow / parallel-worker / parallel-orchestrator>`
 
 ## Current Spec File
 
@@ -58,6 +58,30 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 `<git status --short result, existing dirty files, planned files, overlap risk>`
 
+## Parallel Queue Status
+
+`<not applicable / queue pending / queue ready / workers active / merge review / complete>`
+
+## Parallel Worker Count
+
+`<default 3 / minimum 2 when 2+ safe tasks exist / maximum 5 / fallback 1, with actual active count>`
+
+## Parallel Claims Status
+
+`<not applicable / path to _parallel/claims.md and summary of unclaimed, claimed, in-progress, done, blocked, needs-review tasks>`
+
+## Parallel Locks Status
+
+`<not applicable / path to _parallel/locks.md, active locks, released locks, overlap risk>`
+
+## Parallel Agent Status
+
+`<not applicable / path to _parallel/agent-status.md, orchestrator status, worker statuses>`
+
+## Parallel Merge Review Status
+
+`<not applicable / pending / passed / needs-review / failed, with final verification status>`
+
 ## Acceptance Status
 
 `<not started / all required criteria met / partial / blocked>`
@@ -87,6 +111,9 @@ This file is the live resume state for the active workflow. Keep it current afte
 - Default execution mode is `complete-workflow`.
 - If the next task is not `Done`, continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached.
 - Use `single-task` only when the user explicitly requested one-task execution.
+- For `parallel-workflow`, orchestrator owns intake/spec/task plan, queue, claims, locks, worker assignment, merge review, final verification, review, release notes, summary, handoff, and health check.
+- For `parallel-worker`, worker claims exactly one eligible task, records claim and file locks before editing, completes Build -> Refine -> Polish, records final status, releases locks, and stops.
+- For `parallel-orchestrator`, validate claims/locks/worker outputs, resolve conflicts or create follow-up tasks, run final verification, and complete final artifacts.
 - Resume from the current task and current iteration.
 - Every executable task must complete Build -> Refine -> Polish with documented goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action before `Done`.
 - Preserve dirty worktree protection: stop before editing if dirty files overlap with planned files.
