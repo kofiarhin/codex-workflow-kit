@@ -271,3 +271,37 @@ If verification fails during any iteration, record the failure recovery protocol
 - Review result: Reviewed. No bugs, scope creep, app implementation edits, generated junk, or sensitive values found.
 - Blockers: none.
 - Next step: Workflow complete; final response.
+
+### 2026-05-15 00:00 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `WORK_REQUEST.md`, `_spec/2026-05-15-fix-detailed-spec-workflow-update.md`, `_task/2026-05-15-fix-detailed-spec-workflow-update.md`, `AGENTS.md`, `templates/AGENTS.md`, `_spec/README.md`, `templates/_spec/README.md`, `_task/README.md`, `templates/_task/README.md`, `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Planned files are workflow documentation, templates, prompts, and workflow artifacts only. Overlap risk was none.
+- Iteration evidence:
+  - Iteration 1 - Build: Replaced the remaining active lightweight spec guidance in `AGENTS.md` and `templates/AGENTS.md`, replaced `_spec/README.md` and `templates/_spec/README.md` with the exact detailed spec template structure, and updated `_task/README.md` plus `templates/_task/README.md` to require spec-derived task plans with section citations. Verification found no active `Request summary` spec guidance in the updated active docs. Acceptance was complete for Build; next action was Refine.
+  - Iteration 2 - Refine: Tightened detailed spec field labels in workflow and prompt docs to better match the exact requested structure. Required search checks confirmed active docs preserve detailed spec behavior, execution modes, and the Build -> Refine -> Polish loop. Acceptance was complete for Refine; next action was Polish.
+  - Iteration 3 - Polish: Mirror checks for `AGENTS.md`, `_spec/README.md`, `_task/README.md`, `RUN_WORKFLOW.md`, and `docs/PROMPTS.md` against their template counterparts returned no content differences, with line-ending warnings only. Added a README clarification that task plans should cite or reference detailed spec sections. Final verdict: Done.
+- Acceptance result: all TASK-001 criteria checked `[x]`.
+- Verification result: Active-doc `Request summary` search returned no matches; detailed spec template/task extraction checks passed; root/template mirror checks passed with line-ending warnings only; execution mode and 3-pass preservation checks passed.
+- Failure recovery notes: none.
+- Review result: Reviewed. Scope stayed within workflow docs/templates/prompts and active workflow artifacts; no app implementation files were edited.
+- Blockers: none.
+- Next step: Continue automatically to `TASK-002: Verify and finalize detailed spec workflow fix`.
+
+### 2026-05-15 00:00 - TASK-002
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `_task/2026-05-15-fix-detailed-spec-workflow-update.md`, `_progress/progress.md`, `_handoff/current.md`, `_review/2026-05-15-fix-detailed-spec-workflow-update.md`, `_release/2026-05-15-fix-detailed-spec-workflow-update.md`, `_summary/2026-05-15-fix-detailed-spec-workflow-update.md`
+- Dirty worktree protection: Initial `git status --short` returned no existing dirty files before implementation. Final status shows workflow docs/templates/prompts/artifacts only and no app implementation files under `client/` or `server/`.
+- Iteration evidence:
+  - Iteration 1 - Build: Ran required grep searches. Literal `grep -R ... .` attempts timed out while traversing dependency folders; reran with `.git` and `node_modules` excluded. Adjusted searches completed successfully and confirmed active docs/templates no longer use `Request summary` as active spec-template guidance. Acceptance was complete for Build; next action was Refine.
+  - Iteration 2 - Refine: Ran `npm test` and `npm run build`. Both passed; tests had existing React Router future-flag warnings. Acceptance was complete for Refine; next action was Polish.
+  - Iteration 3 - Polish: Ran `git diff --check`, `git diff --stat`, `git diff`, and `git status --short`; created review, release notes, summary, and final handoff. `git diff --check` passed with line-ending normalization warnings only. Final verdict: Done.
+- Acceptance result: all TASK-002 criteria checked `[x]`.
+- Verification result: Required searches passed after grep timeout recovery; `npm test` passed; `npm run build` passed; `git diff --check` passed with line-ending warnings only; `git diff --stat` and `git diff` ran.
+- Failure recovery notes: Literal `grep -R ... .` timed out; rerun with `.git` and `node_modules` excluded succeeded.
+- Review result: Reviewed. Final diff audit found no unrelated app/runtime files, no generated junk, and no sensitive values.
+- Blockers: none.
+- Next step: Workflow complete; final response.

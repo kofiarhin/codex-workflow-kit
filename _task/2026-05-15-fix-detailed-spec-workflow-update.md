@@ -1,0 +1,149 @@
+# Task Plan: Fix Detailed Spec Workflow Update
+
+- Spec file used: `_spec/2026-05-15-fix-detailed-spec-workflow-update.md`
+- Planning date: 2026-05-15
+- Progress files read: `_progress/progress.md`
+- Summary files read: `_summary/2026-05-15-add-detailed-spec-blueprint.md`
+- Handoff file read: `_handoff/current.md`
+- Execution mode: `complete-workflow`
+- Dirty worktree protection: `git status --short` returned no existing dirty files before implementation. Planned files are workflow documentation, templates, prompt docs if needed, and workflow artifacts. Overlap risk is none.
+- Detailed spec sections used for task extraction: sections 5, 7, 9, 11, 12, 15, 16, 17, 18, 19, and 22 from `_spec/2026-05-15-fix-detailed-spec-workflow-update.md`.
+
+## Task List
+
+### TASK-001: Replace remaining lightweight spec guidance
+
+- Status: Done
+- Objective: Update the active remaining workflow docs so the exact detailed spec template is authoritative and task planning cites the detailed spec sections used.
+- Derived from detailed spec sections:
+  - Section 5 Current State Analysis
+  - Section 7 Scope
+  - Section 9 Functional Requirements
+  - Section 11 Affected Surfaces
+  - Section 15 Execution Strategy
+  - Section 17 Acceptance Criteria
+  - Section 22 Task Extraction Notes
+- Files likely affected:
+  - `AGENTS.md`
+  - `templates/AGENTS.md`
+  - `_spec/README.md`
+  - `templates/_spec/README.md`
+  - `_task/README.md`
+  - `templates/_task/README.md`
+  - `README.md`
+  - `_task/2026-05-15-fix-detailed-spec-workflow-update.md`
+- Checklist:
+  - [x] Replace old `Spec Rules` in root/template `AGENTS.md`.
+  - [x] Replace spec README content with exact detailed spec template structure.
+  - [x] Require task plans to cite or reference detailed spec sections.
+  - [x] Keep root/template paired files aligned.
+  - [x] Preserve execution modes and 3-pass hardening language.
+- Iteration plan:
+  - Iteration 1 - Build:
+    - Goal: Patch the documentation gaps identified in the spec.
+    - Changes made: Updated `AGENTS.md` and mirrored it to `templates/AGENTS.md`; replaced `_spec/README.md` with the exact detailed spec template and mirrored it; replaced `_task/README.md` with spec-derived task planning guidance and mirrored it.
+    - Verification command/result: `rg -n "Request summary|Detailed Spec Template|Request ID / slug|Task Extraction Notes" AGENTS.md templates/AGENTS.md _spec/README.md templates/_spec/README.md _task/README.md templates/_task/README.md` confirmed detailed template/task extraction terms and no active `Request summary` guidance in those files.
+    - Review findings: Remaining lightweight `Request summary` matches are in historical artifacts or this run's verification text, not active spec guidance.
+    - Acceptance status: Complete for Build.
+    - Remaining issues: Needed mirror and preservation checks.
+    - Next action: Run Refine checks.
+  - Iteration 2 - Refine:
+    - Goal: Run targeted searches and fix active guidance mismatches.
+    - Changes made: Tightened detailed spec field labels in workflow and prompt docs to better match the exact requested structure.
+    - Verification command/result: Required search suite started; active-doc `rg -n "Request summary" AGENTS.md templates/AGENTS.md RUN_WORKFLOW.md templates/RUN_WORKFLOW.md docs/PROMPTS.md templates/docs/PROMPTS.md README.md _spec/README.md templates/_spec/README.md _task/README.md templates/_task/README.md` returned no matches; `rg -n "complete-workflow|single-task|plan-only|Build -> Refine -> Polish|Iteration 1|Iteration 2|Iteration 3" ...` found the preserved execution modes and 3-pass loop.
+    - Review findings: Active docs now point to detailed spec guidance; execution modes and hardening loop remain present.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: Needed final mirror checks.
+    - Next action: Run Polish checks.
+  - Iteration 3 - Polish:
+    - Goal: Confirm mirrors, no app-code changes, and final task acceptance.
+    - Changes made: Added a narrow README clarification that task plans should cite or reference the detailed spec sections used.
+    - Verification command/result: `git diff --no-index -- AGENTS.md templates/AGENTS.md`, `git diff --no-index -- _spec/README.md templates/_spec/README.md`, `git diff --no-index -- _task/README.md templates/_task/README.md`, `git diff --no-index -- RUN_WORKFLOW.md templates/RUN_WORKFLOW.md`, and `git diff --no-index -- docs/PROMPTS.md templates/docs/PROMPTS.md` returned no content differences, with line-ending warnings only.
+    - Review findings: Root/template pairs are aligned and TASK-001 scope stayed in workflow docs/templates/artifacts.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: Continue to `TASK-002`.
+- Acceptance criteria:
+  - [x] `AGENTS.md` no longer uses the old lightweight `Spec Rules` list as active guidance.
+  - [x] `templates/AGENTS.md` mirrors the updated detailed spec rules.
+  - [x] `_spec/README.md` contains the exact detailed spec template structure.
+  - [x] `templates/_spec/README.md` mirrors `_spec/README.md`.
+  - [x] `_task/README.md` requires task plans to be derived from and cite/reference detailed spec sections.
+  - [x] `templates/_task/README.md` mirrors the same task-planning requirement.
+- Acceptance result:
+  - [x] All criteria met.
+- Verification commands:
+  - `rg -n "Request summary|Detailed Spec Template|Request ID / slug|Task Extraction Notes" AGENTS.md templates/AGENTS.md _spec/README.md templates/_spec/README.md _task/README.md templates/_task/README.md`
+  - `git diff --no-index -- _spec/README.md templates/_spec/README.md`
+  - `git diff --no-index -- AGENTS.md templates/AGENTS.md`
+- Stop condition: stop if replacing old guidance would require changing unrelated workflow behavior.
+- Out-of-scope items: app code, deployment, dependencies, historical artifact rewrites.
+
+### TASK-002: Verify and finalize detailed spec workflow fix
+
+- Status: Done
+- Objective: Run the required searches and available checks, then update progress, handoff, review, release notes, and summary for this workflow run.
+- Derived from detailed spec sections:
+  - Section 16 Verification Strategy
+  - Section 17 Acceptance Criteria
+  - Section 18 Edge Cases And Failure Modes
+  - Section 19 Risks And Mitigations
+  - Section 22 Task Extraction Notes
+- Files likely affected:
+  - `_task/2026-05-15-fix-detailed-spec-workflow-update.md`
+  - `_progress/progress.md`
+  - `_handoff/current.md`
+  - `_review/2026-05-15-fix-detailed-spec-workflow-update.md`
+  - `_release/2026-05-15-fix-detailed-spec-workflow-update.md`
+  - `_summary/2026-05-15-fix-detailed-spec-workflow-update.md`
+- Checklist:
+  - [x] Run the required text searches.
+  - [x] Run available test/build checks.
+  - [x] Run `git diff --stat` and `git diff`.
+  - [x] Document iteration evidence and acceptance results.
+  - [x] Create review, release notes, summary, and final handoff.
+- Iteration plan:
+  - Iteration 1 - Build:
+    - Goal: Run required searches and identify any remaining active gaps.
+    - Changes made: Ran the required grep searches. Initial literal `grep -R ... .` attempts timed out while traversing dependency folders; reran with `.git` and `node_modules` excluded to preserve the requested search intent.
+    - Verification command/result: `grep -R --exclude-dir=.git --exclude-dir=node_modules "Request summary" .`, `"Spec Phase"`, `"Spec Generation"`, `"Vertical Task Generation"`, `"Health Check"`, and `"detailed spec"` all completed. `Request summary` matches are historical artifacts or verification text only; active docs/templates no longer use it as spec template guidance.
+    - Review findings: Searches confirm active docs contain detailed spec guidance and expected prompt/workflow headings.
+    - Acceptance status: Complete for Build.
+    - Remaining issues: Needed test/build verification.
+    - Next action: Run Refine checks.
+  - Iteration 2 - Refine:
+    - Goal: Run available test/build commands and address only in-scope failures.
+    - Changes made: Ran available repository checks; no code changes required.
+    - Verification command/result: `npm test` passed with 1 client test file/5 tests and 3 server suites/7 tests; existing React Router future-flag warnings appeared. `npm run build` passed for the Vite client.
+    - Review findings: No in-scope failures; no app/runtime code needed changes.
+    - Acceptance status: Complete for Refine.
+    - Remaining issues: Needed final diff audit and artifacts.
+    - Next action: Run Polish checks.
+  - Iteration 3 - Polish:
+    - Goal: Run final diff audit and complete workflow artifacts.
+    - Changes made: Ran `git diff --check`, `git diff --stat`, `git diff`, and `git status --short`; created review, release notes, summary, progress, and handoff updates.
+    - Verification command/result: `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran; `git status --short` showed workflow docs/templates/artifacts only.
+    - Review findings: Final diff matches the saved spec; one self-made historical-spec edit was reverted before finalization; no app/runtime files, secrets, generated junk, or unrelated behavior changes found.
+    - Acceptance status: Complete.
+    - Remaining issues: None.
+    - Next action: Final response.
+- Acceptance criteria:
+  - [x] Required searches are run and documented.
+  - [x] Existing execution modes and 3-pass task hardening remain intact.
+  - [x] No app/runtime code is changed.
+  - [x] Review, release notes, summary, progress, and handoff are updated.
+- Acceptance result:
+  - [x] All criteria met.
+- Verification commands:
+  - `rg -n "Request summary" .`
+  - `rg -n "Spec Phase" .`
+  - `rg -n "Spec Generation" .`
+  - `rg -n "Vertical Task Generation" .`
+  - `rg -n "Health Check" .`
+  - `rg -n "detailed spec" .`
+  - `npm test`
+  - `npm run build`
+  - `git diff --stat`
+  - `git diff`
+- Stop condition: stop if verification finds unrelated app/runtime changes or unfixable missing required spec guidance.
+- Out-of-scope items: committing changes, app code, deployment config.

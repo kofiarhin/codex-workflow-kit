@@ -106,8 +106,8 @@ For a work request:
 
    Document existing dirty files, files planned for this workflow, and overlap risk. If dirty files overlap with planned files, stop and ask before editing. If dirty files are unrelated, continue but document them. Never overwrite user changes and never clean/reset files unless explicitly instructed.
 7. Read `_handoff/current.md` if it exists, `_progress/progress.md`, the latest relevant `_summary/` entry, and durable supporting docs.
-8. Generate a detailed spec in `_spec/`.
-9. Generate a vertical task plan in `_task/`.
+8. Generate a detailed spec in `_spec/` using the required detailed spec template.
+9. Generate a vertical task plan in `_task/` from the saved detailed spec.
 10. If execution mode is `plan-only`, stop after saving the spec and task plan.
 11. If execution mode is `single-task`, execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
 12. If execution mode is omitted, use `complete-workflow`.
@@ -178,24 +178,163 @@ Stop questioning when the remaining unknowns are minor enough to document as ass
 
 ## Spec Rules
 
-Each spec in `_spec/` must include:
+Each spec in `_spec/` must be a detailed, implementation-aware execution blueprint. Use `Not applicable` for irrelevant sections. Do not delete required sections.
 
-- Request summary.
-- Date.
-- Source prompt.
-- Questions asked and answers received.
-- Assumptions.
-- Goal and non-goals.
-- Users.
-- Functional requirements.
-- UI expectations, when relevant.
-- API expectations, when relevant.
-- Data model expectations, when relevant.
-- Edge cases.
-- Constraints.
-- Success criteria.
-- Out-of-scope items.
-- Open questions.
+# Detailed Spec Template
+
+## 1. Metadata
+- Spec filename:
+- Date:
+- Request ID / slug:
+- Request source:
+- Execution mode:
+- Request classification:
+- Scope level:
+- Risk level:
+
+## 2. Original Request
+- Raw user request:
+- Normalized request:
+- Source prompt / WORK_REQUEST reference:
+
+## 3. Questions And Answers
+- Questions asked:
+- Answers received:
+- Questions skipped:
+- Remaining open questions:
+
+## 4. Problem Definition
+- Problem being solved:
+- Why it matters:
+- Current pain point:
+- Expected value:
+
+## 5. Current State Analysis
+- Existing behavior:
+- Existing architecture/components:
+- Existing files/modules likely involved:
+- Existing data flow:
+- Existing API/UI/CLI/workflow behavior:
+- Existing tests or verification coverage:
+
+## 6. Desired End State
+- Expected final behavior:
+- User-facing outcome:
+- Developer-facing outcome:
+- System/workflow outcome:
+- Backward compatibility expectations:
+
+## 7. Scope
+- In scope:
+- Out of scope:
+- Non-goals:
+- Explicit boundaries:
+
+## 8. Users And Use Cases
+- Primary users:
+- Secondary users:
+- Main use cases:
+- Edge use cases:
+
+## 9. Functional Requirements
+- Required behaviors:
+- Inputs:
+- Outputs:
+- State changes:
+- Error states:
+- Permissions/auth expectations:
+
+## 10. Non-Functional Requirements
+- Performance expectations:
+- Reliability expectations:
+- Security/privacy expectations:
+- Accessibility expectations:
+- Maintainability expectations:
+- DX expectations:
+
+## 11. Affected Surfaces
+- Files likely affected:
+- Directories likely affected:
+- UI surfaces:
+- API routes:
+- Components:
+- Services:
+- Database/schema:
+- Config/env vars:
+- Tests:
+- Docs:
+- Workflow artifacts:
+
+## 12. Dependency And Integration Map
+- Internal dependencies:
+- External packages/services:
+- Integration points:
+- Ordering constraints:
+- Migration/setup requirements:
+
+## 13. Data And State Impact
+- Data models:
+- Database changes:
+- State management changes:
+- Cache/session/local storage impact:
+- Backward compatibility impact:
+
+## 14. UX / API / Workflow Expectations
+- UX expectations:
+- API contract expectations:
+- CLI/workflow behavior:
+- Error handling expectations:
+- Empty/loading/success/failure states:
+
+## 15. Execution Strategy
+- Recommended implementation approach:
+- Suggested sequencing:
+- Safe rollout/migration approach:
+- Files to inspect before editing:
+- Decisions to avoid until more evidence exists:
+
+## 16. Verification Strategy
+- Required automated checks:
+- Required manual checks:
+- Test types needed:
+- Build/lint/typecheck expectations:
+- Acceptance evidence required:
+- Proof of completion:
+
+## 17. Acceptance Criteria
+- [ ] Concrete measurable criterion 1
+- [ ] Concrete measurable criterion 2
+- [ ] Concrete measurable criterion 3
+
+## 18. Edge Cases And Failure Modes
+- Edge cases:
+- Failure modes:
+- Regression risks:
+- Recovery expectations:
+
+## 19. Risks And Mitigations
+- Technical risks:
+- Product/UX risks:
+- Security risks:
+- Scope risks:
+- Mitigation plan:
+
+## 20. Assumptions
+- Explicit assumptions:
+- Confidence level:
+- What to revisit if assumptions are wrong:
+
+## 21. Open Questions
+- Blocking questions:
+- Non-blocking questions:
+- Execution impact:
+
+## 22. Task Extraction Notes
+- Suggested vertical task boundaries:
+- Suggested first task:
+- Suggested task ordering:
+- Areas that should not become separate tasks:
+- How the 3-pass Build -> Refine -> Polish loop should apply:
 
 Use timestamped or slugged filenames, such as:
 
@@ -210,7 +349,10 @@ Each task plan in `_task/` must include:
 - Spec file used.
 - Planning date.
 - Progress and summary files read.
+- Detailed spec sections used to derive or justify the task plan.
 - Task list.
+
+Task planning must be derived from the saved detailed spec, not from the raw request alone. The plan must cite or reference the detailed spec sections it used, especially affected surfaces, dependency and integration map, data and state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks and mitigations, assumptions, open questions, and task extraction notes.
 
 Each task must include:
 
@@ -355,6 +497,7 @@ The summary must include:
 
 - Request.
 - Spec file used.
+- Whether the detailed spec was complete or had gaps, including any missing required sections and whether they were repaired before planning.
 - Task plan used.
 - Review file used.
 - Tasks completed.
@@ -375,6 +518,7 @@ Before the final response, check:
 - Did `WORK_REQUEST.md` sync?
 - Did `_handoff/current.md` exist and reflect the latest workflow state?
 - Did the spec file exist?
+- Did the spec include every required detailed spec section, or was any missing section repaired before planning?
 - Did the task plan exist?
 - Was progress updated?
 - Was the review created?
@@ -394,9 +538,9 @@ Final health status must be one of:
 - `Partial`
 - `Failed`
 
-`Passed` requires a synced work request, spec, task plan, progress, handoff, review, summary, release notes, required iteration evidence for every executable task, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+`Passed` requires a synced work request, a detailed spec with every required section, a task plan derived from and citing or referencing the detailed spec, progress, handoff, review, summary, release notes, required iteration evidence for every executable task, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
 
-If release notes, final diff audit, dirty worktree check, iteration evidence, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, final diff audit, dirty worktree check, required detailed spec sections, iteration evidence, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## Implementation Boundaries
 
@@ -524,6 +668,7 @@ At the end of a workflow run, report:
 
 - Request classification.
 - Spec file used.
+- Whether the detailed spec was complete or had gaps.
 - Task plan used.
 - Tasks completed.
 - Iteration evidence summary.

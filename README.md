@@ -161,7 +161,7 @@ _task/<date-or-slug>.md
 
 The spec is a detailed, implementation-aware execution blueprint. It captures metadata, the original and normalized request, questions and answers, problem definition, current state analysis, desired end state, scope, users and use cases, functional and non-functional requirements, affected surfaces, dependencies and integrations, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases and failure modes, risks and mitigations, assumptions, open questions, and task extraction notes. Irrelevant sections should say `Not applicable` instead of being deleted.
 
-The task plan breaks the detailed spec into vertical slices. It should derive tasks especially from affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
+The task plan breaks the detailed spec into vertical slices. It should derive tasks especially from affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes, and cite or reference the detailed spec sections used. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
 
 Each task iteration records goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
 

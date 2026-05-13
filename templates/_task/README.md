@@ -2,7 +2,7 @@
 
 Store vertical task plans in this folder.
 
-Agents must create a saved task plan here before implementation. Use filenames that match the related spec when practical, for example:
+Agents must create a saved task plan here before implementation. Use filenames that match the related detailed spec when practical, for example:
 
 ```txt
 _task/2026-05-10-add-dark-theme.md
@@ -12,17 +12,34 @@ Default execution mode is `complete-workflow`: after the task plan is created, e
 
 Execution modes:
 
-- `plan-only`: ask questions, write spec, write task plan, then stop.
+- `plan-only`: ask questions, write the detailed spec, write the task plan derived from it, then stop.
 - `single-task`: execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
 - `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
 Use `single-task` only when the user explicitly asks for controlled one-task execution.
+
+Task plans must be derived from the saved detailed spec, not from the raw request alone. Each task plan must cite or reference the detailed spec sections used to derive the plan, especially:
+
+- Current State Analysis.
+- Affected Surfaces.
+- Dependency And Integration Map.
+- Data And State Impact.
+- UX / API / Workflow Expectations.
+- Execution Strategy.
+- Verification Strategy.
+- Acceptance Criteria.
+- Edge Cases And Failure Modes.
+- Risks And Mitigations.
+- Assumptions.
+- Open Questions.
+- Task Extraction Notes.
 
 Each task must include:
 
 - Task ID.
 - Status.
 - Objective.
+- Detailed spec sections used or referenced.
 - Files likely affected.
 - Checklist.
 - Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.

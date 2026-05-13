@@ -8,122 +8,87 @@ The workflow will ask clarifying questions, generate a saved detailed spec in `_
 
 ## Request
 
-Update the workflow kit so the Spec Phase generates a much more detailed, implementation-aware execution blueprint before task planning.
+Fix the failed detailed-spec workflow update.
 
-Upgrade the existing Spec Phase from a lightweight brief into a detailed execution blueprint that helps the agent understand:
+Upgrade the Spec Phase into a detailed implementation-aware execution blueprint. The previous update did not fully replace lightweight spec guidance; remaining workflow docs still treat specs as short briefs in some places.
 
-- what is being solved
-- why it matters
-- how the current system works
-- what should change
-- what must not change
-- which files/surfaces may be affected
-- what risks exist
-- how verification will prove completion
-- how the later vertical task plan should be derived
+## Required Files To Read
 
-Do not generate app code. Only update workflow docs/templates/artifacts.
-
-## Files Requested
-
+- `AGENTS.md`
 - `RUN_WORKFLOW.md`
-- `templates/RUN_WORKFLOW.md`
+- `README.md`
 - `docs/PROMPTS.md`
+- `templates/RUN_WORKFLOW.md`
 - `templates/docs/PROMPTS.md`
 - `_spec/README.md`
 - `templates/_spec/README.md`
-- `README.md`
-- Relevant current workflow artifacts under `_review/`, `_summary/`, `_release/`, `_progress/`, or `_handoff/` if this workflow run requires documenting the change.
+- `_task/README.md`
+- `templates/_task/README.md`
+- `_progress/progress.md`
+- `_handoff/current.md`
 
-## Required Detailed Spec Sections
+## Requested Changes
 
-The spec template must include at least:
+- `RUN_WORKFLOW.md`: require the detailed spec phase, require saving it before task planning, require task planning to derive from it, require health check validation of all detailed spec sections, and preserve the 3-pass Build -> Refine -> Polish loop.
+- `templates/RUN_WORKFLOW.md`: mirror `RUN_WORKFLOW.md`.
+- `_spec/README.md`: replace the lightweight spec template with the exact detailed spec template from the user request.
+- `templates/_spec/README.md`: mirror `_spec/README.md`.
+- `docs/PROMPTS.md`: replace old Spec Generation, add Spec Quality Review, update Vertical Task Generation to extract tasks from the detailed spec, and update Final Summary to report spec completeness/gaps.
+- `templates/docs/PROMPTS.md`: mirror `docs/PROMPTS.md`.
+- `README.md`: describe the spec phase as a detailed execution blueprint and make clear planning happens after, and is derived from, that detailed spec.
+- Relevant workflow documentation, templates, prompts, and workflow artifacts may be updated as needed to remove remaining lightweight spec guidance.
 
-1. Metadata
-2. Original Request
-3. Questions And Answers
-4. Problem Definition
-5. Current State Analysis
-6. Desired End State
-7. Scope
-8. Users And Use Cases
-9. Functional Requirements
-10. Non-Functional Requirements
-11. Affected Surfaces
-12. Dependency And Integration Map
-13. Data And State Impact
-14. UX / API / Workflow Expectations
-15. Execution Strategy
-16. Verification Strategy
-17. Acceptance Criteria
-18. Edge Cases And Failure Modes
-19. Risks And Mitigations
-20. Assumptions
-21. Open Questions
-22. Task Extraction Notes
+## Detailed Spec Rules
 
-Use `Not applicable` for irrelevant sections instead of deleting them.
+- Use the exact 22-section detailed spec structure from the user request.
+- Use `Not applicable` for irrelevant sections. Do not delete required sections.
+- The detailed spec must be saved before task planning.
+- The task plan must cite or reference the detailed spec sections it was derived from.
+- Health check must be `Partial` or `Failed` if the detailed spec is missing required sections.
+- Final response must mention the detailed spec file used and whether the spec had gaps.
 
-## Prompt Documentation Requirements
+## Preserve
 
-Update `docs/PROMPTS.md` and `templates/docs/PROMPTS.md`:
-
-- Replace the current `Spec Generation` prompt with a detailed spec-generation prompt using the required sections.
-- Add a reusable `Spec Quality Review` prompt that checks whether a saved spec is complete enough for task planning.
-- Update `Vertical Task Generation` so tasks are explicitly extracted from the detailed spec, especially affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes.
-- Update `Final Summary` so it reports whether the detailed spec was complete or had gaps.
-
-## Acceptance Criteria
-
-- `RUN_WORKFLOW.md` requires the expanded detailed spec before planning.
-- `templates/RUN_WORKFLOW.md` mirrors the same requirement.
-- `_spec/README.md` documents the new detailed spec structure.
-- `templates/_spec/README.md` mirrors it.
-- `docs/PROMPTS.md` includes the updated Spec Generation prompt.
-- `templates/docs/PROMPTS.md` mirrors it.
-- `README.md` describes the spec phase as a detailed execution blueprint.
-- Planning Phase explicitly derives tasks from the detailed spec.
-- Health Check validates required spec sections.
-- Existing 3-pass task hardening loop remains intact.
-- Existing execution modes remain intact.
-- No unrelated workflow behavior is removed.
+- Existing execution modes: `plan-only`, `single-task`, and `complete-workflow`.
+- Dirty worktree protection.
+- Acceptance tracking.
+- Failure recovery.
+- Handoff.
+- Progress.
+- Review.
+- Release notes.
+- Summary.
+- Final health check.
+- Existing 3-pass Build -> Refine -> Polish task hardening loop.
 
 ## Verification
 
-- Search for old lightweight spec wording and replace it where needed:
-  - `Request summary`
-  - `Goal`
-  - `Non-goals`
-  - `Functional requirements`
-  - `Success criteria`
-  - `Open questions`
-- Confirm those terms are no longer the entire spec structure and are now part of the larger detailed spec.
-- Search for `Spec Phase`, `Spec Generation`, `Vertical Task Generation`, and `Health Check` and confirm they reference the detailed spec.
-- Run available formatting/lint/test commands if present.
-- Run `git diff --stat`.
-- Run `git diff`.
+Run these searches and ensure the results are updated correctly:
 
-## Question Preference
+```bash
+grep -R "Request summary" .
+grep -R "Spec Phase" .
+grep -R "Spec Generation" .
+grep -R "Vertical Task Generation" .
+grep -R "Health Check" .
+grep -R "detailed spec" .
+```
 
-The user provided detailed required files, sections, rules, acceptance criteria, verification expectations, and execution preference. No blocking clarifying question is needed; assumptions are recorded in the saved spec.
+Then run available formatting/lint/test commands if present.
 
-## Optional Execution Preference
+Finally run:
 
-Selected: `complete-workflow`
+```bash
+git diff --stat
+git diff
+```
 
-Default: `complete-workflow`
+## Execution Preference
 
-## Optional Context
+`complete-workflow`
 
-- Dirty worktree check before implementation: `git status --short` returned no existing dirty files.
-- Planned files are workflow docs, templates, and workflow run artifacts only.
-- Overlap risk: none detected before edits.
+## Scope Boundaries
 
-## Out Of Scope
-
-- App implementation code under `client/` or `server/`.
-- Deployment changes.
-- Runtime dependency changes.
-- Removing existing execution modes.
-- Removing the existing Build -> Refine -> Polish task hardening loop.
-- Removing existing workflow gates or artifacts.
+- Do not change app/runtime code.
+- Do not commit changes.
+- Only update workflow documentation, templates, prompts, and relevant workflow artifacts.

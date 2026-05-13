@@ -74,7 +74,7 @@ Include these required sections:
 1. Metadata
    - Spec filename
    - Date
-   - Request ID or slug
+   - Request ID / slug
    - Request source
    - Execution mode
    - Request classification
@@ -83,11 +83,11 @@ Include these required sections:
 2. Original Request
    - Raw user request
    - Normalized request
-   - Source prompt or WORK_REQUEST reference
+   - Source prompt / WORK_REQUEST reference
 3. Questions And Answers
    - Questions asked
    - Answers received
-   - Questions skipped because user said skip questions
+   - Questions skipped
    - Remaining open questions
 4. Problem Definition
    - Problem being solved
@@ -96,11 +96,11 @@ Include these required sections:
    - Expected value
 5. Current State Analysis
    - Existing behavior
-   - Existing architecture/components involved
+   - Existing architecture/components
    - Existing files/modules likely involved
    - Existing data flow
-   - Existing API/UI/CLI/workflow behavior, when relevant
-   - Existing tests or verification coverage, when known
+   - Existing API/UI/CLI/workflow behavior
+   - Existing tests or verification coverage
 6. Desired End State
    - Expected final behavior
    - User-facing outcome
@@ -118,17 +118,17 @@ Include these required sections:
    - Main use cases
    - Edge use cases
 9. Functional Requirements
-   - Concrete required behaviors
+   - Required behaviors
    - Inputs
    - Outputs
    - State changes
    - Error states
-   - Permissions/auth expectations, when relevant
+   - Permissions/auth expectations
 10. Non-Functional Requirements
    - Performance expectations
    - Reliability expectations
    - Security/privacy expectations
-   - Accessibility expectations, when relevant
+   - Accessibility expectations
    - Maintainability expectations
    - DX expectations
 11. Affected Surfaces
@@ -156,11 +156,11 @@ Include these required sections:
    - Cache/session/local storage impact
    - Backward compatibility impact
 14. UX / API / Workflow Expectations
-   - UX expectations, if relevant
-   - API contract expectations, if relevant
-   - CLI/workflow behavior, if relevant
+   - UX expectations
+   - API contract expectations
+   - CLI/workflow behavior
    - Error handling expectations
-   - Empty/loading/success/failure states, if relevant
+   - Empty/loading/success/failure states
 15. Execution Strategy
    - Recommended implementation approach
    - Suggested sequencing
@@ -173,11 +173,11 @@ Include these required sections:
    - Test types needed
    - Build/lint/typecheck expectations
    - Acceptance evidence required
-   - What counts as proof of completion
+   - Proof of completion
 17. Acceptance Criteria
-   - Checklist format only
-   - Concrete, measurable, verifiable items
-   - Include both behavior and artifact/documentation criteria when relevant
+   - [ ] Concrete measurable criterion 1
+   - [ ] Concrete measurable criterion 2
+   - [ ] Concrete measurable criterion 3
 18. Edge Cases And Failure Modes
    - Edge cases
    - Failure modes
@@ -188,15 +188,15 @@ Include these required sections:
    - Product/UX risks
    - Security risks
    - Scope risks
-   - Mitigation plan for each risk
+   - Mitigation plan
 20. Assumptions
    - Explicit assumptions
-   - Confidence level where useful
-   - What should be revisited if assumptions are wrong
+   - Confidence level
+   - What to revisit if assumptions are wrong
 21. Open Questions
    - Blocking questions
    - Non-blocking questions
-   - How each question affects execution
+   - Execution impact
 22. Task Extraction Notes
    - Suggested vertical task boundaries
    - Suggested first task

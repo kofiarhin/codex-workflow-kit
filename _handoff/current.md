@@ -4,11 +4,11 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Update the workflow kit so the Spec Phase generates a detailed, implementation-aware execution blueprint before task planning.
+Fix the failed detailed-spec workflow update by replacing remaining lightweight spec guidance with the exact detailed spec execution blueprint and spec-derived task planning requirements.
 
 ## Request ID
 
-2026-05-15-add-detailed-spec-blueprint
+2026-05-15-fix-detailed-spec-workflow-update
 
 ## Current Phase
 
@@ -20,27 +20,27 @@ complete-workflow
 
 ## Current Spec File
 
-`_spec/2026-05-15-add-detailed-spec-blueprint.md`
+`_spec/2026-05-15-fix-detailed-spec-workflow-update.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-15-add-detailed-spec-blueprint.md`
+`_task/2026-05-15-fix-detailed-spec-workflow-update.md`
 
 ## Current Review File
 
-`_review/2026-05-15-add-detailed-spec-blueprint.md`
+`_review/2026-05-15-fix-detailed-spec-workflow-update.md`
 
 ## Current Release Notes File
 
-`_release/2026-05-15-add-detailed-spec-blueprint.md`
+`_release/2026-05-15-fix-detailed-spec-workflow-update.md`
 
 ## Current Summary File
 
-`_summary/2026-05-15-add-detailed-spec-blueprint.md`
+`_summary/2026-05-15-fix-detailed-spec-workflow-update.md`
 
 ## Last Completed Task
 
-`TASK-003: Update README and finalize workflow artifacts`
+`TASK-002: Verify and finalize detailed spec workflow fix`
 
 ## Current Task
 
@@ -56,17 +56,16 @@ None. Review and commit when ready.
 
 ## Dirty Worktree Status
 
-Initial `git status --short` before implementation returned no existing dirty files. Final status shows workflow docs/templates/artifacts only and no app implementation files under `client/` or `server/`.
+Initial `git status --short` returned no existing dirty files before implementation. Final status shows workflow docs/templates/prompts/artifacts only and no app implementation files under `client/` or `server/`.
 
 ## Acceptance Status
 
-TASK-001, TASK-002, and TASK-003 acceptance results are complete and all required criteria are checked `[x]`.
+TASK-001 and TASK-002 acceptance results are complete and all required criteria are checked `[x]`.
 
 ## Iteration Evidence Status
 
 - TASK-001: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete.
 - TASK-002: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete.
-- TASK-003: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete.
 
 ## Blockers
 
@@ -74,7 +73,7 @@ None.
 
 ## Verification Status
 
-Passed. Required detailed-spec searches passed; old lightweight-term search confirms those terms are no longer the entire spec structure; prompt mirror check passed; `npm test` passed; `npm run build` passed; `git diff --check` reported line-ending normalization warnings only; `git diff --stat` and `git diff` ran.
+Passed. Required grep searches completed after excluding `.git` and `node_modules` due literal full-tree timeout; active-doc `Request summary` search returned no matches; detailed spec heading and task-derivation checks passed; mirror checks passed; `npm test` passed; `npm run build` passed; `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran.
 
 ## Workflow Health Status
 
@@ -86,9 +85,9 @@ Passed.
 
 ## Notes For Continuation
 
-- Workflow completed for `2026-05-15-add-detailed-spec-blueprint`.
-- Review file: `_review/2026-05-15-add-detailed-spec-blueprint.md`.
-- Release notes file: `_release/2026-05-15-add-detailed-spec-blueprint.md`.
-- Summary file: `_summary/2026-05-15-add-detailed-spec-blueprint.md`.
+- Workflow completed for `2026-05-15-fix-detailed-spec-workflow-update`.
+- Review file: `_review/2026-05-15-fix-detailed-spec-workflow-update.md`.
+- Release notes file: `_release/2026-05-15-fix-detailed-spec-workflow-update.md`.
+- Summary file: `_summary/2026-05-15-fix-detailed-spec-workflow-update.md`.
 - Decisions: none.
-- Suggested commit message: `docs: require detailed spec blueprint before planning`.
+- Suggested commit message: `docs: replace remaining lightweight spec guidance`.
