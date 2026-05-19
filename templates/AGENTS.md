@@ -16,6 +16,7 @@ Customize placeholders before using this in a production project. MERN is the de
 - Workflow entrypoints:
   - `WORK_REQUEST.md`
   - `RUN_WORKFLOW.md`
+  - `.agents/skills/grill-me/SKILL.md`
 - Main workflow memory:
   - `_handoff/current.md`
   - `_spec/`
@@ -44,62 +45,63 @@ Customize placeholders before using this in a production project. MERN is the de
    - `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each executable task must complete the full 3-pass hardening loop before the next task starts.
 6. Agents must not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
 7. Agents must continue through `TASK-002`, `TASK-003`, and later tasks automatically when the current task is `Done` and safe to continue.
-8. Ask focused clarifying questions before implementation unless the prompt explicitly says `skip questions`.
-9. Keep asking until there is about 90% understanding of the request.
-10. Clarify the goal, users, exact behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope items.
-11. If the request is tiny and obvious, ask fewer questions, but still avoid touching code until the spec and task plan exist.
-12. Do not touch code during the questioning phase.
-13. If the user says `skip questions`, generate a best-effort spec and clearly record assumptions.
-14. No implementation is allowed without a saved spec in `_spec/`.
-15. No implementation is allowed without a saved task plan in `_task/`.
-16. Before planning, read `_handoff/current.md` if it exists, `_progress/progress.md`, and the latest relevant file in `_summary/`.
-17. Before touching code for any task, read `_handoff/current.md`, `_progress/progress.md`, and the latest relevant file in `_summary/`.
-18. Read `RUN_WORKFLOW.md` before planning or editing.
-19. Read `docs/PROJECT_CONTEXT.md` and relevant supporting docs before implementation, updating them only when durable project facts change.
-20. Generate a timestamped or slugged spec file in `_spec/`, for example `_spec/2026-05-10-add-dark-theme.md`.
-21. Generate a vertical task plan in `_task/` from the saved spec.
-22. Tasks must be vertical slices of user-visible or independently verifiable value, not vague frontend/backend/database layers.
-23. Break work into Ralph Wiggum-style tasks: small, literal, safe, sequential steps that are easy to follow and hard to misinterpret.
-24. Implement tasks sequentially, one task at a time.
-25. Keep changes scoped to the active task.
-26. Never implement unrelated work.
-27. Every task must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
-28. Every executable task must run through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`.
-29. For every code-changing task, each Build, Refine, and Polish iteration must embed TDD-first Red -> Green -> Refactor: write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without changing behavior, and verify tests still pass.
-30. Each iteration must include documented goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, and next action.
-31. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
-32. A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
-33. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
-34. A task cannot move to `Reviewed` unless verification was attempted.
-35. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
-36. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-37. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
-38. If verification fails during any iteration, follow the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
-39. After each task, append progress to `_progress/progress.md`, including separate iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, and any failure recovery notes.
-40. After each task, update `_handoff/current.md` so it reflects the latest completed task, current task, current iteration, current phase, blockers, dirty worktree status, verification status, acceptance status, iteration evidence status, and next step.
-41. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
-42. The handoff file should allow another agent/session to resume without rereading the entire conversation.
-43. `continue workflow` must start from `_handoff/current.md`.
-44. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
-45. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
-46. After all executable tasks are complete or a stop condition is reached, create a review file in `_review/`.
-47. After review, create release notes in `_release/<request-id>.md`.
-48. After release notes are complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
-49. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
-50. Before the final response, run the workflow health check.
-51. Continue to the next task only when the current task completed Build -> Refine -> Polish, is verified, reviewed, documented, all required TDD evidence for code-changing tasks is documented or explicitly excepted, all required acceptance criteria are met, and safe to continue.
-52. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
-53. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
+8. Workflow requests must use the grill-me skill at `.agents/skills/grill-me/SKILL.md` as the default intake engine before any spec, task plan, or implementation work.
+9. Grill-me asks one focused question at a time and includes a recommended answer with every question.
+10. Grill-me inspects the repo (code, docs, workflow files) instead of asking when an answer can be discovered locally.
+11. The normal workflow starts only after grill-me has produced the Shared Understanding Handoff and the normalized request has been synced into `WORK_REQUEST.md`.
+12. Do not touch code, create `_spec/`, or create `_task/` during the grill-me intake phase.
+13. If the user says `skip questions`, bypass grill-me, generate a best-effort spec, and clearly record assumptions.
+14. If the user says `continue workflow`, do not invoke grill-me; resume from `_handoff/current.md`.
+15. No implementation is allowed without a saved spec in `_spec/`.
+16. No implementation is allowed without a saved task plan in `_task/`.
+17. Before planning, read `_handoff/current.md` if it exists, `_progress/progress.md`, and the latest relevant file in `_summary/`.
+18. Before touching code for any task, read `_handoff/current.md`, `_progress/progress.md`, and the latest relevant file in `_summary/`.
+19. Read `RUN_WORKFLOW.md` before planning or editing.
+20. Read `docs/PROJECT_CONTEXT.md` and relevant supporting docs before implementation, updating them only when durable project facts change.
+21. Generate a timestamped or slugged spec file in `_spec/`, for example `_spec/2026-05-10-add-dark-theme.md`.
+22. Generate a vertical task plan in `_task/` from the saved spec.
+23. Tasks must be vertical slices of user-visible or independently verifiable value, not vague frontend/backend/database layers.
+24. Break work into Ralph Wiggum-style tasks: small, literal, safe, sequential steps that are easy to follow and hard to misinterpret.
+25. Implement tasks sequentially, one task at a time.
+26. Keep changes scoped to the active task.
+27. Never implement unrelated work.
+28. Every task must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
+29. Every executable task must run through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`.
+30. For every code-changing task, each Build, Refine, and Polish iteration must embed TDD-first Red -> Green -> Refactor: write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without changing behavior, and verify tests still pass.
+31. Each iteration must include documented goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, and next action.
+32. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
+33. A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
+34. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
+35. A task cannot move to `Reviewed` unless verification was attempted.
+36. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+37. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+38. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
+39. If verification fails during any iteration, follow the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
+40. After each task, append progress to `_progress/progress.md`, including separate iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, and any failure recovery notes.
+41. After each task, update `_handoff/current.md` so it reflects the latest completed task, current task, current iteration, current phase, blockers, dirty worktree status, verification status, acceptance status, iteration evidence status, and next step.
+42. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
+43. The handoff file should allow another agent/session to resume without rereading the entire conversation.
+44. `continue workflow` must start from `_handoff/current.md`.
+45. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
+46. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
+47. After all executable tasks are complete or a stop condition is reached, create a review file in `_review/`.
+48. After review, create release notes in `_release/<request-id>.md`.
+49. After release notes are complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
+50. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
+51. Before the final response, run the workflow health check.
+52. Continue to the next task only when the current task completed Build -> Refine -> Polish, is verified, reviewed, documented, all required TDD evidence for code-changing tasks is documented or explicitly excepted, all required acceptance criteria are met, and safe to continue.
+53. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
+54. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
 
 ## Required Workflow
 
 For a work request:
 
 1. Use the latest direct user prompt as the active request when it looks like project work; otherwise read `WORK_REQUEST.md`.
-2. Sync the active request into `WORK_REQUEST.md`.
-3. Read `RUN_WORKFLOW.md`.
-4. Ask clarifying questions until there is about 90% understanding, unless the prompt explicitly says `skip questions`.
-5. If questions are skipped, write assumptions into the spec.
+2. Invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to produce a Shared Understanding Handoff, unless the prompt explicitly says `skip questions` or `continue workflow`.
+3. Sync the normalized active request into `WORK_REQUEST.md`.
+4. Read `RUN_WORKFLOW.md`.
+5. If questions are skipped, bypass grill-me and write assumptions into the spec. If the prompt is `continue workflow`, skip grill-me and resume from `_handoff/current.md`.
 6. Check repository status for dirty worktree protection:
 
    ```bash
@@ -163,9 +165,9 @@ If the user says `continue workflow`:
 
 ## Questioning Rules
 
-Questions should be focused and grouped. Do not ask a large questionnaire when a short set of questions will reach useful certainty.
+Use the grill-me skill at `.agents/skills/grill-me/SKILL.md` as the default intake engine for every workflow request. Grill-me asks one focused question at a time, includes a recommended answer with every question, and inspects the repo instead of asking when an answer can be discovered from code, docs, or workflow files. The normal workflow only starts after grill-me has produced the Shared Understanding Handoff.
 
-Ask about:
+Grill-me must cover:
 
 - Goal and business/user value.
 - Primary users and roles.
@@ -176,7 +178,9 @@ Ask about:
 - Success criteria and verification.
 - Explicitly out-of-scope work.
 
-Stop questioning when the remaining unknowns are minor enough to document as assumptions, or when the user says to proceed.
+Stop grilling when the goal, scope, out-of-scope work, user-facing behavior, affected surfaces, and acceptance criteria are clear, or when the remaining unknowns can be documented as assumptions.
+
+`skip questions` bypasses grill-me and proceeds with a best-effort spec that records assumptions. `continue workflow` bypasses grill-me and resumes from `_handoff/current.md`.
 
 ## Spec Rules
 

@@ -4,9 +4,9 @@ This is the master orchestration prompt for a reusable AI engineering workflow. 
 
 ## Command To Agent
 
-Use the latest direct user prompt as the primary request source when it looks like project work. Sync it into `WORK_REQUEST.md`, then execute this workflow exactly.
+Use the latest direct user prompt as the primary request source when it looks like project work. Run the grill-me intake skill first to build shared understanding, then sync the normalized request into `WORK_REQUEST.md`, then execute this workflow exactly.
 
-Before touching code, ask focused clarifying questions until you reach about 90% understanding. If the user explicitly says `skip questions`, generate a best-effort detailed spec and record assumptions.
+Before touching code, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to stress-test the request and produce a Shared Understanding Handoff. If the user explicitly says `skip questions`, bypass grill-me and generate a best-effort detailed spec with recorded assumptions. If the user says `continue workflow`, do not run grill-me; resume from `_handoff/current.md`.
 
 Default execution mode is `complete-workflow`. Do not stop after `TASK-001` unless the user explicitly selected `single-task` or a stop condition is reached.
 
@@ -36,8 +36,10 @@ Do not implement without:
 
 ```txt
 direct user prompt or WORK_REQUEST
+-> grill-me intake unless skipped/resuming
+-> shared understanding handoff
 -> sync WORK_REQUEST
--> questions
+-> dirty worktree check
 -> spec in _spec
 -> read _progress and _summary
 -> read or create _handoff/current.md
@@ -78,7 +80,7 @@ Request source rules:
 - If there is no direct project-work prompt, use the request stored in `WORK_REQUEST.md`.
 - Do not require the user to manually edit workflow docs before proceeding.
 
-Sync the active request into `WORK_REQUEST.md` before questioning and planning. Preserve useful optional context when present, but make the latest active request obvious.
+Do not create `WORK_REQUEST.md`, `_spec/`, or `_task/` until grill-me has produced the Shared Understanding Handoff, unless `skip questions` is set. Sync the normalized active request into `WORK_REQUEST.md` after grill-me completes (or immediately, when `skip questions` bypasses grill-me). Preserve useful optional context when present, but make the latest active request obvious.
 
 Before planning, read `_handoff/current.md` if it exists. If no handoff exists, create it and populate the current request, request ID, current phase, known artifact paths, blockers, verification status, workflow health status, suggested next prompt, and continuation notes.
 
@@ -86,6 +88,7 @@ Before planning, read `_handoff/current.md` if it exists. If no handoff exists, 
 
 If the active user prompt is exactly or primarily `continue workflow`, resume instead of restarting intake:
 
+0. Do not invoke the grill-me intake skill. Resume from existing handoff state.
 1. Read `_handoff/current.md` first and use it as the primary resume source.
 2. If no handoff exists, create it, then fall back to `_progress/progress.md`, the latest relevant `_summary/`, the latest `_task/`, and the referenced spec to reconstruct the live state.
 3. Read `_progress/progress.md` to verify completed task history.
@@ -104,9 +107,9 @@ If the active user prompt is exactly or primarily `continue workflow`, resume in
 
 Do not touch code in this phase.
 
-Ask focused clarifying questions until there is about 90% understanding of the request. Ask fewer questions for tiny, obvious requests. Group questions so the user can answer efficiently.
+Invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` as the default intake engine. Grill-me asks one focused question at a time, includes a recommended answer with every question, inspects the repo instead of asking when the answer is discoverable from code, docs, or workflow files, and walks decision branches one-by-one until shared understanding exists.
 
-Clarify:
+Grill-me must cover:
 
 - Goal.
 - Users.
@@ -119,16 +122,24 @@ Clarify:
 - Success criteria.
 - What is out of scope.
 
+Grill-me produces a Shared Understanding Handoff with these sections: Original Request, Confirmed Understanding, Decisions Made, Assumptions, In Scope, Out Of Scope, Acceptance Criteria, Risks And Edge Cases, Remaining Open Questions, and Normalized Workflow Request. The normal workflow continues from the Normalized Workflow Request.
+
 If the prompt explicitly says `skip questions`:
 
-- Do not ask questions.
+- Do not invoke grill-me.
 - Generate the best possible spec from available context.
 - Record assumptions and open questions in the spec.
 
-Stop questioning when:
+If the prompt is `continue workflow`:
 
-- The user has answered enough to proceed.
-- The remaining unknowns are minor and can be documented as assumptions.
+- Do not invoke grill-me.
+- Resume from `_handoff/current.md` per section 1A.
+
+Stop grilling when:
+
+- The goal, scope, and out-of-scope work are clear.
+- User-facing behavior, affected surfaces, and acceptance criteria are clear.
+- The remaining unknowns can be documented as assumptions.
 - The user explicitly says to proceed.
 
 ## 3. Classify Request

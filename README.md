@@ -5,8 +5,10 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> dirty worktree check -> detailed execution blueprint in _spec -> vertical plan/tasks derived from the blueprint in _task -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
+request -> grill-me intake skill -> shared understanding handoff -> sync WORK_REQUEST -> dirty worktree check -> detailed execution blueprint in _spec -> vertical plan/tasks derived from the blueprint in _task -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
 ```
+
+The grill-me skill is the workflow intake engine. It stress-tests a rough request through focused questions (one at a time, each with a recommended answer), inspects the repo when the answer is already there, and produces a Shared Understanding Handoff that feeds the rest of the workflow. It replaces the old generic clarification phase.
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
 
@@ -15,6 +17,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `WORK_REQUEST.md`: Auto-managed record of the latest active request and optional preferences.
 - `RUN_WORKFLOW.md`: The master orchestration prompt that tells the agent how to run the workflow.
 - `AGENTS.md`: Repository operating rules for coding agents.
+- `.agents/skills/grill-me/SKILL.md`: The workflow intake skill. Replaces the old generic clarification phase with focused, one-question-at-a-time intake that produces a Shared Understanding Handoff before the spec is written.
 - `_handoff/current.md`: Live workflow state used to resume with `continue workflow`.
 - `_spec/`: Saved detailed execution blueprints generated after intake questions and repo intake.
 - `_task/`: Saved vertical task plans generated from detailed specs.
@@ -36,8 +39,8 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 
 AI coding agents work better with clear scope and a repeatable loop. This kit makes the agent slow down before code changes:
 
-- Ask clarifying questions before implementation.
-- Build about 90% understanding of goal, users, behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope work.
+- Run the grill-me intake skill before implementation to build shared understanding.
+- Cover goal, users, behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope work through focused one-at-a-time grill-me questions with recommended answers.
 - Save a detailed, implementation-aware execution blueprint in `_spec/`.
 - Read `_progress/` and `_summary/` before planning.
 - Generate vertical tasks in `_task/` from the detailed spec's affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes.
@@ -61,6 +64,10 @@ templates/
   WORK_REQUEST.md
   RUN_WORKFLOW.md
   AGENTS.md
+  .agents/
+    skills/
+      grill-me/
+        SKILL.md
   _handoff/
     current.md
   _spec/
@@ -136,13 +143,13 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, sync it into `WORK_REQUEST.md`, ask clarifying questions, run dirty worktree protection, generate a detailed execution blueprint spec, generate a vertical task plan from that blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, sync the normalized request into `WORK_REQUEST.md`, run dirty worktree protection, generate a detailed execution blueprint spec, generate a vertical task plan from that blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
 
 Manual editing of `WORK_REQUEST.md`, `_spec/`, `_task/`, `_progress/`, `_review/`, `_summary/`, or `_decisions/` is optional, not required.
 
-### Step 3: Answer Questions
+### Step 3: Answer Grill-Me Questions
 
-The agent should ask focused questions before writing code. It should clarify:
+The agent invokes the grill-me skill at `.agents/skills/grill-me/SKILL.md` before writing code. Grill-me asks one focused question at a time, includes a recommended answer with every question, and inspects the repo instead of asking when the answer is already discoverable. It covers:
 
 - Goal.
 - Users.
@@ -155,7 +162,7 @@ The agent should ask focused questions before writing code. It should clarify:
 - Success criteria.
 - Out-of-scope work.
 
-Tiny obvious requests can use fewer questions. No implementation should happen during this phase.
+Grill-me ends with a Shared Understanding Handoff (Original Request, Confirmed Understanding, Decisions Made, Assumptions, In Scope, Out Of Scope, Acceptance Criteria, Risks And Edge Cases, Remaining Open Questions, Normalized Workflow Request). The normal workflow continues from the Normalized Workflow Request. Tiny obvious requests use a shorter grill-me pass. No implementation should happen during this phase.
 
 ### Step 4: Review Spec And Task Plan
 
@@ -329,13 +336,13 @@ Use this prompt to resume an interrupted workflow:
 continue workflow
 ```
 
-The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task and current iteration that is not `Done`, and continue executing remaining tasks sequentially until every task is complete or a stop condition is reached. It should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
+The agent should read `_handoff/current.md` first, verify completed task history against `_progress/progress.md`, read the referenced task plan and spec, find the next task and current iteration that is not `Done`, and continue executing remaining tasks sequentially until every task is complete or a stop condition is reached. `continue workflow` does not re-invoke the grill-me intake skill; the agent resumes directly from the handoff state. The agent should not ask the original intake questions again unless needed, and it should not regenerate the entire spec unless the request changed.
 
 ## Question Control
 
-By default, the workflow asks questions first.
+By default, the workflow runs the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` before any spec, task plan, or implementation.
 
-To skip questions, include `skip questions` in the prompt:
+To bypass grill-me, include `skip questions` in the prompt:
 
 ```txt
 skip questions
@@ -343,6 +350,8 @@ add dark theme for the app
 ```
 
 When questions are skipped, the agent must generate the best possible detailed spec and record assumptions/open questions before planning or implementation.
+
+To resume an interrupted run without re-running grill-me, use `continue workflow`. That command skips grill-me and resumes from `_handoff/current.md`.
 
 ## Execution Preferences
 
@@ -362,8 +371,8 @@ Default: `complete-workflow`.
 ## Recommended Agent Loop
 
 1. Treat the latest direct prompt as the active request.
-2. Sync the request into `WORK_REQUEST.md`.
-3. Ask clarifying questions unless the prompt says `skip questions`.
+2. Invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` unless the prompt says `skip questions` or `continue workflow`, and produce a Shared Understanding Handoff.
+3. Sync the normalized request into `WORK_REQUEST.md`.
 4. Generate a saved detailed execution blueprint in `_spec/`.
 5. Read `_progress/progress.md` and the latest relevant `_summary/`.
 6. Read or create `_handoff/current.md`.
@@ -418,12 +427,12 @@ Refactor auth middleware for readability without changing behavior.
 
 ## Test Prompts
 
-Prompt with questions:
+Prompt with grill-me intake:
 
 ```txt
 Add dark theme to the app.
 Follow RUN_WORKFLOW.md.
-Ask clarifying questions first, then generate the detailed spec in _spec/ and the vertical task plan derived from it in _task/.
+Run the grill-me intake skill first, then generate the detailed spec in _spec/ and the vertical task plan derived from it in _task/.
 ```
 
 Prompt that skips questions:
@@ -461,7 +470,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> questions -> dirty worktree check -> detailed _spec -> spec-derived _task -> all task execution through Build -> Refine -> Polish -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
+direct prompt -> grill-me intake skill -> shared understanding handoff -> sync WORK_REQUEST -> dirty worktree check -> detailed _spec -> spec-derived _task -> all task execution through Build -> Refine -> Polish -> acceptance results + _progress + _handoff after each task -> final diff audit -> _review -> _release -> _summary -> _handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, detailed current-state notes, success criteria, or acceptance criteria.
@@ -503,6 +512,7 @@ Keep these files at the project root:
 - `AGENTS.md`
 - `WORK_REQUEST.md`
 - `RUN_WORKFLOW.md`
+- `.agents/skills/grill-me/SKILL.md`
 - `_handoff/`
 - `_spec/`
 - `_task/`
@@ -555,8 +565,9 @@ These examples show the expected level of detail. They are not application code.
 
 ## Design Principles
 
-- Ask before building.
+- Grill-me intake before building.
 - Plain English request in.
+- Shared Understanding Handoff before WORK_REQUEST sync, spec, or task plan.
 - Detailed execution blueprint before task planning and implementation.
 - Vertical tasks over vague layers.
 - Ralph Wiggum-style steps over broad autonomy.

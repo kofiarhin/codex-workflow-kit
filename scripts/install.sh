@@ -92,6 +92,7 @@ echo
 copy_file "$TEMPLATE_ROOT/AGENTS.md" "AGENTS.md"
 copy_file "$TEMPLATE_ROOT/WORK_REQUEST.md" "WORK_REQUEST.md"
 copy_file "$TEMPLATE_ROOT/RUN_WORKFLOW.md" "RUN_WORKFLOW.md"
+copy_file "$TEMPLATE_ROOT/.agents/skills/grill-me/SKILL.md" ".agents/skills/grill-me/SKILL.md"
 copy_file "$TEMPLATE_ROOT/_handoff/current.md" "_handoff/current.md"
 copy_file "$TEMPLATE_ROOT/_spec/README.md" "_spec/README.md"
 copy_file "$TEMPLATE_ROOT/_task/README.md" "_task/README.md"
@@ -124,5 +125,8 @@ echo
 echo "   Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md."
 echo
 echo "4. Review _handoff/current.md, _spec/, _task/, _parallel/, _progress/progress.md, _review/, _release/, _summary/, _decisions/, and the final response before committing."
+echo
+echo "Workflow intake now runs through the grill-me skill installed at:"
+echo "   .agents/skills/grill-me/SKILL.md"
 echo
 echo "Existing files were skipped unless --force was used."

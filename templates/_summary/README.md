@@ -25,6 +25,7 @@ Each summary should include:
 - Release notes file used.
 - Tasks completed.
 - Iteration evidence summary.
+- TDD-first evidence summary for every code-changing task.
 - Files changed.
 - Acceptance results.
 - Verification run.
@@ -37,4 +38,8 @@ Each summary should include:
 
 After writing a summary, agents must update `_handoff/current.md` with the summary path, final or current workflow health status, unresolved issues, and suggested next prompt.
 
-Workflow health is `Passed` only when the work request synced, spec exists, task plan exists, progress updated, handoff updated, review created, summary created, release notes created, required iteration evidence exists for every executable task, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+Workflow health is `Passed` only when the work request synced, spec exists, task plan exists, progress updated, handoff updated, review created, summary created, release notes created, required iteration evidence exists for every executable task, TDD-first evidence exists for every code-changing task, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+
+TDD-first evidence must summarize, for every code-changing task, whether relevant tests were added or updated before implementation, Red phase expected failure was observed when possible, Green phase passing verification was recorded, Refactor phase post-cleanup verification was recorded, and any missing-test exception was explicitly justified.
+
+Workflow health cannot be `Passed` if any code-changing task lacks Red phase evidence, Green phase evidence, Refactor phase evidence, or an explicitly justified missing-test exception.

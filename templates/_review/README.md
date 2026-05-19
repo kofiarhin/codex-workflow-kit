@@ -17,6 +17,7 @@ Each review file must include:
 - Task plan used.
 - Tasks reviewed.
 - Iteration evidence reviewed for every executable task.
+- TDD-first evidence reviewed for every code-changing task.
 - Bugs found.
 - Scope creep check.
 - Final diff audit.
@@ -32,6 +33,12 @@ Each review file must include:
 - Write the review after task verification and before the final summary.
 - Review the completed work against the saved spec and task plan.
 - Confirm every executable task has Build, Refine, and Polish evidence before it is marked `Done`.
+- For every code-changing task, confirm TDD-first evidence:
+  - Relevant tests were added or updated before implementation.
+  - Red phase expected failure was observed when possible.
+  - Green phase passing verification was recorded.
+  - Refactor phase post-cleanup verification was recorded.
+  - Any missing-test exception is explicitly justified.
 - Check that scope stayed inside the active request.
 - Include the final diff audit from `git diff --stat` and `git diff`, or document why those commands could not run.
 - Include failure recovery notes for any failed verification, including the failing command, captured error, classification, targeted fix attempt, exact rerun result, and final status.

@@ -4,7 +4,7 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will ask clarifying questions, run dirty worktree protection, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, record acceptance results, update `_progress/progress.md` and `_handoff/current.md` after each task, run a final diff audit, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
+The workflow will invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, run dirty worktree protection, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, record acceptance results, update `_progress/progress.md` and `_handoff/current.md` after each task, run a final diff audit, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
 
 ## Request
 
@@ -14,10 +14,10 @@ The workflow will ask clarifying questions, run dirty worktree protection, gener
 
 Choose one:
 
-- `ask questions`: default. Ask focused questions until about 90% understanding before writing the spec.
+- `grill-me intake`: default. Use the grill-me skill at `.agents/skills/grill-me/SKILL.md` to create shared understanding before writing the spec.
 - `skip questions`: do not ask questions; generate a best-effort spec and record assumptions.
 
-Default: `ask questions`
+Default: `grill-me intake`
 
 ## Optional Execution Preference
 

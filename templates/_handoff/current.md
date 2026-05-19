@@ -50,6 +50,26 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 `<Iteration 1 - Build / Iteration 2 - Refine / Iteration 3 - Polish / none>`
 
+## Current TDD Phase
+
+`<Red / Green / Refactor / none>`
+
+## Red Phase Status
+
+`<not started / failing test written or updated / expected failure observed / blocked / not applicable, with command summary>`
+
+## Green Phase Status
+
+`<not started / implementation in progress / passing verification recorded / blocked / not applicable, with command summary>`
+
+## Refactor Phase Status
+
+`<not started / cleanup in progress / post-cleanup verification recorded / blocked / not applicable, with command summary>`
+
+## Missing-Test Exception
+
+`<none / explicitly justified exception with reason and best available verification>`
+
 ## Next Task
 
 `<task id and title, review, summary, health check, or none>`
@@ -114,8 +134,10 @@ This file is the live resume state for the active workflow. Keep it current afte
 - For `parallel-workflow`, orchestrator owns intake/spec/task plan, queue, claims, locks, worker assignment, merge review, final verification, review, release notes, summary, handoff, and health check.
 - For `parallel-worker`, worker claims exactly one eligible task, records claim and file locks before editing, completes Build -> Refine -> Polish, records final status, releases locks, and stops.
 - For `parallel-orchestrator`, validate claims/locks/worker outputs, resolve conflicts or create follow-up tasks, run final verification, and complete final artifacts.
-- Resume from the current task and current iteration.
+- Resume from the current task, current iteration, and current TDD phase.
 - Every executable task must complete Build -> Refine -> Polish with documented goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action before `Done`.
+- For code-changing tasks, resume at the recorded TDD phase: Red writes or updates the failing test first and records the expected failure when possible; Green implements the smallest passing change and records passing verification; Refactor cleans up without behavior change and records post-cleanup verification.
+- Do not advance a code-changing task to `Done` unless Red, Green, and Refactor evidence is complete for the current iteration or the missing-test exception is explicitly justified.
 - Preserve dirty worktree protection: stop before editing if dirty files overlap with planned files.
 - Preserve acceptance results: no task is `Done` unless every required criterion is checked `[x]`.
 - If verification fails, follow the failure recovery protocol inside the current iteration and record the result in progress, review, and summary.
