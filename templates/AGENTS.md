@@ -65,29 +65,31 @@ Customize placeholders before using this in a production project. MERN is the de
 26. Never implement unrelated work.
 27. Every task must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 28. Every executable task must run through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`.
-29. Each iteration must include documented goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
-30. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
-31. A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
-32. A task cannot move to `Reviewed` unless verification was attempted.
-33. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
-34. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-35. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
-36. If verification fails during any iteration, follow the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
-37. After each task, append progress to `_progress/progress.md`, including separate iteration evidence, acceptance results, and any failure recovery notes.
-38. After each task, update `_handoff/current.md` so it reflects the latest completed task, current task, current iteration, current phase, blockers, dirty worktree status, verification status, acceptance status, iteration evidence status, and next step.
-39. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
-40. The handoff file should allow another agent/session to resume without rereading the entire conversation.
-41. `continue workflow` must start from `_handoff/current.md`.
-42. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
-43. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
-44. After all executable tasks are complete or a stop condition is reached, create a review file in `_review/`.
-45. After review, create release notes in `_release/<request-id>.md`.
-46. After release notes are complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
-47. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
-48. Before the final response, run the workflow health check.
-49. Continue to the next task only when the current task completed Build -> Refine -> Polish, is verified, reviewed, documented, all required acceptance criteria are met, and safe to continue.
-50. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
-51. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
+29. For every code-changing task, each Build, Refine, and Polish iteration must embed TDD-first Red -> Green -> Refactor: write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without changing behavior, and verify tests still pass.
+30. Each iteration must include documented goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, and next action.
+31. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
+32. A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
+33. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
+34. A task cannot move to `Reviewed` unless verification was attempted.
+35. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+36. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+37. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
+38. If verification fails during any iteration, follow the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
+39. After each task, append progress to `_progress/progress.md`, including separate iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, and any failure recovery notes.
+40. After each task, update `_handoff/current.md` so it reflects the latest completed task, current task, current iteration, current phase, blockers, dirty worktree status, verification status, acceptance status, iteration evidence status, and next step.
+41. Always keep `_handoff/current.md` current; do not leave handoff stale after task execution.
+42. The handoff file should allow another agent/session to resume without rereading the entire conversation.
+43. `continue workflow` must start from `_handoff/current.md`.
+44. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff accordingly.
+45. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
+46. After all executable tasks are complete or a stop condition is reached, create a review file in `_review/`.
+47. After review, create release notes in `_release/<request-id>.md`.
+48. After release notes are complete, create or append a summary in `_summary/` and update `_handoff/current.md`.
+49. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
+50. Before the final response, run the workflow health check.
+51. Continue to the next task only when the current task completed Build -> Refine -> Polish, is verified, reviewed, documented, all required TDD evidence for code-changing tasks is documented or explicitly excepted, all required acceptance criteria are met, and safe to continue.
+52. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
+53. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
 
 ## Required Workflow
 
@@ -116,9 +118,9 @@ For a work request:
     - read latest `_progress/progress.md`
     - read relevant `_summary/`
     - inspect the codebase for the current task
-    - implement only the current task through Iteration 1 Build
-    - refine only in-scope issues through Iteration 2 Refine
-    - polish and harden through Iteration 3 Polish
+    - implement only the current task through Iteration 1 Build, using Red -> Green -> Refactor for code-changing work
+    - refine only in-scope issues through Iteration 2 Refine, using Red -> Green -> Refactor for code-changing work
+    - polish and harden through Iteration 3 Polish, using Red -> Green -> Refactor for code-changing work
     - verify, critique, and record evidence inside each iteration
     - append progress to `_progress/progress.md`
     - update `_handoff/current.md`
@@ -362,6 +364,11 @@ Each task must include:
 - Files likely affected.
 - Checklist.
 - Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Acceptance criteria.
 - Acceptance result.
 - Verification commands.
@@ -372,6 +379,11 @@ Each iteration plan must include:
 
 - Goal.
 - Changes made.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Verification command/result.
 - Review findings.
 - Acceptance status.
@@ -393,6 +405,7 @@ Allowed terminal states:
 Rules:
 
 - A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
+- A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
 - A task cannot move to `Reviewed` unless verification was attempted.
 - If verification cannot run, the task can be `Needs Human Review`, not `Done`.
 - A task cannot be `Done` unless every required acceptance criterion is checked `[x]`.
@@ -444,6 +457,7 @@ After each task, append:
 - Lifecycle transition reached.
 - Files changed.
 - Iteration evidence for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+- Test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, and test commands run for each code-changing iteration, or an explicit missing-test exception.
 - Acceptance result.
 - Verification result.
 - Failure recovery notes, if verification failed.
@@ -525,6 +539,7 @@ Before the final response, check:
 - Was the summary created?
 - Were release notes created?
 - Was required iteration evidence recorded for every executable task?
+- Was TDD-first evidence recorded for every code-changing task, including first-test Red evidence, expected failure when possible, Green verification, Refactor verification, and any justified missing-test exception?
 - Was the final diff audit completed or documented?
 - Was the dirty worktree checked?
 - Were acceptance results completed?
@@ -538,9 +553,9 @@ Final health status must be one of:
 - `Partial`
 - `Failed`
 
-`Passed` requires a synced work request, a detailed spec with every required section, a task plan derived from and citing or referencing the detailed spec, progress, handoff, review, summary, release notes, required iteration evidence for every executable task, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+`Passed` requires a synced work request, a detailed spec with every required section, a task plan derived from and citing or referencing the detailed spec, progress, handoff, review, summary, release notes, required iteration evidence for every executable task, required TDD-first evidence for every code-changing task or justified missing-test exceptions, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
 
-If release notes, final diff audit, dirty worktree check, required detailed spec sections, iteration evidence, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, final diff audit, dirty worktree check, required detailed spec sections, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## Implementation Boundaries
 

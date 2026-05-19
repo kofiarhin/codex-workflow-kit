@@ -10,6 +10,8 @@ If `_handoff/current.md` conflicts with this file, trust this file for completed
 
 Every executable task must complete Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`. Record separate evidence for each iteration: goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
 
+For code-changing tasks, TDD-first evidence is required inside each Build, Refine, and Polish iteration. Record the test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, and test commands run. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
+
 If verification fails during any iteration, record the failure recovery protocol result inside that iteration.
 
 Parallel modes must also record task priority, parallel-safe flag, dependencies, file locks, claim status, claimed by, agent role, merge risk, worker status, lock release status, and orchestrator merge review status. Missing claims, locks, worker status, or merge review evidence make workflow health `Partial` or `Failed` when parallel execution is used.
@@ -26,10 +28,15 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Parallel claim/lock status: `<claim recorded, active locks, released locks, unexpected overlap, or not applicable for sequential mode>`
 - Worker status: `<orchestrator/worker id, one claimed task, current iteration, final status, or not applicable>`
 - Merge review status: `<pending/passed/needs-review/failed/not applicable>`
+- Test plan: `<relevant tests and commands for code-changing tasks, or not applicable with reason>`
+- Red phase evidence: `<test added/updated first, failing command/result, expected failure confirmation, or justified missing-test exception>`
+- Green phase evidence: `<smallest implementation change, passing command/result, or not applicable>`
+- Refactor phase evidence: `<cleanup without behavior change, passing command/result after refactor, or not applicable>`
+- Test commands run: `<commands used for Red, Green, Refactor, and final verification>`
 - Iteration evidence:
-  - Iteration 1 - Build: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
-  - Iteration 2 - Refine: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
-  - Iteration 3 - Polish: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, final verdict>`
+  - Iteration 1 - Build: `<goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 2 - Refine: `<goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 3 - Polish: `<goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, final verdict>`
 - Acceptance result: `<all criteria [x], or list unmet/partial criteria>`
 - Verification result: `<commands and result>`
 - Failure recovery notes: `<none, or failing command/error/classification/fix/rerun/final result>`
@@ -390,5 +397,57 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Verification result: Required searches passed; `bash -n scripts/install.sh` passed; `npm test` passed; `npm run build` passed; `git diff --check` passed with line-ending warnings only; final diff audit ran.
 - Failure recovery notes: none.
 - Review result: Reviewed. Final diff audit found no unrelated files, no app/runtime changes, no generated junk, and no sensitive values.
+- Blockers: none.
+- Next step: Workflow complete; final response.
+
+### 2026-05-19 00:00 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `_task/README.md`, `templates/_task/README.md`, `_progress/progress.md`, `templates/_progress/progress.md`, `README.md`, `docs/PROMPTS.md`, `templates/docs/PROMPTS.md`, `AGENTS.md`, `templates/AGENTS.md`, `_task/2026-05-19-add-tdd-first-workflow.md`
+- Dirty worktree protection: Initial `git status --short` returned `?? notes.txt`. Planned files are workflow docs/templates and workflow artifacts. `notes.txt` is unrelated and was not touched. Overlap risk: none.
+- Parallel metadata: `Priority=P0; Parallel safe=no; Depends on=none; Blocks=TASK-002; File locks=RUN_WORKFLOW.md, templates/RUN_WORKFLOW.md, _task/README.md, templates/_task/README.md, _progress/progress.md, templates/_progress/progress.md, README.md, docs/PROMPTS.md, templates/docs/PROMPTS.md, AGENTS.md, templates/AGENTS.md; Claim status=done; Claimed by=orchestrator; Agent role=orchestrator; Merge risk=medium`
+- Parallel claim/lock status: Not applicable for sequential `complete-workflow`; no worker claims or active locks were used.
+- Worker status: Orchestrator-owned sequential task; final status Done.
+- Merge review status: Not applicable until final docs review.
+- Test plan: Docs-only task; no app/runtime tests added. Missing-test exception: no code behavior changed. Verification uses targeted documentation searches and mirror checks.
+- Red phase evidence: Not applicable for docs-only workflow documentation changes; no app code implementation occurred.
+- Green phase evidence: Targeted TDD-first and workflow-preservation searches passed.
+- Refactor phase evidence: Root/template mirror checks for `RUN_WORKFLOW.md`, `_task/README.md`, and `docs/PROMPTS.md` returned no content differences, with line-ending warnings only.
+- Test commands run: `rg "TDD-first|Red phase|Green phase|Refactor phase|failing test|missing-test exception" ...`; `rg "complete-workflow|Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done|dirty worktree|_handoff|_release|parallel-workflow" ...`; `git diff --no-index -- RUN_WORKFLOW.md templates/RUN_WORKFLOW.md`; `git diff --no-index -- _task/README.md templates/_task/README.md`; `git diff --no-index -- docs/PROMPTS.md templates/docs/PROMPTS.md`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added canonical TDD-first workflow rules, task/progress evidence fields, review/health gates, and README/prompt/AGENTS support. Verification searches passed; mirror checks passed with line-ending warnings only. Review found post-refactor verification and README health wording needed refinement. Acceptance was partial; next action was Refine.
+  - Iteration 2 - Refine: Tightened code-task `Done` rules to require post-refactor verification and updated README health wording. Targeted searches and mirror checks passed. Acceptance met; next action was Polish.
+  - Iteration 3 - Polish: Reviewed edited docs for consistency and completed task evidence. Required TDD-first and workflow-preservation terms remained present. Final verdict: Done.
+- Acceptance result: all TASK-001 criteria checked `[x]`.
+- Verification result: Targeted TDD-first searches passed; existing workflow preservation searches passed; root/template mirror checks passed with line-ending warnings only.
+- Failure recovery notes: none.
+- Review result: Reviewed. Scope stayed within workflow docs/templates/prompts and active workflow artifacts; no app/runtime code was edited.
+- Blockers: none.
+- Next step: Continue automatically to `TASK-002: Verify and finalize TDD-first workflow update`.
+
+### 2026-05-19 00:00 - TASK-002
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `_task/2026-05-19-add-tdd-first-workflow.md`, `_progress/progress.md`, `_handoff/current.md`, `_review/2026-05-19-add-tdd-first-workflow.md`, `_release/2026-05-19-add-tdd-first-workflow.md`, `_summary/2026-05-19-add-tdd-first-workflow.md`
+- Dirty worktree protection: Initial `git status --short` returned `?? notes.txt`. Final status still shows `notes.txt` as unrelated and untouched. Planned docs/artifact files only; overlap risk none.
+- Parallel metadata: `Priority=P1; Parallel safe=no; Depends on=TASK-001; Blocks=final response; File locks=workflow final artifacts, _progress/progress.md, _handoff/current.md, _review/2026-05-19-add-tdd-first-workflow.md, _release/2026-05-19-add-tdd-first-workflow.md, _summary/2026-05-19-add-tdd-first-workflow.md; Claim status=done; Claimed by=orchestrator; Agent role=orchestrator; Merge risk=low`
+- Parallel claim/lock status: Not applicable for sequential `complete-workflow`; no worker claims or active locks were used.
+- Worker status: Orchestrator-owned sequential task; final status Done.
+- Merge review status: Passed for documentation/template changes; no parallel worker outputs were produced.
+- Test plan: Docs-only finalization; no app/runtime tests added. Missing-test exception: no app/runtime behavior changed. Verification uses targeted searches, repo tests/build, diff checks, and final audit.
+- Red phase evidence: Not applicable for docs-only finalization; no app code implementation occurred.
+- Green phase evidence: Targeted TDD-first search passed; `npm test` passed; `npm run build` passed.
+- Refactor phase evidence: `git diff --check` passed with line-ending normalization warnings only; `git status --short client server` returned no app/runtime changes.
+- Test commands run: TDD-first `rg`; workflow preservation `rg`; `npm test`; `npm run build`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`; `git status --short client server`.
+- Iteration evidence:
+  - Iteration 1 - Build: Ran targeted TDD-first and workflow preservation searches. Both passed. Acceptance met; next action was broader verification.
+  - Iteration 2 - Refine: Ran `npm test`, `npm run build`, `git diff --check`, and status checks. Tests/build passed; diff check passed with line-ending warnings only. Acceptance met; next action was final diff audit and artifacts.
+  - Iteration 3 - Polish: Ran final diff audit and created review, release notes, summary, and final task-plan updates. Final audit found docs/workflow-artifact scope only and no app/runtime changes. Final verdict: Done.
+- Acceptance result: all TASK-002 criteria checked `[x]`.
+- Verification result: Required searches passed; `npm test` passed with existing React Router future-flag warnings; `npm run build` passed; `git diff --check` passed with line-ending warnings only; `git diff --stat` and `git diff` ran; `git status --short client server` returned no app/runtime changes.
+- Failure recovery notes: none.
+- Review result: Reviewed. No bugs, no scope creep, no app/runtime changes, no generated junk, and no sensitive values found.
 - Blockers: none.
 - Next step: Workflow complete; final response.

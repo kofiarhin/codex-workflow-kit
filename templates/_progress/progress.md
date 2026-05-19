@@ -28,6 +28,8 @@ Every task must record explicit acceptance results. A task cannot be `Done` unle
 
 Every executable task must complete Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`. Record separate evidence for each iteration: goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
 
+For code-changing tasks, TDD-first evidence is required inside each Build, Refine, and Polish iteration. Record the test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, and test commands run. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
+
 If verification fails during any iteration, record the failure recovery protocol result inside that iteration: failing command, captured error, in-scope/unrelated classification, targeted fix attempt, exact rerun result, and final task status.
 
 Dirty worktree protection must be documented before implementation: existing dirty files, files planned for the workflow, and overlap risk.
@@ -57,10 +59,15 @@ Do not stop after `TASK-001` unless execution mode is explicitly `single-task` o
 - Parallel claim/lock status: `<claim recorded, active locks, released locks, unexpected overlap, or not applicable for sequential mode>`
 - Worker status: `<orchestrator/worker id, one claimed task, current iteration, final status, or not applicable>`
 - Merge review status: `<pending/passed/needs-review/failed/not applicable>`
+- Test plan: `<relevant tests and commands for code-changing tasks, or not applicable with reason>`
+- Red phase evidence: `<test added/updated first, failing command/result, expected failure confirmation, or justified missing-test exception>`
+- Green phase evidence: `<smallest implementation change, passing command/result, or not applicable>`
+- Refactor phase evidence: `<cleanup without behavior change, passing command/result after refactor, or not applicable>`
+- Test commands run: `<commands used for Red, Green, Refactor, and final verification>`
 - Iteration evidence:
-  - Iteration 1 - Build: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
-  - Iteration 2 - Refine: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, next action>`
-  - Iteration 3 - Polish: `<goal, changes made, verification command/result, review findings, acceptance status, remaining issues, final verdict>`
+  - Iteration 1 - Build: `<goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 2 - Refine: `<goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, next action>`
+  - Iteration 3 - Polish: `<goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, final verdict>`
 - Acceptance result: `<all criteria [x], or list unmet/partial criteria>`
 - Verification result: `<commands and result, or why verification could not run>`
 - Failure recovery notes: `<none, or failing command/error/classification/fix/rerun/final result>`

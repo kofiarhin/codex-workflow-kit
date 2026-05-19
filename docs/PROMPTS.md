@@ -328,20 +328,25 @@ Follow AGENTS.md and RUN_WORKFLOW.md.
 
 Run the active executable task through the required 3-pass hardening loop:
 
-1. Iteration 1 - Build: implement the smallest working vertical slice, run verification, review against acceptance criteria, and record issues, gaps, failed checks, and the next refinement target.
-2. Iteration 2 - Refine: fix issues found in Build, improve correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency, run verification again, review again, and record what improved and what remains.
-3. Iteration 3 - Polish: perform final cleanup and hardening, remove rough edges, tighten tests/docs/types/error handling where relevant, confirm no regressions, run final verification, and produce the final task verdict.
+1. Iteration 1 - Build: for code-changing tasks, run Red -> Green -> Refactor; write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without behavior change, and verify tests still pass.
+2. Iteration 2 - Refine: for code-changing tasks, run Red -> Green -> Refactor again for the next correction, edge case, or hardening target; fix issues found in Build, improve correctness, tests, structure, naming, typing, reliability, and project consistency, then review again.
+3. Iteration 3 - Polish: for code-changing tasks, run Red -> Green -> Refactor again for final cleanup and regression coverage; tighten tests/docs/types/error handling where relevant, confirm no regressions, run final verification, and produce the final task verdict.
 
 For each iteration, record:
 - Goal
 - Changes made
+- Test plan
+- Red phase evidence
+- Green phase evidence
+- Refactor phase evidence
+- Test commands run
 - Verification command/result
 - Review findings
 - Acceptance status
 - Remaining issues
 - Next action
 
-Do not mark the task Done until all three iterations are complete and all required acceptance criteria are checked [x], unless a documented stop condition forces Blocked or Needs Human Review.
+Do not mark the task Done until all three iterations are complete, all required acceptance criteria are checked [x], and every code-changing iteration has TDD-first evidence or an explicitly justified missing-test exception.
 ```
 
 ## Iteration 1 Build Pass
@@ -354,6 +359,11 @@ Implement the smallest working vertical slice that satisfies the core task inten
 
 Required evidence:
 - Changes made
+- Test plan
+- Red phase evidence for code-changing work
+- Green phase evidence for code-changing work
+- Refactor phase evidence for code-changing work
+- Test commands run
 - Verification command/result
 - Review findings against acceptance criteria
 - Acceptance status
@@ -373,6 +383,11 @@ Fix issues found in Iteration 1 and improve correctness, edge cases, tests, stru
 
 Required evidence:
 - Changes made
+- Test plan
+- Red phase evidence for code-changing work
+- Green phase evidence for code-changing work
+- Refactor phase evidence for code-changing work
+- Test commands run
 - Verification command/result
 - Review findings
 - Acceptance status
@@ -393,13 +408,18 @@ Complete final cleanup and hardening, remove rough edges, tighten tests/docs/typ
 
 Required evidence:
 - Changes made
+- Test plan
+- Red phase evidence for code-changing work
+- Green phase evidence for code-changing work
+- Refactor phase evidence for code-changing work
+- Test commands run
 - Final verification command/result
 - Final review findings
 - Final acceptance status
 - Remaining issues, or none
 - Final task verdict
 
-Do not mark the task Done unless all required acceptance criteria are checked [x].
+Do not mark the task Done unless all required acceptance criteria are checked [x] and any code-changing work has required TDD-first evidence or a justified missing-test exception.
 ```
 
 ## Iteration Evidence Review
@@ -408,11 +428,12 @@ Do not mark the task Done unless all required acceptance criteria are checked [x
 Review iteration evidence for the active task.
 
 Confirm:
-1. Iteration 1 Build has goal, changes, verification, review findings, acceptance status, remaining issues, and next action.
-2. Iteration 2 Refine has goal, changes, verification, review findings, acceptance status, remaining issues, and next action.
-3. Iteration 3 Polish has goal, changes, verification, review findings, acceptance status, remaining issues, and final verdict.
+1. Iteration 1 Build has goal, changes, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification, review findings, acceptance status, remaining issues, and next action.
+2. Iteration 2 Refine has goal, changes, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification, review findings, acceptance status, remaining issues, and next action.
+3. Iteration 3 Polish has goal, changes, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification, review findings, acceptance status, remaining issues, and final verdict.
 4. Failure recovery, if used, is documented inside the iteration where verification failed.
-5. Final acceptance criteria are all checked [x], or the task is Blocked/Needs Human Review.
+5. Code-changing tasks added or updated relevant tests first, observed the failing test before implementation when possible, recorded passing verification after implementation and refactor, or explicitly justified a missing-test exception.
+6. Final acceptance criteria are all checked [x], or the task is Blocked/Needs Human Review.
 
 Report missing evidence before the task is marked Done.
 ```

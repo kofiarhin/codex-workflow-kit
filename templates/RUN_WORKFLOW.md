@@ -30,6 +30,7 @@ Do not implement without:
 5. A current read of the latest relevant `_summary/` entry.
 6. Task status transitions that follow `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 7. Documented iteration evidence for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish for each executable task.
+8. For every code-changing task, documented TDD-first evidence inside each iteration: Red, Green, and Refactor, or an explicit missing-test exception.
 
 ## Pipeline
 
@@ -43,6 +44,7 @@ direct user prompt or WORK_REQUEST
 -> vertical plan in _task
 -> execute every task in order by default, or prepare _parallel queue/claims/locks when parallel mode is selected and safe
 -> run each executable task through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish
+-> for every code-changing task, run Red -> Green -> Refactor inside each iteration
 -> verify, review, and record evidence inside each iteration
 -> update _progress after each task
 -> update _handoff/current.md after each task
@@ -364,6 +366,11 @@ Each task must include:
 - Files likely affected.
 - Checklist.
 - Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Acceptance criteria.
 - Acceptance result.
 - Verification commands.
@@ -374,6 +381,11 @@ Each task's Iteration plan must include these fields for every iteration:
 
 - Goal.
 - Changes made.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Verification command/result.
 - Review findings.
 - Acceptance status.
@@ -395,6 +407,7 @@ Allowed terminal states:
 Status rules:
 
 - A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
+- A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation, post-refactor verification was recorded, and any missing-test exception is explicitly justified.
 - A task cannot move to `Reviewed` unless verification was attempted.
 - If verification cannot run, the task can be `Needs Human Review`, not `Done`.
 - A task cannot be `Done` unless every required acceptance criterion is checked `[x]`.
@@ -433,14 +446,28 @@ Execute one task at a time in the default sequential `complete-workflow` mode, c
 
 Every executable task must run through this required 3-pass task hardening loop:
 
-1. Iteration 1 - Build: implement the smallest working vertical slice, run verification, review against acceptance criteria, and record issues, gaps, failed checks, and the next refinement target.
-2. Iteration 2 - Refine: fix issues found in Iteration 1, improve correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency, run verification again, review again, and record what improved and what remains.
-3. Iteration 3 - Polish: perform final cleanup and hardening, remove rough edges, tighten tests, docs, types, and error handling where relevant, confirm no regressions, run final task verification, and produce the final task verdict.
+1. Iteration 1 - Build: for code-changing tasks, run the TDD-first Red -> Green -> Refactor loop, then review against acceptance criteria and record issues, gaps, failed checks, and the next refinement target. Red means write or update the failing test first and verify it fails for the expected reason. Green means implement the smallest change to pass and verify tests pass. Refactor means clean structure, naming, and types without changing behavior and verify tests still pass.
+2. Iteration 2 - Refine: for code-changing tasks, run Red -> Green -> Refactor again for the next in-scope correction, edge case, or hardening target. Fix issues found in Iteration 1, improve correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency, run verification again, review again, and record what improved and what remains.
+3. Iteration 3 - Polish: for code-changing tasks, run Red -> Green -> Refactor again for final cleanup and regression coverage. Perform final cleanup and hardening, remove rough edges, tighten tests, docs, types, and error handling where relevant, confirm no regressions, run final task verification, and produce the final task verdict.
+
+TDD-first is mandatory for code-changing tasks in every iteration, not optional and not deferred until after implementation. Each code-changing iteration must record:
+
+- Test plan: relevant test file, behavior under test, and command to run.
+- Red phase evidence: test added or updated first, failing command/result, and confirmation that the failure is expected.
+- Green phase evidence: smallest implementation change and passing command/result.
+- Refactor phase evidence: cleanup performed without behavior change and passing command/result after refactor.
+- Test commands run: every command used for Red, Green, and Refactor.
+- Missing-test exception: explicit justification when a relevant failing test cannot be written or observed first.
 
 Do not blindly repeat work. Every iteration must have a clear purpose and documented evidence. Each iteration must include:
 
 - Goal.
 - Changes made.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Verification command/result.
 - Review findings.
 - Acceptance status.
@@ -462,9 +489,9 @@ For each task:
 5. If `_handoff/current.md` conflicts with `_progress/progress.md`, trust `_progress/progress.md` for completed task history and update handoff.
 6. Inspect only the relevant codebase area.
 7. Move the task to `In Progress` and set `_handoff/current.md` to the current task and current iteration.
-8. Run Iteration 1 - Build.
-9. Run Iteration 2 - Refine.
-10. Run Iteration 3 - Polish.
+8. Run Iteration 1 - Build, including Red -> Green -> Refactor for code-changing tasks.
+9. Run Iteration 2 - Refine, including Red -> Green -> Refactor for code-changing tasks.
+10. Run Iteration 3 - Polish, including Red -> Green -> Refactor for code-changing tasks.
 11. In every iteration, run verification commands or record why they could not run.
 12. If verification fails during any iteration, follow the failure recovery protocol in section 8A inside that iteration.
 13. In every iteration, record acceptance status for every relevant acceptance criterion.
@@ -472,7 +499,7 @@ For each task:
 15. Fix only in-scope defects for the current iteration.
 16. Move the task to `Verified` only after final task verification is attempted and all iteration verification results are documented.
 17. Move the task to `Reviewed` only after the Iteration 3 final review is complete and all iteration review findings are documented.
-18. Move the task to `Done` only after all three iterations are complete, final verification and review are documented, and all required acceptance results are checked `[x]`.
+18. Move the task to `Done` only after all three iterations are complete, final verification and review are documented, all required TDD evidence for code-changing tasks is documented or explicitly excepted, and all required acceptance results are checked `[x]`.
 19. Append progress to `_progress/progress.md`, including separate evidence for each iteration, acceptance results, and failure recovery notes.
 20. Update `_handoff/current.md` with the last completed task, current task, current iteration, next task, blockers, dirty worktree status, acceptance status, verification status, iteration evidence status, workflow health status, and suggested next prompt.
 21. Continue to the next task automatically only when the current task is `Done`.
@@ -530,8 +557,8 @@ Each worker must:
 2. Confirm the task's file locks do not overlap with active locks in `_parallel/locks.md`.
 3. Record the claim and file locks before editing.
 4. Mark the task `in-progress` in claims and agent status.
-5. Run the claimed task through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
-6. Update `_progress/progress.md` with separate iteration evidence, acceptance results, claim status, file locks, worker identity, verification, review, and final status.
+5. Run the claimed task through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish, including Red -> Green -> Refactor evidence in each iteration for code-changing tasks.
+6. Update `_progress/progress.md` with separate iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, claim status, file locks, worker identity, verification, review, and final status.
 7. Mark the task `done`, `blocked`, or `needs-review`.
 8. Release locks only after final task status is recorded.
 9. Stop after one claimed task.
@@ -558,6 +585,14 @@ Workflow health must be `Partial` or `Failed` if claims, locks, worker status, i
 ## 8. Verification
 
 Verification should match the task risk and must run, or be explicitly documented as unable to run, in each task iteration.
+
+For code-changing tasks, verification must prove the TDD-first sequence:
+
+1. Red: run the new or updated relevant test before implementation and record the expected failure.
+2. Green: run the relevant test after the smallest implementation change and record the pass.
+3. Refactor: run the relevant test again after cleanup and record that it still passes.
+
+If Red cannot be observed first, document why before implementation and record the best available missing-test exception. Do not use a missing-test exception to avoid reasonable test coverage.
 
 Use available commands such as:
 
@@ -616,6 +651,7 @@ After each task, append:
 - Lifecycle transition reached.
 - Files changed.
 - Iteration evidence for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+- Test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, and test commands run for each code-changing iteration, or an explicit missing-test exception.
 - Acceptance result.
 - Verification result.
 - Failure recovery notes, if any.
@@ -667,6 +703,7 @@ The review must include:
 - Task plan used.
 - Tasks reviewed.
 - Iteration evidence reviewed for every executable task.
+- TDD-first evidence reviewed for every code-changing task, including whether relevant tests were added or updated first, whether the failing test was observed before implementation when possible, whether passing verification was recorded after implementation, and whether any missing-test exception is justified.
 - Bugs found.
 - Scope creep check.
 - Final diff audit.
@@ -765,7 +802,7 @@ Check for:
 - Broken acceptance criteria.
 - Security regressions.
 - Missing error states.
-- Test gaps.
+- Test gaps, especially code-changing work without first-test Red evidence, post-implementation Green evidence, post-refactor verification, or a justified missing-test exception.
 - Over-complex implementation.
 - Inconsistent project conventions.
 
@@ -789,6 +826,10 @@ Before the final response, check:
 - Was the dirty worktree checked?
 - Were acceptance results completed?
 - Were verification commands run or documented?
+- For every code-changing task, were relevant tests added or updated before implementation?
+- For every code-changing task, was the failing test observed before implementation when possible?
+- For every code-changing task, was passing verification recorded after implementation and after refactor?
+- For every code-changing task without first-test evidence, was a missing-test exception explicitly justified?
 - Was scope respected?
 - Were decisions recorded if needed?
 - For parallel modes, did every task include priority, parallel-safe flag, dependencies, file locks, claim status, claimed by, agent role, and merge risk?
@@ -799,11 +840,11 @@ Before the final response, check:
 
 Final health status:
 
-- `Passed`: all required artifacts exist, the detailed spec exists with all required sections, all executable tasks are complete, all required iteration evidence is present, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
-- `Partial`: artifacts exist, but some tasks remain because of a documented blocker, human-review need, verification gap, follow-up risk, missing parallel merge review, or incomplete claim/lock evidence.
-- `Failed`: any required artifact is missing, the detailed spec is missing required sections and planning proceeded anyway, scope was not respected, required verification/review/summary documentation is absent, or parallel execution proceeded with overlapping active file locks.
+- `Passed`: all required artifacts exist, the detailed spec exists with all required sections, all executable tasks are complete, all required iteration evidence is present, code-changing tasks include required TDD-first evidence or justified missing-test exceptions, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
+- `Partial`: artifacts exist, but some tasks remain because of a documented blocker, human-review need, verification gap, TDD evidence gap with justified stop state, follow-up risk, missing parallel merge review, or incomplete claim/lock evidence.
+- `Failed`: any required artifact is missing, the detailed spec is missing required sections and planning proceeded anyway, scope was not respected, required TDD-first evidence for code-changing tasks is absent without justified exception, required verification/review/summary documentation is absent, or parallel execution proceeded with overlapping active file locks.
 
-If release notes, final diff audit, dirty worktree check, required detailed spec sections, iteration evidence, acceptance results, claims, locks, worker status, or parallel merge review are missing when required, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, final diff audit, dirty worktree check, required detailed spec sections, iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, claims, locks, worker status, or parallel merge review are missing when required, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## 17. Final Response
 

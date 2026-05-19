@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> questions -> dirty worktree check -> detailed execution blueprint in _spec -> vertical plan/tasks derived from the blueprint in _task -> execute each task through Build -> Refine -> Polish -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
+request -> questions -> dirty worktree check -> detailed execution blueprint in _spec -> vertical plan/tasks derived from the blueprint in _task -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + _progress/_handoff after each task -> final diff audit -> review in _review -> release notes in _release -> final summary in _summary -> update _handoff -> health check
 ```
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
@@ -42,6 +42,7 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Read `_progress/` and `_summary/` before planning.
 - Generate vertical tasks in `_task/` from the detailed spec's affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes.
 - Execute one Ralph Wiggum-style task at a time through Build -> Refine -> Polish, continuing through all generated tasks by default.
+- For code-changing tasks, follow TDD-first inside every Build, Refine, and Polish iteration: write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without behavior change, and verify tests still pass.
 - Move each task through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
 - Protect dirty worktrees by checking `git status --short`, documenting existing dirty files, planned files, and overlap risk before implementation.
 - Record explicit acceptance checklist results for every task.
@@ -167,7 +168,7 @@ _task/<date-or-slug>.md
 
 The spec is a detailed, implementation-aware execution blueprint. It captures metadata, the original and normalized request, questions and answers, problem definition, current state analysis, desired end state, scope, users and use cases, functional and non-functional requirements, affected surfaces, dependencies and integrations, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases and failure modes, risks and mitigations, assumptions, open questions, and task extraction notes. Irrelevant sections should say `Not applicable` instead of being deleted.
 
-The task plan breaks the detailed spec into vertical slices. It should derive tasks especially from affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes, and cite or reference the detailed spec sections used. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
+The task plan breaks the detailed spec into vertical slices. It should derive tasks especially from affected surfaces, execution strategy, verification strategy, acceptance criteria, risks, and task extraction notes, and cite or reference the detailed spec sections used. Each task includes objective, likely files, checklist, an Iteration plan for Build -> Refine -> Polish, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, acceptance criteria, acceptance result, verification commands, stop condition, and out-of-scope items.
 
 Each task iteration records goal, changes made, verification command/result, review findings, acceptance status, remaining issues, and next action.
 
@@ -201,9 +202,11 @@ _task/<active-task-plan>.md
 
 Default execution mode is `complete-workflow`, so the agent executes every generated task in order. For each task, the agent inspects relevant code and runs the required hardening loop:
 
-1. Build the smallest working vertical slice, verify, review, and record gaps.
-2. Refine correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency, then verify and review again.
-3. Polish remaining rough edges, confirm no regressions, run final verification, and produce the final task verdict.
+1. Build the smallest working vertical slice, using Red -> Green -> Refactor for code-changing work, then verify, review, and record gaps.
+2. Refine correctness, edge cases, tests, structure, naming, typing, reliability, and project consistency with another Red -> Green -> Refactor pass where code changes are needed, then verify and review again.
+3. Polish remaining rough edges with final Red -> Green -> Refactor coverage for code-changing cleanup, confirm no regressions, run final verification, and produce the final task verdict.
+
+For code-changing tasks, `Done` is blocked unless relevant tests were added or updated before implementation, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
 
 Progress records each iteration separately, handoff records the current task and current iteration, and the agent continues automatically only when the current task is `Done`.
 
@@ -272,12 +275,13 @@ Health checks confirm:
 - Dirty worktree protection ran.
 - Acceptance results were completed.
 - Iteration evidence was completed for every executable task.
+- TDD-first evidence was completed for every code-changing task, or a missing-test exception was explicitly justified.
 - Final diff audit was completed or documented.
 - Verification commands ran or were documented.
 - Scope was respected.
 - Decisions were recorded when needed.
 
-If release notes, final diff audit, dirty worktree check, iteration evidence, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
+If release notes, final diff audit, dirty worktree check, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
 
 ## Final Artifact Checklist
 

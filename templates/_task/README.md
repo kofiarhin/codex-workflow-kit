@@ -57,6 +57,11 @@ Each task must include:
 - Files likely affected.
 - Checklist.
 - Iteration plan for Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Acceptance criteria.
 - Acceptance result.
 - Verification commands.
@@ -67,6 +72,11 @@ Each iteration plan must include:
 
 - Goal.
 - Changes made.
+- Test plan.
+- Red phase evidence.
+- Green phase evidence.
+- Refactor phase evidence.
+- Test commands run.
 - Verification command/result.
 - Review findings.
 - Acceptance status.
@@ -90,6 +100,7 @@ Allowed terminal states:
 Rules:
 
 - A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
+- A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation, post-refactor verification was recorded, and any missing-test exception is explicitly justified.
 - A task cannot move to `Reviewed` unless verification was attempted.
 - If verification cannot run, the task can be `Needs Human Review`, not `Done`.
 - A task cannot be `Done` unless every required acceptance criterion is checked `[x]`.
@@ -109,7 +120,14 @@ Copy or summarize acceptance results in `_progress/progress.md`.
 
 Tasks should be Ralph Wiggum-style: small, literal, sequential, and easy to verify.
 
-Continue to the next task automatically only when the current task is `Done` after Build -> Refine -> Polish. Stop if a task is `Blocked`, `Needs Human Review`, remains failed after iteration-level failure recovery, becomes risky or unclear, or requires external access.
+Continue to the next task automatically only when the current task is `Done` after Build -> Refine -> Polish. For code-changing tasks, each Build, Refine, and Polish iteration must embed TDD-first Red -> Green -> Refactor evidence:
+
+- Red phase: write or update the relevant failing test first, run it, and record the expected failure.
+- Green phase: implement the smallest in-scope change to pass, run the relevant tests, and record the pass.
+- Refactor phase: clean structure, naming, and types without changing behavior, run the relevant tests again, and record that they still pass.
+- Missing-test exception: if a failing test cannot reasonably be written or observed first, document why before implementation and record the best available verification.
+
+Stop if a task is `Blocked`, `Needs Human Review`, remains failed after iteration-level failure recovery, becomes risky or unclear, lacks required TDD evidence for code-changing work, or requires external access.
 
 ## Parallel Task Rules
 
