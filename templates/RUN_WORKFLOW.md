@@ -12,7 +12,7 @@ Default execution mode is `complete-workflow`. Do not stop after `TASK-001` unle
 
 Execution modes:
 
-- `plan-only`: ask questions, write spec, write task plan, then stop.
+- `plan-only`: run grill-me intake, write spec, write task plan, then stop.
 - `single-task`: execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
 - `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each executable task must complete the full 3-pass hardening loop before the next task starts.
 - `parallel-workflow`: orchestrator plans tasks, marks parallel safety, creates queue/claims/locks, assigns worker agents when safe, then performs merge review, final verification, review, release notes, summary, handoff, and health check.

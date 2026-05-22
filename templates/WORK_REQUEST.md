@@ -23,9 +23,9 @@ Default: `grill-me intake`
 
 Choose one:
 
-- `plan-only`: ask questions, write spec, write task plan, then stop.
-- `single-task`: ask questions, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
-- `complete-workflow`: ask questions, write spec, write task plan, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
+- `plan-only`: run grill-me intake, write spec, write task plan, then stop.
+- `single-task`: run grill-me intake, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
+- `complete-workflow`: run grill-me intake, write spec, write task plan, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
 Default: `complete-workflow`
 

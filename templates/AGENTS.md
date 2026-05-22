@@ -37,10 +37,10 @@ Customize placeholders before using this in a production project. MERN is the de
 
 1. If the latest user prompt looks like project work, treat it as the active work request and route it through `RUN_WORKFLOW.md`.
 2. Project work includes requests such as `implement`, `fix`, `create`, `generate`, `audit`, `refactor`, `test`, `document`, `deploy`, `review`, or similar software changes.
-3. Automatically sync the active user prompt into `WORK_REQUEST.md`. Do not ask the user to manually edit workflow docs first.
+3. Automatically sync the active user prompt into `WORK_REQUEST.md` only after grill-me has produced the Shared Understanding Handoff, unless `skip questions` is set (in which case sync immediately). Do not ask the user to manually edit workflow docs first.
 4. Default execution mode is `complete-workflow`.
 5. Execution modes:
-   - `plan-only`: ask questions, write spec, write task plan, then stop.
+   - `plan-only`: run grill-me intake, write spec, write task plan, then stop.
    - `single-task`: execute only the next ready task through the full 3-pass hardening loop, update artifacts, then stop.
    - `complete-workflow`: execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each executable task must complete the full 3-pass hardening loop before the next task starts.
 6. Agents must not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
