@@ -4,15 +4,15 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Update the workflow kit so code generation follows a strict TDD-first approach while preserving the existing workflow structure. Extend the current workflow, including Build -> Refine -> Polish, task templates, review/health checks, and README/docs as needed.
+Update the workflow so there is a mandatory user approval gate after spec generation, and update `RUN_WORKFLOW.md` plus matching README/docs references while preserving Build -> Refine -> Polish and TDD flow after approval.
 
 ## Request ID
 
-2026-05-19-add-tdd-first-workflow
+2026-05-23-add-spec-approval-gate
 
 ## Current Phase
 
-Complete.
+Spec approval gate. Spec has been saved and task planning is intentionally paused until explicit user approval or requested changes.
 
 ## Execution Mode
 
@@ -20,7 +20,7 @@ complete-workflow
 
 ## Parallel Queue Status
 
-Not applicable for this sequential documentation workflow.
+Not started. Task planning is blocked by the spec approval gate.
 
 ## Parallel Worker Count
 
@@ -28,11 +28,11 @@ Not active.
 
 ## Parallel Claims Status
 
-Not active. TASK-001 and TASK-002 were orchestrator-owned sequential work.
+Not active.
 
 ## Parallel Locks Status
 
-Not active. No worker-held locks.
+Not active.
 
 ## Parallel Agent Status
 
@@ -40,80 +40,75 @@ Not active.
 
 ## Parallel Merge Review Status
 
-Passed for documentation/template changes; no parallel worker outputs were produced.
+Not active.
 
 ## Current Spec File
 
-`_spec/2026-05-19-add-tdd-first-workflow.md`
+`_spec/2026-05-23-add-spec-approval-gate.md`
 
 ## Current Task Plan File
 
-`_task/2026-05-19-add-tdd-first-workflow.md`
+None. Do not generate `_task/2026-05-23-add-spec-approval-gate.md` until the user explicitly approves the saved spec.
 
 ## Current Review File
 
-`_review/2026-05-19-add-tdd-first-workflow.md`
+None yet.
 
 ## Current Release Notes File
 
-`_release/2026-05-19-add-tdd-first-workflow.md`
+None yet.
 
 ## Current Summary File
 
-`_summary/2026-05-19-add-tdd-first-workflow.md`
+None yet.
 
 ## Last Completed Task
 
-`TASK-002: Verify and finalize TDD-first workflow update`
+None for this workflow.
 
 ## Current Task
 
-None. Workflow tasks are complete.
+None. Waiting for spec approval before task planning.
 
 ## Current Iteration
 
-None. All executable tasks completed Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
+None.
 
 ## Next Task
 
-None. Review and commit when ready.
+After approval, generate `_task/2026-05-23-add-spec-approval-gate.md` and continue according to `complete-workflow`.
 
 ## Dirty Worktree Status
 
-Initial `git status --short` returned `?? notes.txt`. Planned files were workflow docs/templates and workflow artifacts. `notes.txt` is unrelated and was not touched. Final status still includes `notes.txt` as untracked.
+Initial `git status --short` showed many uncommitted files from the previous KareBraids workflow, including app files and workflow artifacts. Planned edits for this pre-approval phase were limited to `WORK_REQUEST.md`, `_spec/2026-05-23-add-spec-approval-gate.md`, and `_handoff/current.md`. Future implementation must avoid unrelated app files and document any overlap before editing workflow docs.
 
 ## Acceptance Status
 
-TASK-001 and TASK-002 acceptance results are complete and all required criteria are checked `[x]`.
+Pending. Acceptance criteria are listed in `_spec/2026-05-23-add-spec-approval-gate.md` and cannot be executed until spec approval permits task planning.
 
 ## Iteration Evidence Status
 
-- TASK-001: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete. TDD evidence is not applicable because the task was docs-only; missing-test exception documented.
-- TASK-002: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete. TDD evidence is not applicable because the task was docs-only; missing-test exception documented.
+Not started. No executable task has been generated.
 
 ## Blockers
 
-None.
+Waiting for user response to the spec approval gate.
 
 ## Verification Status
 
-Passed. Targeted TDD-first search passed; workflow preservation search passed; root/template mirror checks passed with line-ending warnings only; `npm test` passed with existing React Router future-flag warnings; `npm run build` passed; `git diff --check` passed with line-ending normalization warnings only; `git diff --stat` and `git diff` ran; `git status --short client server` returned no app/runtime changes.
+Pre-approval artifact creation only. No implementation verification has run.
 
 ## Workflow Health Status
 
-Passed.
+Partial while paused at the mandatory spec approval gate. This is expected because the task plan, implementation, review, release notes, and summary are intentionally not created before approval.
 
 ## Suggested Next Prompt
 
-`continue workflow`
+`approve spec`
 
 ## Notes For Continuation
 
-- Active workflow: `2026-05-19-add-tdd-first-workflow`.
-- Execution preference: `complete-workflow`.
-- Workflow completed for `2026-05-19-add-tdd-first-workflow`.
-- Review file: `_review/2026-05-19-add-tdd-first-workflow.md`.
-- Release notes file: `_release/2026-05-19-add-tdd-first-workflow.md`.
-- Summary file: `_summary/2026-05-19-add-tdd-first-workflow.md`.
-- Decisions: none.
-- Suggested commit message: `docs: add tdd-first workflow rules`.
+- If the user replies with `approve spec`, `approved`, `looks good`, `proceed to planning`, or `proceed`, generate the task plan and continue in `complete-workflow` mode.
+- If the user replies with `change:`, `update:`, `revise:`, `add:`, or `remove:`, revise the spec and show the approval prompt again.
+- If the user replies with `cancel workflow`, stop and mark the workflow paused/cancelled.
+- If the user later says `continue workflow`, resume at this spec approval gate because the spec exists and no task plan exists.

@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const requiredVariables = ["MONGODB_URI", "CLIENT_ORIGIN", "JWT_SECRET"];
+const requiredVariables = ["CLIENT_ORIGIN", "JWT_SECRET"];
 const missingVariables = requiredVariables.filter((key) => !process.env[key]);
 
 if (missingVariables.length > 0) {

@@ -6,6 +6,6 @@ describe("health route", () => {
     const response = await request(app).get("/api/health").expect(200);
 
     expect(response.body.status).toBe("ok");
-    expect(response.body.service).toBe("mern-boilerplate-api");
+    expect(response.body.service).toBe("karebraids-api");
   });
 });

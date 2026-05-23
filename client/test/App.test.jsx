@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { App } from "../src/App.jsx";
@@ -44,6 +44,55 @@ vi.mock("../src/hooks/mutations/useUpdateProfile.js", () => ({
   useUpdateProfile: () => profileMocks.updateProfileState
 }));
 
+const braidServicesMocks = vi.hoisted(() => ({
+  servicesState: {
+    isLoading: false,
+    isError: false,
+    data: [
+      {
+        id: "service-1",
+        name: "Knotless waist-length braids",
+        description: "Low-tension install with wash, parting, and finish.",
+        durationMinutes: 300,
+        priceDollars: 285,
+        isActive: true
+      }
+    ],
+    error: null
+  },
+  createState: {
+    mutateAsync: vi.fn(),
+    isPending: false,
+    error: null
+  },
+  updateState: {
+    mutateAsync: vi.fn(),
+    isPending: false,
+    error: null
+  },
+  deleteState: {
+    mutate: vi.fn(),
+    isPending: false,
+    error: null
+  }
+}));
+
+vi.mock("../src/hooks/queries/useBraidServices.js", () => ({
+  useBraidServices: () => braidServicesMocks.servicesState
+}));
+
+vi.mock("../src/hooks/mutations/useCreateBraidService.js", () => ({
+  useCreateBraidService: () => braidServicesMocks.createState
+}));
+
+vi.mock("../src/hooks/mutations/useUpdateBraidService.js", () => ({
+  useUpdateBraidService: () => braidServicesMocks.updateState
+}));
+
+vi.mock("../src/hooks/mutations/useDeleteBraidService.js", () => ({
+  useDeleteBraidService: () => braidServicesMocks.deleteState
+}));
+
 describe("App", () => {
   afterEach(() => {
     cleanup();
@@ -66,6 +115,31 @@ describe("App", () => {
     profileMocks.updateProfileState.isError = false;
     profileMocks.updateProfileState.isSuccess = false;
     profileMocks.updateProfileState.error = null;
+    braidServicesMocks.servicesState = {
+      isLoading: false,
+      isError: false,
+      data: [
+        {
+          id: "service-1",
+          name: "Knotless waist-length braids",
+          description: "Low-tension install with wash, parting, and finish.",
+          durationMinutes: 300,
+          priceDollars: 285,
+          isActive: true
+        }
+      ],
+      error: null
+    };
+    braidServicesMocks.createState.mutateAsync.mockReset();
+    braidServicesMocks.createState.mutateAsync.mockResolvedValue({});
+    braidServicesMocks.createState.isPending = false;
+    braidServicesMocks.createState.error = null;
+    braidServicesMocks.updateState.mutateAsync.mockReset();
+    braidServicesMocks.updateState.isPending = false;
+    braidServicesMocks.updateState.error = null;
+    braidServicesMocks.deleteState.mutate.mockReset();
+    braidServicesMocks.deleteState.isPending = false;
+    braidServicesMocks.deleteState.error = null;
     vi.useRealTimers();
   });
 
@@ -78,8 +152,56 @@ describe("App", () => {
       </AppProviders>
     );
 
-    expect(screen.getByText("Forgeboard")).toBeInTheDocument();
-    expect(screen.getByText(/full-stack base/i)).toBeInTheDocument();
+    expect(screen.getByText("KareBraids")).toBeInTheDocument();
+    expect(screen.getByText(/braid studio operations/i)).toBeInTheDocument();
+  });
+
+  it("renders the braid services starter route", () => {
+    render(
+      <AppProviders>
+        <MemoryRouter initialEntries={["/services"]}>
+          <App />
+        </MemoryRouter>
+      </AppProviders>
+    );
+
+    expect(screen.getByRole("heading", { name: /braid services/i })).toBeInTheDocument();
+    expect(screen.getByText("Knotless waist-length braids")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /add service/i })).toBeInTheDocument();
+  });
+
+  it("submits a new braid service through the create mutation", async () => {
+    render(
+      <AppProviders>
+        <MemoryRouter initialEntries={["/services"]}>
+          <App />
+        </MemoryRouter>
+      </AppProviders>
+    );
+
+    fireEvent.change(screen.getByLabelText("Service name"), {
+      target: { value: "Boho bob braids" }
+    });
+    fireEvent.change(screen.getByLabelText("Description"), {
+      target: { value: "Shoulder-grazing bob with loose textured ends." }
+    });
+    fireEvent.change(screen.getByLabelText("Duration minutes"), {
+      target: { value: "210" }
+    });
+    fireEvent.change(screen.getByLabelText("Price dollars"), {
+      target: { value: "195" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: /add service/i }));
+
+    await waitFor(() => {
+      expect(braidServicesMocks.createState.mutateAsync).toHaveBeenCalledWith({
+        name: "Boho bob braids",
+        description: "Shoulder-grazing bob with loose textured ends.",
+        durationMinutes: 210,
+        priceDollars: 195,
+        isActive: true
+      });
+    });
   });
 
   it("renders the dashboard empty state when a card has no data", () => {

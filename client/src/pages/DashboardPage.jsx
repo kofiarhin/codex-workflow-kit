@@ -17,23 +17,23 @@ import { dismissToast, showToast } from "../redux/ui/uiSlice.js";
 
 const stackItems = [
   {
-    title: "React client",
-    detail: "Vite, Router, Redux Toolkit, TanStack Query",
+    title: "Salon client",
+    detail: "KareBraids routes with Vite, Router, Redux Toolkit, and TanStack Query",
     icon: ChartLineUp
   },
   {
-    title: "Express API",
-    detail: "Flat server structure with controllers and routes",
+    title: "Service catalog API",
+    detail: "Braid services CRUD through flat Express controllers and routes",
     icon: TerminalWindow
   },
   {
-    title: "Mongo models",
-    detail: "Mongoose schemas with safe public serialization",
+    title: "Mongo catalog model",
+    detail: "Mongoose service schema with public serialization",
     icon: Database
   },
   {
     title: "Auth baseline",
-    detail: "HTTP-only cookie token and protected route middleware",
+    detail: "HTTP-only cookie token and protected profile middleware",
     icon: ShieldCheck
   }
 ];
@@ -62,29 +62,29 @@ export function DashboardPage() {
       <DashboardToast />
       <div className="animate-rise-in">
         <p className="mb-5 inline-flex rounded-md border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-600 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
-          MERN starter
+          KareBraids MERN starter
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold leading-none tracking-tighter text-zinc-950 md:text-6xl dark:text-white">
-          A clean full-stack base for shipping product code.
+          Braid studio operations in a clean MERN starter.
         </h1>
         <p className="mt-6 max-w-[62ch] text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
-          The boilerplate keeps server state in TanStack Query, app preferences in
+          KareBraids keeps catalog data in TanStack Query, app preferences in
           Redux, API calls in services, and backend responsibilities inside a flat
           Express structure.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
-            to="/login"
+            to="/services"
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition duration-300 hover:bg-zinc-800 active:translate-y-[1px] dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200"
           >
-            Open auth flow
+            Open services
             <ArrowRight size={18} />
           </Link>
           <a
-            href="https://vitejs.dev/"
+            href="https://tanstack.com/query/latest"
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-zinc-200 bg-white px-5 py-2.5 text-sm font-semibold text-zinc-800 transition duration-300 hover:border-zinc-300 hover:bg-zinc-50 active:translate-y-[1px] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
           >
-            Vite docs
+            Query docs
           </a>
           {auth.userId && (
             <button

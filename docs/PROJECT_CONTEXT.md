@@ -5,7 +5,7 @@ This file captures durable repository facts discovered during workflow runs. Kee
 ## Project Summary
 
 - Project name: `codex-workflow-kit-mern-boilerplate`
-- Purpose: MERN boilerplate with React dashboard, auth baseline, notification preferences, and Express API.
+- Purpose: KareBraids MERN boilerplate with React dashboard, auth baseline, braid services CRUD, notification preferences, and Express API.
 - Current maturity: MVP/starter
 
 ## Stack
@@ -56,10 +56,12 @@ No typecheck script is currently defined.
 - Folder conventions: Frontend lives in `client/src`; backend lives flat under `server/`.
 - Naming conventions: React components use PascalCase `.jsx`; hooks use `use*.js`.
 - API conventions: Frontend API calls go through services and shared `client/src/lib/api.js`.
+- Domain conventions: Example CRUD data uses braid services through `/api/braid-services` and `client/src/pages/BraidServicesPage.jsx`.
 - State management conventions: Redux Toolkit for client-owned global state; TanStack Query for server state.
 - Error handling conventions: Current UI uses inline form/dashboard alerts for mutation errors.
 - Profile conventions: User records include an optional `avatarUrl` string; profile avatar updates use the protected `/api/auth/profile` endpoint and store URL strings only.
 - Dev server conventions: Vite client dev server is pinned to `127.0.0.1:5175` with strict port behavior.
+- Database conventions: `MONGODB_URI` is optional for local smoke startup; when it is provided, `server/config/db.js` connects to MongoDB.
 
 ## Architecture Rules
 

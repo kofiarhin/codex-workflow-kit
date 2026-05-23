@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const { clientOrigin, nodeEnv } = require("./config/env");
 const { errorHandler } = require("./middleware/errorHandler");
 const authRoutes = require("./routes/authRoutes");
+const braidServiceRoutes = require("./routes/braidServiceRoutes");
 const healthRoutes = require("./routes/healthRoutes");
 const notificationPreferencesRoutes = require("./routes/notificationPreferencesRoutes");
 
@@ -27,6 +28,7 @@ if (nodeEnv !== "test") {
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/braid-services", braidServiceRoutes);
 app.use("/api/notification-preferences", notificationPreferencesRoutes);
 
 app.use((req, res) => {

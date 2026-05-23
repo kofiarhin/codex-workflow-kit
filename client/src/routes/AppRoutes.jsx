@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "../components/layout/AppShell.jsx";
+import { BraidServicesPage } from "../pages/BraidServicesPage.jsx";
 import { DashboardPage } from "../pages/DashboardPage.jsx";
 import { LoginPage } from "../pages/LoginPage.jsx";
 import { NotificationPreferencesPage } from "../pages/NotificationPreferencesPage.jsx";
@@ -10,6 +11,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<DashboardPage />} />
+        <Route path="/services" element={<BraidServicesPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/notifications" element={<NotificationPreferencesPage />} />
         <Route path="/profile" element={<ProfileSettingsPage />} />

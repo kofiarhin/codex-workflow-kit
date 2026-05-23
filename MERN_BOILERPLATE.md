@@ -1,6 +1,6 @@
-# MERN Boilerplate
+# KareBraids MERN Boilerplate
 
-This scaffold adds a React/Vite frontend and Express/Mongo backend to the workspace.
+This scaffold adds a KareBraids React/Vite frontend and Express/Mongo backend to the workspace.
 
 ## Setup
 
@@ -13,8 +13,11 @@ npm run dev
 
 The default development URLs are:
 
-- Frontend: `http://localhost:5173`
+- Frontend: `http://127.0.0.1:5175`
 - Backend: `http://localhost:5000/api`
+
+`MONGODB_URI` may be left blank for local smoke testing. When it is provided, the
+server connects to MongoDB at startup.
 
 ## Commands
 

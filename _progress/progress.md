@@ -451,3 +451,29 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Review result: Reviewed. No bugs, no scope creep, no app/runtime changes, no generated junk, and no sensitive values found.
 - Blockers: none.
 - Next step: Workflow complete; final response.
+
+### 2026-05-22 03:35 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `.env.example`, `MERN_BOILERPLATE.md`, `WORK_REQUEST.md`, `_handoff/current.md`, `_spec/2026-05-22-setup-karebraids-mern-boilerplate.md`, `_task/2026-05-22-setup-karebraids-mern-boilerplate.md`, `client/index.html`, `client/src/constants/constans.js`, `client/src/hooks/mutations/useCreateBraidService.js`, `client/src/hooks/mutations/useDeleteBraidService.js`, `client/src/hooks/mutations/useUpdateBraidService.js`, `client/src/hooks/queries/useBraidServices.js`, `client/src/pages/BraidServicesPage.jsx`, `client/src/pages/DashboardPage.jsx`, `client/src/routes/AppRoutes.jsx`, `client/src/services/braidServicesService.js`, `client/test/App.test.jsx`, `docs/PROJECT_CONTEXT.md`, `server/app.js`, `server/config/db.js`, `server/config/env.js`, `server/controllers/braidServiceController.js`, `server/controllers/healthController.js`, `server/models/BraidService.js`, `server/routes/braidServiceRoutes.js`, `server/tests/braidServices.test.js`, `server/tests/dbOptional.test.js`, `server/tests/health.test.js`, `server/tests/setupEnv.js`
+- Dirty worktree protection: Initial status showed `M WORK_REQUEST.md`, created by request sync. Planned files overlap only with this workflow; no unrelated dirty files were present.
+- Parallel metadata: `Priority=P0; Parallel safe=no; Depends on=none; Blocks=final review/release/summary; File locks=client/server/env/docs/workflow artifacts; Claim status=done; Claimed by=orchestrator; Agent role=orchestrator; Merge risk=medium`
+- Parallel claim/lock status: Sequential `complete-workflow`; no worker claims or active locks were used.
+- Worker status: Orchestrator-owned sequential task; final status Done.
+- Merge review status: Not applicable for sequential execution.
+- Test plan: Backend Jest/Supertest coverage for braid services CRUD and optional MongoDB; frontend Vitest/RTL coverage for KareBraids branding, services route, and create mutation; full workspace tests and build.
+- Red phase evidence: Iteration 1 server tests failed as expected with 404 braid service routes and required `MONGODB_URI`; Iteration 2 client tests failed as expected on missing KareBraids branding and services route; Iteration 3 server test failed as expected on old health service name.
+- Green phase evidence: Backend CRUD/optional DB implementation made server tests pass; frontend route/UI/hooks implementation made client tests pass; health branding/docs update plus targeted recovery made server tests pass.
+- Refactor phase evidence: Backend test warning mocked and controller formatting cleaned; frontend hooks mocked in RTL tests and create mutation covered; final workspace tests/build/diff checks passed.
+- Test commands run: `npm run test --workspace server`; `npm run test --workspace client`; `npm test`; `npm run build`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added backend failing tests first, observed expected failures, implemented `BraidService` model/controller/routes and optional DB startup, then refactored test/controller cleanup. Verification: `npm run test --workspace server` passed.
+  - Iteration 2 - Refine: Added frontend failing tests first, observed expected failures, implemented KareBraids branding, `/services` route, shared service, TanStack Query hooks, CRUD UI, then refactored tests to mock hooks and cover create mutation. Verification: `npm run test --workspace client` passed with existing React Router future-flag warnings.
+  - Iteration 3 - Polish: Added health branding failing test first, updated health response, env/docs/browser title, recovered route-test mock issue after real model creation, ran final verification and diff audit. Final verdict: Done.
+- Acceptance result: all criteria checked `[x]`: existing folders used, KareBraids branding present, auth baseline tests pass, braid services CRUD API exists with tests, services route uses TanStack Query/shared API client, env examples document optional local MongoDB, Tailwind design pre-flight passed, automated tests/build passed.
+- Verification result: `npm run test --workspace server` passed; `npm run test --workspace client` passed; `npm test` passed; `npm run build` passed; `git diff --check` passed with line-ending warnings only; `git diff --stat` and `git diff` ran; `git status --short` ran.
+- Failure recovery notes: Final server verification initially failed because `server/tests/braidServices.test.js` still used a virtual mock after the real `BraidService` file existed. Classified as in-scope test isolation issue, removed the virtual mock option, reran `npm run test --workspace server`, and it passed.
+- Review result: Reviewed. Scope respected; no deployment changes, new dependencies, generated junk, or secrets found.
+- Blockers: none.
+- Next step: Write review, release notes, summary, update handoff, and final response.
