@@ -477,3 +477,29 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Review result: Reviewed. Scope respected; no deployment changes, new dependencies, generated junk, or secrets found.
 - Blockers: none.
 - Next step: Write review, release notes, summary, update handoff, and final response.
+
+### 2026-05-23 00:00 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `AGENTS.md`, `README.md`, `RUN_WORKFLOW.md`, `WORK_REQUEST.md`, `_handoff/current.md`, `_review/2026-05-23-add-spec-approval-gate.md`, `_release/2026-05-23-add-spec-approval-gate.md`, `_spec/2026-05-23-add-spec-approval-gate.md`, `_spec/README.md`, `_summary/2026-05-23-add-spec-approval-gate.md`, `_task/2026-05-23-add-spec-approval-gate.md`, `_task/README.md`, `docs/PROMPTS.md`, `templates/AGENTS.md`, `templates/RUN_WORKFLOW.md`, `templates/WORK_REQUEST.md`, `templates/_handoff/current.md`, `templates/_spec/README.md`, `templates/_task/README.md`, `templates/docs/PROMPTS.md`
+- Dirty worktree protection: Initial status already contained previous KareBraids app/workflow changes. Planned files for this task were workflow docs/templates/artifacts only. App files in `client/` and `server/` were unrelated and were not edited by this request.
+- Parallel metadata: `Priority=P0; Parallel safe=no; Depends on=none; Blocks=final response; File locks=workflow docs/templates/artifacts; Claim status=done; Claimed by=orchestrator; Agent role=orchestrator; Merge risk=medium`
+- Parallel claim/lock status: Sequential docs workflow; no worker claims or active locks.
+- Worker status: Orchestrator-owned sequential task; final status Done.
+- Merge review status: Not applicable for sequential execution.
+- Test plan: Docs-only verification with targeted `rg` checks, `git diff --check`, and `git status --short client server`.
+- Red phase evidence: Not applicable for docs-only workflow documentation. Missing-test exception: no runtime code changed.
+- Green phase evidence: Targeted approval-gate searches found exact prompt, approval language, continue-workflow behavior, execution-mode updates, and health-check rules in expected docs.
+- Refactor phase evidence: Duplicate numbering in AGENTS docs was corrected; `git diff --check` passed with line-ending warnings only.
+- Test commands run: `rg` approval-gate checks; `rg` stale immediate-planning checks; `git diff --check`; `git status --short client server`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added spec approval gate to root/template `RUN_WORKFLOW.md`, including exact prompt, continue-workflow resume behavior, planning guard, and health-check rules. Verification passed with targeted `rg`; supporting docs still needed updates.
+  - Iteration 2 - Refine: Updated README, AGENTS, prompt docs, spec/task folder docs, work request template, and handoff template. Stale wording searches passed except intentional approved-spec wording. Acceptance complete.
+  - Iteration 3 - Polish: Added task plan, review, release notes, summary, and progress evidence. `git diff --check` passed with line-ending warnings only, and `git status --short client server` confirmed no app files were touched by this request. Final verdict: Done.
+- Acceptance result: all criteria checked `[x]`.
+- Verification result: Targeted `rg` checks passed; `git diff --check` passed with line-ending warnings only; `git status --short client server` showed only pre-existing app changes and no new app edits by this request.
+- Failure recovery notes: Fixed duplicate numbering in `AGENTS.md` and `templates/AGENTS.md`.
+- Review result: Reviewed. Scope stayed within workflow docs/templates/artifacts; no app implementation files were edited.
+- Blockers: none.
+- Next step: Final response.

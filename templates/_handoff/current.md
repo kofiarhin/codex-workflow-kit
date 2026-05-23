@@ -26,6 +26,10 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 `<path or none>`
 
+## Spec Approval Status
+
+`<not required yet / pending approval / approved with user phrase / revision requested / cancelled>`
+
 ## Current Review File
 
 `<path or none>`
@@ -129,6 +133,8 @@ This file is the live resume state for the active workflow. Keep it current afte
 ## Notes For Continuation
 
 - Default execution mode is `complete-workflow`.
+- If a spec exists but no task plan exists, resume at the spec approval gate, show the spec path and summary, and wait for approval. Do not generate tasks automatically.
+- Do not create `_task/` until the saved spec has explicit user approval.
 - If the next task is not `Done`, continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached.
 - Use `single-task` only when the user explicitly requested one-task execution.
 - For `parallel-workflow`, orchestrator owns intake/spec/task plan, queue, claims, locks, worker assignment, merge review, final verification, review, release notes, summary, handoff, and health check.

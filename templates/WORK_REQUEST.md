@@ -4,7 +4,7 @@ This file is auto-managed by the workflow. It stores the latest active work requ
 
 Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
 
-The workflow will invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, run dirty worktree protection, generate a saved spec in `_spec/`, create a vertical task plan in `_task/`, execute tasks one by one until the request is complete or stopped, record acceptance results, update `_progress/progress.md` and `_handoff/current.md` after each task, run a final diff audit, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
+The workflow will invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, run dirty worktree protection, generate a saved spec in `_spec/`, stop for explicit user approval, create a vertical task plan in `_task/` only after approval, execute tasks one by one until the request is complete or stopped, record acceptance results, update `_progress/progress.md` and `_handoff/current.md` after each task, run a final diff audit, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
 
 ## Request
 
@@ -23,9 +23,9 @@ Default: `grill-me intake`
 
 Choose one:
 
-- `plan-only`: run grill-me intake, write spec, write task plan, then stop.
-- `single-task`: run grill-me intake, write spec, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
-- `complete-workflow`: run grill-me intake, write spec, write task plan, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
+- `plan-only`: run grill-me intake, write spec, wait for approval, write task plan, then stop.
+- `single-task`: run grill-me intake, write spec, wait for approval, write task plan, execute only the next ready task, verify and review it, update artifacts, then stop.
+- `complete-workflow`: run grill-me intake, write spec, wait for approval, write task plan, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached.
 
 Default: `complete-workflow`
 

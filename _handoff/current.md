@@ -4,7 +4,7 @@ This file is the live resume state for the active workflow. Keep it current afte
 
 ## Current Request
 
-Update the workflow so there is a mandatory user approval gate after spec generation, and update `RUN_WORKFLOW.md` plus matching README/docs references while preserving Build -> Refine -> Polish and TDD flow after approval.
+Implement the mandatory spec approval gate properly across `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, README/docs references, and related templates.
 
 ## Request ID
 
@@ -12,7 +12,7 @@ Update the workflow so there is a mandatory user approval gate after spec genera
 
 ## Current Phase
 
-Spec approval gate. Spec has been saved and task planning is intentionally paused until explicit user approval or requested changes.
+Complete.
 
 ## Execution Mode
 
@@ -20,7 +20,7 @@ complete-workflow
 
 ## Parallel Queue Status
 
-Not started. Task planning is blocked by the spec approval gate.
+Not applicable for this sequential docs workflow.
 
 ## Parallel Worker Count
 
@@ -48,67 +48,73 @@ Not active.
 
 ## Current Task Plan File
 
-None. Do not generate `_task/2026-05-23-add-spec-approval-gate.md` until the user explicitly approves the saved spec.
+`_task/2026-05-23-add-spec-approval-gate.md`
+
+## Spec Approval Status
+
+Approved by direct user instruction to implement the saved approval-gate request after the previous update failed.
 
 ## Current Review File
 
-None yet.
+`_review/2026-05-23-add-spec-approval-gate.md`
 
 ## Current Release Notes File
 
-None yet.
+`_release/2026-05-23-add-spec-approval-gate.md`
 
 ## Current Summary File
 
-None yet.
+`_summary/2026-05-23-add-spec-approval-gate.md`
 
 ## Last Completed Task
 
-None for this workflow.
+`TASK-001: Add spec approval gate to workflow docs`
 
 ## Current Task
 
-None. Waiting for spec approval before task planning.
+None.
 
 ## Current Iteration
 
-None.
+None. TASK-001 completed Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish.
 
 ## Next Task
 
-After approval, generate `_task/2026-05-23-add-spec-approval-gate.md` and continue according to `complete-workflow`.
+None. Review and commit when ready.
 
 ## Dirty Worktree Status
 
-Initial `git status --short` showed many uncommitted files from the previous KareBraids workflow, including app files and workflow artifacts. Planned edits for this pre-approval phase were limited to `WORK_REQUEST.md`, `_spec/2026-05-23-add-spec-approval-gate.md`, and `_handoff/current.md`. Future implementation must avoid unrelated app files and document any overlap before editing workflow docs.
+Initial status already contained previous KareBraids app/workflow changes. This request only edited workflow docs/templates/artifacts. `git status --short client server` was checked and no app files were edited by this request.
 
 ## Acceptance Status
 
-Pending. Acceptance criteria are listed in `_spec/2026-05-23-add-spec-approval-gate.md` and cannot be executed until spec approval permits task planning.
+TASK-001 acceptance results are complete and all required criteria are checked `[x]`.
 
 ## Iteration Evidence Status
 
-Not started. No executable task has been generated.
+TASK-001: Iteration 1 Build complete; Iteration 2 Refine complete; Iteration 3 Polish complete. TDD-first evidence is not applicable because this was docs-only work; a missing-test exception is recorded in progress.
 
 ## Blockers
 
-Waiting for user response to the spec approval gate.
+None.
 
 ## Verification Status
 
-Pre-approval artifact creation only. No implementation verification has run.
+Passed. Targeted `rg` checks passed, `git diff --check` passed with line-ending warnings only, and `git status --short client server` confirmed no app files were touched by this request.
 
 ## Workflow Health Status
 
-Partial while paused at the mandatory spec approval gate. This is expected because the task plan, implementation, review, release notes, and summary are intentionally not created before approval.
+Passed for this docs workflow.
 
 ## Suggested Next Prompt
 
-`approve spec`
+`git status --short`
 
 ## Notes For Continuation
 
-- If the user replies with `approve spec`, `approved`, `looks good`, `proceed to planning`, or `proceed`, generate the task plan and continue in `complete-workflow` mode.
-- If the user replies with `change:`, `update:`, `revise:`, `add:`, or `remove:`, revise the spec and show the approval prompt again.
-- If the user replies with `cancel workflow`, stop and mark the workflow paused/cancelled.
-- If the user later says `continue workflow`, resume at this spec approval gate because the spec exists and no task plan exists.
+- Active workflow: `2026-05-23-add-spec-approval-gate`.
+- Review file: `_review/2026-05-23-add-spec-approval-gate.md`.
+- Release notes file: `_release/2026-05-23-add-spec-approval-gate.md`.
+- Summary file: `_summary/2026-05-23-add-spec-approval-gate.md`.
+- Decisions: none.
+- Suggested commit message: `docs: require spec approval before task planning`.
