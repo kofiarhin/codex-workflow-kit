@@ -8,36 +8,72 @@ The workflow will run intake unless skipped or resuming, generate a saved detail
 
 ## Request
 
-Update the workflow so there is a mandatory user approval gate after spec generation.
+Update codex-workflow-kit to support long-lived git worktrees without workflow artifact merge conflicts.
 
-Required workflow order:
+Problem:
+Users may have a bare repo with multiple worktrees like main, dev, redesign, feature branches, etc. Each Codex agent works in a separate worktree. The implementation files may be isolated, but workflow-generated artifacts conflict during merge because each worktree writes the same report/state files.
 
-```txt
-request
--> grill-me intake unless skipped/resuming
--> shared understanding handoff
--> sync WORK_REQUEST.md
--> dirty worktree check
--> generate and save detailed spec in _spec/
--> display spec summary + spec path to user
--> STOP and wait for explicit user approval or requested changes
--> only after approval, generate vertical task plan in _task/
--> continue execution according to selected execution mode
-```
+Goal:
+Make workflow artifacts worktree/branch scoped so agents do not overwrite shared workflow reports.
 
-Spec approval gate rules:
+Required behavior:
 
-- After saving the spec, do not generate `_task/` yet.
-- Do not start implementation.
-- Pause workflow and wait for user response.
-- Display the exact approval prompt provided in the original request.
-- Accept approval phrases: `approve spec`, `approved`, `looks good`, `proceed to planning`, `proceed`.
-- Accept revision phrases: `change:`, `update:`, `revise:`, `add:`, `remove:`.
-- If approved, generate `_task/` and continue based on execution mode.
-- If revisions are requested, update the same spec or create a revised spec, redisplay the summary, and ask for approval again.
-- If canceled, stop workflow, update `_handoff/current.md`, and mark workflow paused/cancelled.
-- For `continue workflow`, if a spec exists but `_task/` does not exist, resume at the spec approval gate and do not auto-generate tasks.
-- Preserve existing Build -> Refine -> Polish and TDD flow after approval.
+1. Do not write active workflow state to one shared `_workflow/` directory by default.
+2. Add branch/worktree-scoped workflow directories using this structure:
+
+   ```txt
+   _workflow/runs/<branch-or-worktree-id>/
+     spec.md
+     tasks.md
+     progress.md
+     review.md
+     verification.md
+     summary.md
+     handoff.md
+     release-notes.md
+   ```
+
+3. Add a stable run id rule:
+   - derive from current branch name by default
+   - sanitize slashes into double underscores or hyphens
+   - allow override with `CODEX_WORKFLOW_RUN_ID`
+4. Shared files must be append-only or index-only:
+   - `_workflow/index.md`
+   - `_workflow/runs/README.md`
+5. Agents must only update their own run directory:
+   - an agent in dev writes only `_workflow/runs/dev/`
+   - an agent in redesign writes only `_workflow/runs/redesign/`
+   - no agent rewrites another run directory
+6. Add merge-safe artifact rules:
+   - generated reports must be namespaced by run id
+   - final summary aggregation happens only after merge
+   - no generated artifact should require multiple branches to edit the same file
+   - shared index updates should be optional or append-only
+7. Update workflow instructions so agents first detect:
+   - current branch
+   - current worktree path
+   - run id
+   - artifact root
+8. Add commands/documentation for bare repo + worktree setup:
+
+   ```bash
+   git clone --bare <repo-url> <repo>.git
+   cd <repo>.git
+   git worktree add ../main main
+   git worktree add ../dev dev
+   git worktree add ../redesign redesign
+   ```
+
+9. Add conflict recovery guidance:
+   - if `_workflow` files conflict, preserve each run directory
+   - do not manually merge generated reports line-by-line
+   - regenerate aggregate summary after branches are merged
+10. Update `README.md` and `RUN_WORKFLOW.md` to explain the new model.
+
+Final audit:
+- confirm no active workflow artifact path is shared by all worktrees
+- confirm run-scoped artifacts are documented
+- confirm merge conflicts between dev/redesign workflow reports are avoided
 
 ## Execution Preference
 
@@ -45,7 +81,6 @@ Spec approval gate rules:
 
 ## Scope Boundaries
 
-- Change `RUN_WORKFLOW.md` and matching README/docs/template references only.
-- Do not change unrelated workflow behavior.
+- Change workflow documentation, templates, and workflow artifact guidance needed for worktree-scoped artifacts.
 - Do not change application implementation code.
 - Do not commit changes.

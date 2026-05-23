@@ -1,1 +1,3 @@
 cd ~/projects/codex-workflow-kit && bash scripts/install.sh ../moggoff --force
+
+cd ~/projects/codex-workflow-kit && bash scripts/install.sh ../karebraids/dev --force
