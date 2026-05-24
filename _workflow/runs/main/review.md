@@ -1,61 +1,45 @@
-# Review: Worktree-Scoped Workflow Artifacts
+# Review: Worktree-Safe Workflow Model Completion
 
 ## Request
-
-Update codex-workflow-kit to support long-lived git worktrees without workflow artifact merge conflicts.
+Audit and complete the worktree-safe workflow model in codex-workflow-kit.
 
 ## Spec File Used
-
-`_spec/2026-05-23-worktree-scoped-workflow-artifacts.md`
+`_workflow/runs/main/spec.md`
 
 ## Task Plan Used
-
-`_task/2026-05-23-worktree-scoped-workflow-artifacts.md`
+`_workflow/runs/main/tasks.md`
 
 ## Tasks Reviewed
-
-- `TASK-001: Add run-scoped artifact rules to workflow instructions`
-- `TASK-002: Add worktree setup and template support`
-- `TASK-003: Verify merge-safe artifact documentation and finalize`
+- `TASK-001: Complete run-scoped request and parallel template model`
 
 ## Bugs Found
-
 None.
 
 ## Scope Creep Check
-
-Scope stayed within workflow documentation, templates, installer support, and workflow artifacts. No app implementation files under `client/` or `server/` were changed.
+Scope stayed within workflow docs, templates, installer behavior, and run-scoped workflow artifacts. No app/runtime files under `client/` or `server/` were modified.
 
 ## Final Diff Audit
-
-- Diff matches saved spec: yes.
-- Unrelated files touched by this request: no app/runtime files. `notes.txt` was pre-existing and unrelated.
+- Diff matches request: yes.
+- Unrelated files touched by this run: no. `notes.txt` was already dirty before this task and remains unrelated.
 - Workflow artifacts updated correctly: yes.
-- Tests added or updated for changed behavior: not applicable for docs-only changes.
-- Scope creep: none.
-- Generated junk or temporary files: none found.
-- Sensitive values/secrets added: none found.
+- Tests added/updated for changed behavior: not applicable; docs/template-only change.
+- Generated junk/temp files: none found.
+- Sensitive values/secrets: none found.
 
 ## Failure Recovery Notes
-
 None.
 
 ## Missing Tests
-
-No automated tests were added because this was documentation/template work only. Missing-test exception is justified; verification used targeted `rg`, mirror checks, installer syntax validation, and diff checks.
+No runtime tests were added because no runtime code changed. Verification used targeted docs/template checks, installer syntax, and diff audit.
 
 ## Security Concerns
-
-None. No secrets, tokens, or credentials were added.
+None.
 
 ## Architecture Concerns
-
-Legacy artifact directories remain in the repository for historical compatibility. New canonical workflow instructions and installer support now point active workflow state to `_workflow/runs/<run-id>/`.
+None. The model preserves backward compatibility while making active workflow state run-scoped.
 
 ## Follow-Up Tasks
-
-Optional future cleanup: remove or archive legacy workflow templates once downstream users have migrated to `_workflow/runs/<run-id>/`.
+None required.
 
 ## Final Review Verdict
-
-Passed. The docs now describe branch/worktree-scoped workflow artifacts, stable run-id derivation, optional shared files, and conflict recovery.
+PASSED. The workflow model is fully run-scoped and merge-safe for active workflow state.

@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync WORK_REQUEST -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
+request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
 ```
 
 The grill-me skill is the workflow intake engine. It stress-tests a rough request through focused questions (one at a time, each with a recommended answer), inspects the repo when the answer is already there, and produces a Shared Understanding Handoff that feeds the rest of the workflow. It replaces the old generic clarification phase.
@@ -14,7 +14,8 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 
 ## What This Provides
 
-- `WORK_REQUEST.md`: Auto-managed record of the latest active request and optional preferences.
+- `_workflow/runs/<run-id>/request.md`: Run-scoped active request state for one branch/worktree run.
+- `WORK_REQUEST.md`: Optional/manual compatibility request file for older repos or staged requests. Normal worktree-safe runs must not auto-update it.
 - `RUN_WORKFLOW.md`: The master orchestration prompt that tells the agent how to run the workflow.
 - `AGENTS.md`: Repository operating rules for coding agents.
 - `.agents/skills/grill-me/SKILL.md`: The workflow intake skill. Replaces the old generic clarification phase with focused, one-question-at-a-time intake that produces a Shared Understanding Handoff before the spec is written.
@@ -67,6 +68,7 @@ Codex Workflow Kit is designed for long-lived git worktrees. Each agent must wri
 
 ```txt
 _workflow/runs/<branch-or-worktree-id>/
+  request.md
   spec.md
   tasks.md
   progress.md
@@ -98,12 +100,37 @@ Examples:
 - An agent in `feature/worktree-artifacts` writes `_workflow/runs/feature__worktree-artifacts/`.
 - `CODEX_WORKFLOW_RUN_ID=redesign-v2` writes `_workflow/runs/redesign-v2/`.
 
+Each run folder contains the active workflow memory for exactly one branch/worktree run:
+
+- `request.md`
+- `spec.md`
+- `tasks.md`
+- `progress.md`
+- `handoff.md`
+- `review.md`
+- `verification.md`
+- `release-notes.md`
+- `summary.md`
+- `parallel/`
+
 Shared files are optional and must not be required for normal workflow execution:
 
 - `_workflow/index.md` is an optional index. Prefer updating it after branches merge; if edited during a run, append only.
 - `_workflow/runs/README.md` is static or append-only guidance.
 
-No generated report should require multiple branches to edit the same file. Final summary aggregation happens only after merge.
+No active workflow artifact should require multiple branches to edit the same file. Final orchestration and summary aggregation happen only after merge.
+
+Example long-lived worktree layout:
+
+```txt
+repo.git/
+main/
+  _workflow/runs/main/
+dev/
+  _workflow/runs/dev/
+redesign/
+  _workflow/runs/redesign/
+```
 
 ### Bare Repo And Worktrees
 
@@ -122,11 +149,13 @@ Each worktree gets its own run directory. The implementation files may still con
 If `_workflow` files conflict during a merge:
 
 - Preserve each `_workflow/runs/<run-id>/` directory.
-- Do not manually merge generated reports line by line.
-- Regenerate any aggregate/index summary after branches are merged.
+- Never merge workflow reports line by line manually.
+- Regenerate any aggregate/index state after branches are merged.
+- Treat run folders as branch/worktree-local workflow memory.
+- Run final orchestration only after branch merge.
 - Treat `_workflow/index.md` conflicts as index conflicts, not report conflicts.
 
-Legacy folders such as `_spec/`, `_task/`, `_progress/`, `_handoff/`, `_review/`, `_release/`, and `_summary/` may exist in older repositories as history. New active workflow runs should use `_workflow/runs/<run-id>/` by default.
+Legacy folders such as `_spec/`, `_task/`, `_progress/`, `_handoff/`, `_review/`, `_release/`, and `_summary/` may exist in older repositories as history. Root `WORK_REQUEST.md` may also exist as optional/manual compatibility input. New active workflow runs should use `_workflow/runs/<run-id>/` by default.
 
 ## Repository Structure
 
@@ -143,6 +172,10 @@ templates/
     index.md
     runs/
       README.md
+      parallel/
+        claims.md
+        locks.md
+        agent-status.md
   _decisions/
     README.md
   docs/
@@ -199,9 +232,9 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, detect the branch/worktree/run id/artifact root, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, sync the normalized request into `WORK_REQUEST.md`, run dirty worktree protection, generate a detailed execution blueprint spec in the current run directory, show the spec path and summary, stop for explicit approval, generate a vertical task plan from that approved blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, detect the branch/worktree/run id/artifact root, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, sync the normalized request into `_workflow/runs/<run-id>/request.md`, run dirty worktree protection, generate a detailed execution blueprint spec in the current run directory, show the spec path and summary, stop for explicit approval, generate a vertical task plan from that approved blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
 
-Manual editing of `WORK_REQUEST.md`, `_workflow/runs/<run-id>/`, or `_decisions/` is optional, not required.
+Manual editing of root `WORK_REQUEST.md`, `_workflow/runs/<run-id>/`, or `_decisions/` is optional, not required. Root `WORK_REQUEST.md` is compatibility/manual only; active runs use `_workflow/runs/<run-id>/request.md`.
 
 ### Step 3: Answer Grill-Me Questions
 
@@ -363,7 +396,8 @@ The final health check reports `Passed`, `Partial`, or `Failed`.
 
 Health checks confirm:
 
-- `WORK_REQUEST.md` synced.
+- `_workflow/runs/<run-id>/request.md` synced.
+- Root `WORK_REQUEST.md` was not auto-updated for active state.
 - Spec, task plan, progress, review, release notes, and summary artifacts exist.
 - The detailed spec includes every required section, or missing sections were repaired before planning.
 - Dirty worktree protection ran.
@@ -382,7 +416,7 @@ If release notes, final diff audit, dirty worktree check, iteration evidence, TD
 Every final response must include an iteration evidence summary and exact artifact paths:
 
 ```txt
-Work request: WORK_REQUEST.md
+Work request: _workflow/runs/<run-id>/request.md
 Handoff: _workflow/runs/<run-id>/handoff.md
 Spec: _workflow/runs/<run-id>/spec.md
 Task plan: _workflow/runs/<run-id>/tasks.md
@@ -443,7 +477,7 @@ To resume an interrupted run without re-running grill-me, use `continue workflow
 
 ## Execution Preferences
 
-Direct prompts and `WORK_REQUEST.md` can include an optional execution preference:
+Direct prompts and `_workflow/runs/<run-id>/request.md` can include an optional execution preference. Root `WORK_REQUEST.md` can still be used manually as legacy input when no run-scoped request exists:
 
 - `plan-only`: Ask questions, write the detailed spec, wait for approval, write the task plan derived from the approved spec, then stop.
 - `single-task`: Ask questions, write the detailed spec, wait for approval, write the task plan derived from the approved spec, execute only the next ready task through the full Build -> Refine -> Polish loop, update artifacts, then stop.
@@ -460,7 +494,7 @@ Default: `complete-workflow`.
 
 1. Treat the latest direct prompt as the active request.
 2. Invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` unless the prompt says `skip questions` or `continue workflow`, and produce a Shared Understanding Handoff.
-3. Sync the normalized request into `WORK_REQUEST.md`.
+3. Sync the normalized request into `_workflow/runs/<run-id>/request.md`.
 4. Generate a saved detailed execution blueprint in `_workflow/runs/<run-id>/spec.md`.
 5. Show the spec path, short summary, approval options, and wait for explicit approval.
 6. After approval only, read `_workflow/runs/<run-id>/progress.md` and the latest relevant run-scoped summary.
@@ -561,7 +595,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> detect branch/worktree/run id/artifact root -> grill-me intake skill -> shared understanding handoff -> sync WORK_REQUEST -> dirty worktree check -> _workflow/runs/<run-id>/spec.md -> show spec path and summary -> wait for explicit approval -> _workflow/runs/<run-id>/tasks.md -> all task execution through Build -> Refine -> Polish -> acceptance results + run-scoped progress + handoff after each task -> final diff audit -> run-scoped review -> release notes -> summary -> handoff -> health check
+direct prompt -> detect branch/worktree/run id/artifact root -> grill-me intake skill -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> _workflow/runs/<run-id>/spec.md -> show spec path and summary -> wait for explicit approval -> _workflow/runs/<run-id>/tasks.md -> all task execution through Build -> Refine -> Polish -> acceptance results + run-scoped progress + handoff after each task -> final diff audit -> run-scoped review -> release notes -> summary -> handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, detailed current-state notes, success criteria, or acceptance criteria.
@@ -590,7 +624,7 @@ git diff
 Commit only after verification:
 
 ```bash
-git add AGENTS.md WORK_REQUEST.md RUN_WORKFLOW.md _workflow/ _decisions/ docs/
+git add AGENTS.md RUN_WORKFLOW.md _workflow/ _decisions/ docs/
 git commit -m "docs: add clarified workflow memory"
 ```
 
@@ -601,7 +635,7 @@ Adjust staged files and commit message for the actual task. Do not commit unrela
 Keep these files at the project root:
 
 - `AGENTS.md`
-- `WORK_REQUEST.md`
+- `WORK_REQUEST.md` (optional/manual compatibility)
 - `RUN_WORKFLOW.md`
 - `.agents/skills/grill-me/SKILL.md`
 - `_workflow/`
@@ -652,7 +686,7 @@ These examples show the expected level of detail. They are not application code.
 
 - Grill-me intake before building.
 - Plain English request in.
-- Shared Understanding Handoff before WORK_REQUEST sync, spec, or task plan.
+- Shared Understanding Handoff before run-scoped request sync, spec, or task plan.
 - Detailed execution blueprint before task planning and implementation.
 - Mandatory spec approval gate before task planning.
 - Vertical tasks over vague layers.

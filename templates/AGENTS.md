@@ -14,7 +14,8 @@ Customize placeholders before using this in a production project. MERN is the de
   - Testing: Vitest/React Testing Library for frontend, Jest/Supertest for backend
 - Deployment: `<DEPLOYMENT_TARGETS>`
 - Workflow entrypoints:
-  - `WORK_REQUEST.md`
+  - `<artifact-root>/request.md` (active run-scoped request state)
+  - `WORK_REQUEST.md` (optional/manual compatibility input)
   - `RUN_WORKFLOW.md`
   - `.agents/skills/grill-me/SKILL.md`
 - Workflow artifact scope:
@@ -26,6 +27,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - Agents must update only their own run directory.
   - Shared `_workflow/index.md` and `_workflow/runs/README.md` are optional index/guidance files only.
 - Main workflow memory:
+  - `<artifact-root>/request.md`
   - `<artifact-root>/handoff.md`
   - `<artifact-root>/spec.md`
   - `<artifact-root>/tasks.md`
@@ -45,7 +47,7 @@ Customize placeholders before using this in a production project. MERN is the de
 
 1. If the latest user prompt looks like project work, treat it as the active work request and route it through `RUN_WORKFLOW.md`.
 2. Project work includes requests such as `implement`, `fix`, `create`, `generate`, `audit`, `refactor`, `test`, `document`, `deploy`, `review`, or similar software changes.
-3. Automatically sync the active user prompt into `WORK_REQUEST.md` only after grill-me has produced the Shared Understanding Handoff, unless `skip questions` is set (in which case sync immediately). Do not ask the user to manually edit workflow docs first.
+3. Automatically sync the active user prompt into `<artifact-root>/request.md` only after grill-me has produced the Shared Understanding Handoff, unless `skip questions` is set (in which case sync immediately). Do not auto-update root `WORK_REQUEST.md`; it is optional/manual compatibility input only. Do not ask the user to manually edit workflow docs first.
 4. Default execution mode is `complete-workflow`.
 5. Execution modes:
    - `plan-only`: run grill-me intake, write spec, stop for spec approval, write task plan only after approval, then stop.
@@ -56,7 +58,7 @@ Customize placeholders before using this in a production project. MERN is the de
 8. Workflow requests must use the grill-me skill at `.agents/skills/grill-me/SKILL.md` as the default intake engine before any spec, task plan, or implementation work.
 9. Grill-me asks one focused question at a time and includes a recommended answer with every question.
 10. Grill-me inspects the repo (code, docs, workflow files) instead of asking when an answer can be discovered locally.
-11. The normal workflow starts only after grill-me has produced the Shared Understanding Handoff and the normalized request has been synced into `WORK_REQUEST.md`.
+11. The normal workflow starts only after grill-me has produced the Shared Understanding Handoff and the normalized request has been synced into `<artifact-root>/request.md`.
 12. Do not touch code, create `<artifact-root>/spec.md`, or create `<artifact-root>/tasks.md` during the grill-me intake phase.
 13. If the user says `skip questions`, bypass grill-me, generate a best-effort spec, and clearly record assumptions.
 14. If the user says `continue workflow`, do not invoke grill-me; resume from `<artifact-root>/handoff.md`.
@@ -107,9 +109,9 @@ Customize placeholders before using this in a production project. MERN is the de
 
 For a work request:
 
-1. Use the latest direct user prompt as the active request when it looks like project work; otherwise read `WORK_REQUEST.md`.
+1. Use the latest direct user prompt as the active request when it looks like project work; otherwise read `<artifact-root>/request.md`, falling back to root `WORK_REQUEST.md` only as manual legacy input.
 2. Invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to produce a Shared Understanding Handoff, unless the prompt explicitly says `skip questions` or `continue workflow`.
-3. Sync the normalized active request into `WORK_REQUEST.md`.
+3. Sync the normalized active request into `<artifact-root>/request.md`; do not auto-update root `WORK_REQUEST.md`.
 4. Read `RUN_WORKFLOW.md`.
 5. If questions are skipped, bypass grill-me and write assumptions into the spec. If the prompt is `continue workflow`, skip grill-me and resume from `<artifact-root>/handoff.md`.
 6. Check repository status for dirty worktree protection:
@@ -213,7 +215,7 @@ Each spec in `<artifact-root>/spec.md` must be a detailed, implementation-aware 
 ## 2. Original Request
 - Raw user request:
 - Normalized request:
-- Source prompt / WORK_REQUEST reference:
+- Source prompt / `<artifact-root>/request.md` reference:
 
 ## 3. Questions And Answers
 - Questions asked:
@@ -545,7 +547,7 @@ The summary must include:
 
 Before the final response, check:
 
-- Did `WORK_REQUEST.md` sync?
+- Did `<artifact-root>/request.md` sync?
 - Did `<artifact-root>/handoff.md` exist and reflect the latest workflow state?
 - Did the spec file exist?
 - Did the spec include every required detailed spec section, or was any missing section repaired before planning?
@@ -571,7 +573,7 @@ Final health status must be one of:
 - `Partial`
 - `Failed`
 
-`Passed` requires a synced work request, a detailed spec with every required section, explicit spec approval before task planning, a task plan derived from and citing or referencing the approved detailed spec, progress, handoff, review, summary, release notes, required iteration evidence for every executable task, required TDD-first evidence for every code-changing task or justified missing-test exceptions, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+`Passed` requires a synced `<artifact-root>/request.md`, root `WORK_REQUEST.md` left manual/compatibility-only, a detailed spec with every required section, explicit spec approval before task planning, a task plan derived from and citing or referencing the approved detailed spec, progress, handoff, review, summary, release notes, required iteration evidence for every executable task, required TDD-first evidence for every code-changing task or justified missing-test exceptions, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
 
 If release notes, final diff audit, dirty worktree check, required detailed spec sections, explicit spec approval before task planning, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If `<artifact-root>/tasks.md` was generated before explicit approval or workflow execution continued without user confirmation, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
@@ -716,7 +718,7 @@ At the end of a workflow run, report:
 - Decisions updated in `_decisions/<file>.md` or `none`.
 - Workflow health status: `Passed`, `Partial`, or `Failed`.
 - Final artifact checklist with exact paths:
-  - Work request: `WORK_REQUEST.md`
+  - Work request: `<artifact-root>/request.md`
   - Handoff: `<artifact-root>/handoff.md`
   - Spec: `<artifact-root>/spec.md`
   - Task plan: `<artifact-root>/tasks.md`

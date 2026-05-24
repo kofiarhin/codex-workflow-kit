@@ -1,10 +1,10 @@
 # Run Workflow
 
-This is the master orchestration prompt for a reusable AI engineering workflow. It turns either the latest direct user prompt or `WORK_REQUEST.md` into clarified, specified, planned, verified engineering work.
+This is the master orchestration prompt for a reusable AI engineering workflow. It turns either the latest direct user prompt or the run-scoped request file at `<artifact-root>/request.md` into clarified, specified, planned, verified engineering work.
 
 ## Command To Agent
 
-Use the latest direct user prompt as the primary request source when it looks like project work. Resolve the workflow artifact scope first, sync it into `WORK_REQUEST.md`, then execute this workflow exactly.
+Use the latest direct user prompt as the primary request source when it looks like project work. Resolve the workflow artifact scope first, sync the active request into `<artifact-root>/request.md`, then execute this workflow exactly. Root `WORK_REQUEST.md` is optional/manual compatibility only and must not be auto-updated during normal worktree-safe workflow runs.
 
 Before touching code, ask focused clarifying questions until you reach about 90% understanding. If the user explicitly says `skip questions`, generate a best-effort detailed spec and record assumptions.
 
@@ -37,11 +37,11 @@ Do not implement without:
 ## Pipeline
 
 ```txt
-direct user prompt or WORK_REQUEST
+direct user prompt or <artifact-root>/request.md
 -> detect current branch, worktree path, run id, and artifact root
 -> grill-me intake unless skipped/resuming
 -> shared understanding handoff
--> sync WORK_REQUEST
+-> sync <artifact-root>/request.md
 -> dirty worktree check
 -> spec in <artifact-root>/spec.md
 -> display spec summary and spec path
@@ -94,6 +94,7 @@ Create the current run directory if missing:
 
 ```txt
 _workflow/runs/<run-id>/
+  request.md
   spec.md
   tasks.md
   progress.md
@@ -109,7 +110,7 @@ Only the agent working in that branch/worktree may update that run directory. Do
 - `_workflow/index.md`: optional index. Prefer post-merge updates; if edited during a run, append only.
 - `_workflow/runs/README.md`: static or append-only guidance.
 
-Final summary aggregation happens only after branches are merged. No generated workflow artifact should require multiple branches to edit the same file.
+Final summary aggregation and orchestration happens only after branches are merged. No active workflow artifact should require multiple branches to edit the same file. Never merge workflow reports line by line; preserve each run folder and regenerate aggregate/index state after merge.
 
 Legacy directories such as `_spec/`, `_task/`, `_progress/`, `_handoff/`, `_review/`, `_release/`, and `_summary/` may exist as historical compatibility artifacts. New active workflow state must use the run-scoped artifact root by default.
 
@@ -118,23 +119,24 @@ Legacy directories such as `_spec/`, `_task/`, `_progress/`, `_handoff/`, `_revi
 Read:
 
 - Latest user prompt in the current conversation.
-- `WORK_REQUEST.md`.
+- `<artifact-root>/request.md`.
 - `AGENTS.md`.
 - `docs/PROJECT_CONTEXT.md`.
 - `<artifact-root>/handoff.md`, creating it if missing.
 - `<artifact-root>/progress.md`, creating it if missing.
 - The latest relevant run-scoped `summary.md` in `_workflow/runs/`, if any.
 
-If `_workflow/`, `_workflow/runs/`, the current run directory, or `_decisions/` is missing, create it before continuing. If `<artifact-root>/handoff.md` is missing, create it from the handoff template. If `<artifact-root>/progress.md` is missing, create it with an initial heading. If parallel mode is selected and `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, or `<artifact-root>/parallel/agent-status.md` is missing, create it from the parallel templates before workers claim tasks.
+If `_workflow/`, `_workflow/runs/`, the current run directory, or `_decisions/` is missing, create it before continuing. If `<artifact-root>/request.md` is missing, create it from the latest direct project-work prompt or, only when no direct project-work prompt exists, from root `WORK_REQUEST.md` for legacy compatibility. If `<artifact-root>/handoff.md` is missing, create it from the handoff template. If `<artifact-root>/progress.md` is missing, create it with an initial heading. If parallel mode is selected and `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, or `<artifact-root>/parallel/agent-status.md` is missing, create it from the parallel templates before workers claim tasks.
 
 Request source rules:
 
 - If the latest user prompt looks like project work, it is the active request.
 - Project work includes prompts like `generate mern boilerplate`, `implement login feature`, `fix dashboard bug`, `audit security`, or `refactor auth`.
-- If there is no direct project-work prompt, use the request stored in `WORK_REQUEST.md`.
+- If there is no direct project-work prompt, use the request stored in `<artifact-root>/request.md`.
+- If `<artifact-root>/request.md` is missing and there is no direct project-work prompt, root `WORK_REQUEST.md` may be read as manual compatibility input.
 - Do not require the user to manually edit workflow docs before proceeding.
 
-Sync the active request into `WORK_REQUEST.md` before questioning and planning. `WORK_REQUEST.md` is the only shared active request file; keep it focused on the latest request and avoid using it for generated reports.
+Sync the active request into `<artifact-root>/request.md` before questioning and planning. `<artifact-root>/request.md` is the only active request state file for the current run. Do not auto-update root `WORK_REQUEST.md` during normal runs; it is optional/manual compatibility input only.
 
 Before planning, read `<artifact-root>/handoff.md` if it exists. If no handoff exists, create it and populate the current request, request ID, current phase, current branch, current worktree path, run id, artifact root, blockers, verification status, workflow health status, suggested next prompt, and continuation notes.
 
@@ -264,7 +266,7 @@ Detailed spec required sections:
 2. Original Request:
    - Raw user request.
    - Normalized request.
-   - Source prompt / WORK_REQUEST reference.
+   - Source prompt / `<artifact-root>/request.md` reference.
 3. Questions And Answers:
    - Questions asked.
    - Answers received.
@@ -629,6 +631,8 @@ Stop if:
 
 In `parallel-workflow` or `parallel-orchestrator` mode, the orchestrator owns intake, detailed spec creation, and task planning. Worker agents must not create or replace the saved spec or task plan.
 
+Parallel orchestrators and workers must use `<artifact-root>/request.md` as the request source for the run. They must not read or update root `WORK_REQUEST.md` as active state.
+
 The orchestrator must:
 
 1. Rank all tasks by priority: `P0` before `P1` before `P2`.
@@ -652,6 +656,7 @@ In `parallel-worker` mode, each worker must read:
 
 - `AGENTS.md`
 - `RUN_WORKFLOW.md`
+- `<artifact-root>/request.md`
 - the saved spec at `<artifact-root>/spec.md`
 - the saved task plan at `<artifact-root>/tasks.md`
 - `<artifact-root>/parallel/claims.md`
@@ -921,7 +926,7 @@ Fix only defects within the active task. Create follow-up tasks for anything lar
 
 Before the final response, check:
 
-- Did `WORK_REQUEST.md` sync?
+- Did `<artifact-root>/request.md` sync?
 - Did `<artifact-root>/handoff.md` exist and reflect the latest live resume state?
 - Did the spec file exist?
 - Did the spec include every required detailed spec section, or was any missing section repaired before planning?
@@ -951,7 +956,7 @@ Before the final response, check:
 
 Final health status:
 
-- `Passed`: all required artifacts exist, the detailed spec exists with all required sections, the spec approval gate was completed before task planning, all executable tasks are complete, all required iteration evidence is present, code-changing tasks include required TDD-first evidence or justified missing-test exceptions, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
+- `Passed`: all required artifacts exist, `<artifact-root>/request.md` is synced, root `WORK_REQUEST.md` was not auto-updated for active state, the detailed spec exists with all required sections, the spec approval gate was completed before task planning, all executable tasks are complete, all required iteration evidence is present, code-changing tasks include required TDD-first evidence or justified missing-test exceptions, release notes exist, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
 - `Partial`: artifacts exist, but some tasks remain because of a documented blocker, human-review need, verification gap, TDD evidence gap with justified stop state, follow-up risk, missing parallel merge review, incomplete claim/lock evidence, or a documented approval-gate irregularity that did not lead to implementation.
 - `Failed`: any required artifact is missing, the detailed spec is missing required sections and planning proceeded anyway, `<artifact-root>/tasks.md` was generated before explicit spec approval, workflow execution continued without user confirmation, scope was not respected, required TDD-first evidence for code-changing tasks is absent without justified exception, required verification/review/summary documentation is absent, or parallel execution proceeded with overlapping active file locks.
 
@@ -976,7 +981,7 @@ End with:
 - Decisions location or `none`.
 - Workflow health status: `Passed`, `Partial`, or `Failed`.
 - Final artifact checklist with exact paths:
-  - Work request: `WORK_REQUEST.md`
+  - Work request: `<artifact-root>/request.md`
   - Handoff: `<artifact-root>/handoff.md`
   - Spec: `<artifact-root>/spec.md`
   - Task plan: `<artifact-root>/tasks.md`

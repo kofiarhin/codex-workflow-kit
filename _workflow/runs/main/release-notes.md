@@ -1,56 +1,47 @@
-# Release Notes: Worktree-Scoped Workflow Artifacts
+# Release Notes: Worktree-Safe Workflow Model Completion
 
 ## Request
-
-Support long-lived git worktrees without workflow artifact merge conflicts.
+Audit and complete the worktree-safe workflow model in codex-workflow-kit.
 
 ## User-Facing Changes
-
-- Documented branch/worktree-scoped workflow artifacts under `_workflow/runs/<run-id>/`.
-- Added bare repo plus worktree setup commands.
-- Added conflict recovery guidance for `_workflow` merges.
-- Documented `CODEX_WORKFLOW_RUN_ID` override behavior.
+- Active workflow request state is now documented at `_workflow/runs/<run-id>/request.md`.
+- Root `WORK_REQUEST.md` is compatibility/manual only.
+- README now shows `main`, `dev`, and `redesign` worktree run folders and explicit merge safety rules.
 
 ## Developer Changes
-
-- Updated `RUN_WORKFLOW.md`, README, AGENTS, prompt docs, templates, and installer support.
-- Added `_workflow/index.md` and `_workflow/runs/README.md` with matching templates.
-- Installer now copies `_workflow` guidance instead of legacy shared active-state files.
+- RUN_WORKFLOW and AGENTS now use `<artifact-root>/request.md` for active request state.
+- Added parallel templates for claims, locks, and agent status.
+- Installer now copies `_workflow/index.md`, `_workflow/runs/README.md`, and parallel templates.
+- Prompt docs and workflow guidance were aligned with the run-scoped model.
 
 ## New Routes/APIs
-
 none
 
 ## New Env Vars
-
-- `CODEX_WORKFLOW_RUN_ID` documented as an optional workflow run-id override.
+none
 
 ## Database/Schema Changes
-
 none
 
 ## Dependencies Added/Removed
-
 none
 
 ## Test Commands Run
-
-- `rg "_workflow/runs|CODEX_WORKFLOW_RUN_ID|git branch --show-current|git worktree add|release-notes.md|verification.md" README.md RUN_WORKFLOW.md templates/RUN_WORKFLOW.md`
-- `rg "_workflow/runs/dev|_workflow/runs/redesign|_workflow/runs/<run-id>|spec.md|tasks.md|progress.md|review.md|verification.md|summary.md|handoff.md|release-notes.md" README.md RUN_WORKFLOW.md _workflow/runs/README.md templates/_workflow/runs/README.md`
-- `bash -n scripts/install.sh`
-- `git diff --check`
-- `git diff --stat`
-- `git diff`
-- `git status --short`
+- Template existence checks with `Test-Path`.
+- Required field checks with `rg`.
+- Stale request-state checks with `rg`.
+- `bash -n scripts/install.sh`.
+- `git diff --check`.
+- `git diff --stat`.
+- Scoped `git diff`.
+- `git status --short`.
+- `git status --short client server`.
 
 ## Known Limitations
-
-Legacy workflow artifact folders remain as historical compatibility files.
+Legacy folders and root `WORK_REQUEST.md` remain for compatibility.
 
 ## Follow-Up Work
-
-Consider a future cleanup release that removes legacy active-state templates after migration.
+None required.
 
 ## Suggested Commit Message
-
-`docs: scope workflow artifacts by worktree run id`
+`docs: make workflow request state run-scoped`

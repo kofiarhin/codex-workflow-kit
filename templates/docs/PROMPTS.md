@@ -5,7 +5,7 @@ Use these prompts with OpenAI Codex, Claude Code, Cursor, or similar coding agen
 ## Universal Work Request
 
 ```txt
-Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md.
+Read RUN_WORKFLOW.md and execute it using the direct request or <artifact-root>/request.md.
 
 Follow AGENTS.md.
 Before writing any generated workflow artifact, detect current branch, current worktree path, run id, and artifact root. Use `CODEX_WORKFLOW_RUN_ID` when set; otherwise derive the run id from `git branch --show-current`, sanitize slashes to `__`, and use `_workflow/runs/<run-id>/`.
@@ -43,7 +43,7 @@ Then execute tasks one at a time through the full Build -> Refine -> Polish hard
 ## Intake Questions
 
 ```txt
-Read WORK_REQUEST.md and AGENTS.md.
+Read <artifact-root>/request.md and AGENTS.md. Use root WORK_REQUEST.md only as manual legacy input if the run-scoped request is missing.
 
 Ask the fewest focused questions needed to reach about 90% understanding.
 
@@ -85,7 +85,7 @@ Include these required sections:
 2. Original Request
    - Raw user request
    - Normalized request
-   - Source prompt / WORK_REQUEST reference
+   - Source prompt / <artifact-root>/request.md reference
 3. Questions And Answers
    - Questions asked
    - Answers received
@@ -257,7 +257,7 @@ If planning proceeds with missing required sections, without explicit spec appro
 ## Request Classification
 
 ```txt
-Read WORK_REQUEST.md and the saved <artifact-root>/spec.md file.
+Read <artifact-root>/request.md and the saved <artifact-root>/spec.md file.
 
 Classify the request as one primary type:
 - feature
@@ -301,7 +301,7 @@ Do not implement the request yet.
 ## Vertical Task Generation
 
 ```txt
-Using WORK_REQUEST.md, the saved and explicitly approved detailed <artifact-root>/spec.md file, <artifact-root>/progress.md, the latest relevant <artifact-root>/summary.md entry, <artifact-root>/handoff.md, and durable docs, generate a vertical task plan in <artifact-root>/tasks.md.
+Using <artifact-root>/request.md, the saved and explicitly approved detailed <artifact-root>/spec.md file, <artifact-root>/progress.md, the latest relevant <artifact-root>/summary.md entry, <artifact-root>/handoff.md, and durable docs, generate a vertical task plan in <artifact-root>/tasks.md.
 
 Do not run this prompt if the spec approval gate is still pending. If a spec exists but no task plan exists, show the spec approval prompt again and wait for user approval instead of generating tasks automatically.
 
@@ -504,7 +504,7 @@ Execution mode: parallel-workflow.
 Act as the orchestrator. Own intake, the detailed spec, and the task plan.
 
 Before assigning workers:
-1. Read WORK_REQUEST.md, AGENTS.md, RUN_WORKFLOW.md, <artifact-root>/handoff.md, <artifact-root>/progress.md, the latest relevant <artifact-root>/summary.md entry, and durable docs.
+1. Read <artifact-root>/request.md, AGENTS.md, RUN_WORKFLOW.md, <artifact-root>/handoff.md, <artifact-root>/progress.md, the latest relevant <artifact-root>/summary.md entry, and durable docs.
 2. Save or verify the detailed spec in <artifact-root>/spec.md.
 3. Stop for explicit spec approval before task planning.
 4. Save or verify the task plan in <artifact-root>/tasks.md only after approval.

@@ -581,3 +581,25 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Review result: Reviewed. Final audit confirms active generated reports are namespaced by run id and shared `_workflow` files are optional/index-only.
 - Blockers: none.
 - Next step: Workflow complete; final response.
+
+### 2026-05-24 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: workflow docs/templates/installer and run-scoped workflow artifacts; no app/runtime files changed.
+- Dirty worktree protection: Initial status showed unrelated `M notes.txt`; it was not touched.
+- Test plan: Docs/template verification, installer syntax, root/template mirror check, final diff audit.
+- Red phase evidence: Docs-only missing-test exception; no runtime behavior changed.
+- Green phase evidence: Required request-state, template-field, installer, and merge-safety searches passed.
+- Refactor phase evidence: `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md` mirror check passed; `git diff --check` passed with line-ending warnings only.
+- Test commands run: `Test-Path` template checks; required `rg` checks; `bash -n scripts/install.sh`; `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`; `git diff --check`; `git diff --stat`; scoped `git diff`; `git status --short`; `git status --short client server`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added run-scoped request-state guidance and missing parallel templates. Verification found required template fields.
+  - Iteration 2 - Refine: Updated installer, README, RUN_WORKFLOW, AGENTS, prompt docs, and workflow guidance to remove active root request assumptions. Stale-reference searches passed with only compatibility/manual mentions remaining.
+  - Iteration 3 - Polish: Ran installer syntax, mirror, diff, status, and final audit checks. Final verdict: PASSED.
+- Acceptance result: all criteria checked `[x]`.
+- Verification result: Passed; see `_workflow/runs/main/verification.md`.
+- Failure recovery notes: none.
+- Review result: Reviewed; see `_workflow/runs/main/review.md`.
+- Blockers: none.
+- Next step: Commit requested files separately from unrelated `notes.txt` when ready.

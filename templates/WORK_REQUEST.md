@@ -1,14 +1,16 @@
 # Work Request
 
-This file is auto-managed by the workflow. It stores the latest active work request, usually copied from the user's direct Codex prompt.
+This file is optional/manual compatibility input. It is no longer auto-managed during normal worktree-safe workflow runs.
 
-Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
+Active request state belongs in `_workflow/runs/<run-id>/request.md`, where `<run-id>` is derived from the current branch/worktree or `CODEX_WORKFLOW_RUN_ID`.
 
-The workflow will invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, run dirty worktree protection, generate a saved spec in `_spec/`, stop for explicit user approval, create a vertical task plan in `_task/` only after approval, execute tasks one by one until the request is complete or stopped, record acceptance results, update `_progress/progress.md` and `_handoff/current.md` after each task, run a final diff audit, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
+Users do not need to edit this file manually. You may edit it when you want to stage a request for an older workflow or for a new run before the agent has created `_workflow/runs/<run-id>/request.md`.
+
+The workflow will invoke the grill-me skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, sync the active request to `_workflow/runs/<run-id>/request.md`, run dirty worktree protection, generate a saved spec in `_workflow/runs/<run-id>/spec.md`, stop for explicit user approval, create a vertical task plan in `_workflow/runs/<run-id>/tasks.md` only after approval, execute tasks one by one until the request is complete or stopped, record acceptance results, update run-scoped progress and handoff after each task, run a final diff audit, write a workflow review, create release notes, and write a final summary in the same run directory.
 
 ## Request
 
-`<Auto-synced from latest direct prompt, e.g. Add dark theme to the app.>`
+`<Optional manually staged request, e.g. Add dark theme to the app.>`
 
 ## Question Preference
 

@@ -10,4 +10,8 @@ Active workflow state belongs in:
 _workflow/runs/<run-id>/
 ```
 
-Do not store active specs, task plans, progress, reviews, verification notes, release notes, summaries, or handoff state directly in this shared index.
+Active request state belongs in `_workflow/runs/<run-id>/request.md`. Root `WORK_REQUEST.md` is optional/manual compatibility input only.
+
+Do not store active requests, specs, task plans, progress, reviews, verification notes, release notes, summaries, or handoff state directly in this shared index.
+
+Never merge generated workflow reports line by line manually. Preserve each run folder and regenerate aggregate/index state after branches merge.

@@ -4,6 +4,7 @@ Each branch or worktree writes generated workflow artifacts to its own run direc
 
 ```txt
 _workflow/runs/<branch-or-worktree-id>/
+  request.md
   spec.md
   tasks.md
   progress.md
@@ -12,6 +13,10 @@ _workflow/runs/<branch-or-worktree-id>/
   summary.md
   handoff.md
   release-notes.md
+  parallel/
+    claims.md
+    locks.md
+    agent-status.md
 ```
 
 Run id rules:
@@ -23,4 +28,8 @@ Run id rules:
 
 Agents must only update their own run directory. For example, an agent in `dev` writes `_workflow/runs/dev/`; an agent in `redesign` writes `_workflow/runs/redesign/`.
 
-Do not manually merge generated reports line by line. If `_workflow` conflicts during a merge, preserve each run directory and regenerate any aggregate/index summary after branches merge.
+Active request state lives in `<artifact-root>/request.md`. Root `WORK_REQUEST.md` is optional/manual compatibility input only and must not be auto-updated during normal worktree-safe workflow runs.
+
+Parallel coordination files live under `<artifact-root>/parallel/` during a run. The templates in `_workflow/runs/parallel/` are static starting points for `claims.md`, `locks.md`, and `agent-status.md`.
+
+Never merge generated workflow reports line by line manually. If `_workflow` conflicts during a merge, preserve each run directory, regenerate any aggregate/index state after branches merge, treat run folders as branch/worktree-local memory, and perform final orchestration after branch merge.

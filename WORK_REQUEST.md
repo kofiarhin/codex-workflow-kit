@@ -1,10 +1,12 @@
 # Work Request
 
-This file is auto-managed by the workflow. It stores the latest active work request, usually copied from the user's direct Codex prompt.
+This file is optional/manual compatibility input. It is no longer auto-managed during normal worktree-safe workflow runs.
 
-Users do not need to edit this file manually. You may edit it when you want to stage a request before asking the agent to run the workflow.
+Active request state belongs in `_workflow/runs/<run-id>/request.md`, where `<run-id>` is derived from the current branch/worktree or `CODEX_WORKFLOW_RUN_ID`.
 
-The workflow will run intake unless skipped or resuming, generate a saved detailed spec in `_spec/`, pause for explicit user approval, create a vertical task plan in `_task/` only after approval, execute tasks according to the selected execution mode, update `_progress/progress.md` and `_handoff/current.md`, write a workflow review in `_review/`, create release notes in `_release/`, and write a final summary in `_summary/`.
+Users do not need to edit this file manually. You may edit it when you want to stage a request for an older workflow or for a new run before the agent has created `_workflow/runs/<run-id>/request.md`.
+
+The workflow will run intake unless skipped or resuming, sync the active request to `_workflow/runs/<run-id>/request.md`, generate a saved detailed spec in `_workflow/runs/<run-id>/spec.md`, pause for explicit user approval, create a vertical task plan in `_workflow/runs/<run-id>/tasks.md` only after approval, execute tasks according to the selected execution mode, update run-scoped progress and handoff, write a workflow review, create release notes, and write a final summary in the same run directory.
 
 ## Request
 

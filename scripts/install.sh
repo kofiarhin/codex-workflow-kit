@@ -95,6 +95,9 @@ copy_file "$TEMPLATE_ROOT/RUN_WORKFLOW.md" "RUN_WORKFLOW.md"
 copy_file "$TEMPLATE_ROOT/.agents/skills/grill-me/SKILL.md" ".agents/skills/grill-me/SKILL.md"
 copy_file "$TEMPLATE_ROOT/_workflow/index.md" "_workflow/index.md"
 copy_file "$TEMPLATE_ROOT/_workflow/runs/README.md" "_workflow/runs/README.md"
+copy_file "$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md" "_workflow/runs/parallel/claims.md"
+copy_file "$TEMPLATE_ROOT/_workflow/runs/parallel/locks.md" "_workflow/runs/parallel/locks.md"
+copy_file "$TEMPLATE_ROOT/_workflow/runs/parallel/agent-status.md" "_workflow/runs/parallel/agent-status.md"
 copy_file "$TEMPLATE_ROOT/_decisions/README.md" "_decisions/README.md"
 copy_file "$TEMPLATE_ROOT/docs/PROJECT_CONTEXT.md" "docs/PROJECT_CONTEXT.md"
 copy_file "$TEMPLATE_ROOT/docs/ACTIVE_TASK.md" "docs/ACTIVE_TASK.md"
@@ -110,10 +113,11 @@ echo "Setup complete."
 echo
 echo "Next steps:"
 echo "1. Edit AGENTS.md and docs/PROJECT_CONTEXT.md for your stack, commands, and project rules."
-echo "2. Write one plain-English request in WORK_REQUEST.md or directly in your agent."
+echo "2. Write one plain-English request directly in your agent."
+echo "   Root WORK_REQUEST.md is compatibility/manual only; active request state is _workflow/runs/<run-id>/request.md."
 echo "3. Start your agent with:"
 echo
-echo "   Read RUN_WORKFLOW.md and execute it using WORK_REQUEST.md."
+echo "   Read RUN_WORKFLOW.md and execute it using my direct request."
 echo
 echo "4. Review _workflow/runs/<run-id>/, _workflow/index.md, _decisions/, and the final response before committing."
 echo
