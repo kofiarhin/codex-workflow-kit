@@ -74,3 +74,74 @@ None.
 
 ## Next Recommended Work
 Commit the workflow documentation/template update separately from the unrelated `notes.txt` change.
+
+---
+
+# Summary: Fix Missing Parallel Template Files
+
+## Request
+Fix the missing parallel template file issue in codex-workflow-kit.
+
+## Spec File Used
+`_workflow/runs/main/spec.md`
+
+## Detailed Spec Completeness
+Complete. All required detailed spec sections are present.
+
+## Task Plan Used
+`_workflow/runs/main/tasks.md`
+
+## Review File Used
+`_workflow/runs/main/review.md`
+
+## Tasks Completed
+- `TASK-001: Complete parallel templates and consistency audit`
+
+## Iteration Evidence Summary
+- Build: Completed the three parallel templates by adding missing `Notes` fields.
+- Refine: Confirmed installer copy behavior and aligned docs with source/installed template paths.
+- Polish: Ran final verification, final diff audit, review, release notes, and summary.
+
+## Files Changed
+- `README.md`
+- `RUN_WORKFLOW.md`
+- `templates/RUN_WORKFLOW.md`
+- `templates/_workflow/runs/README.md`
+- `templates/_workflow/runs/parallel/claims.md`
+- `templates/_workflow/runs/parallel/locks.md`
+- `templates/_workflow/runs/parallel/agent-status.md`
+- `_workflow/runs/main/request.md`
+- `_workflow/runs/main/spec.md`
+- `_workflow/runs/main/tasks.md`
+- `_workflow/runs/main/verification.md`
+- `_workflow/runs/main/review.md`
+- `_workflow/runs/main/release-notes.md`
+- `_workflow/runs/main/summary.md`
+- `_workflow/runs/main/handoff.md`
+
+## Verification Run
+See `_workflow/runs/main/verification.md`.
+
+## Acceptance Results
+- [x] Three parallel template files exist.
+- [x] Required fields including `Notes` are present.
+- [x] `scripts/install.sh` installs the templates.
+- [x] README and RUN_WORKFLOW are aligned.
+- [x] `WORK_REQUEST.md` is compatibility/manual only.
+- [x] Long-lived worktrees can keep workflow state separate by run id.
+- [x] Final verdict is `PASSED`.
+
+## Failure Recovery Notes
+None.
+
+## Final Diff Audit
+`git diff --stat` and `git diff` ran. Tracked diff matches the requested scope; untracked source templates are visible in `git status --short`. No app/runtime files, secrets, generated junk, dependency, or deployment changes were found.
+
+## Release Notes File Used
+`_workflow/runs/main/release-notes.md`
+
+## Unresolved Issues
+None.
+
+## Next Recommended Work
+Commit the requested workflow template/docs changes.

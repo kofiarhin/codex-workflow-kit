@@ -1,159 +1,158 @@
-# Spec: Worktree-Safe Workflow Model Completion
+# Spec: Fix Missing Parallel Template Files
 
 ## 1. Metadata
 - Spec filename: `_workflow/runs/main/spec.md`
 - Date: 2026-05-24
-- Request ID / slug: `2026-05-24-worktree-safe-workflow-model`
-- Request source: `_workflow/runs/main/request.md`
+- Request ID / slug: `2026-05-24-fix-parallel-template-files`
+- Request source: Latest direct user prompt synced to `_workflow/runs/main/request.md`
 - Execution mode: `complete-workflow`
 - Request classification: `docs`
-- Scope level: `medium`
+- Scope level: `small`
 - Risk level: `medium`
 
 ## 2. Original Request
-- Raw user request: Audit and complete the worktree-safe workflow model in codex-workflow-kit.
-- Normalized request: Make active workflow request state run-scoped, add missing parallel templates, update installer behavior, align README/RUN_WORKFLOW/templates, preserve legacy compatibility, and complete a final merge-safety audit.
+- Raw user request: Fix the missing parallel template file issue in codex-workflow-kit by creating `templates/_workflow/runs/parallel/`, adding reusable `claims.md`, `locks.md`, and `agent-status.md` templates with specified fields, auditing `scripts/install.sh`, and aligning README/workflow docs around run-scoped request state, compatibility-only `WORK_REQUEST.md`, template locations, branch/worktree-scoped workflow memory, and no shared active workflow artifact edits across branches.
+- Normalized request: Ensure the parallel coordination templates are present, complete, installed, and documented consistently with the worktree-safe workflow model.
 - Source prompt / `<artifact-root>/request.md` reference: `_workflow/runs/main/request.md`
 
 ## 3. Questions And Answers
 - Questions asked: None.
 - Answers received: Not applicable.
-- Questions skipped: The prompt supplied explicit requirements and audit criteria.
+- Questions skipped: The request is explicit and narrow enough to proceed after the required spec approval gate.
 - Remaining open questions: None blocking.
 
 ## 4. Problem Definition
-- Problem being solved: Root `WORK_REQUEST.md` and missing parallel templates still left workflow state partially shared across long-lived worktrees.
-- Why it matters: Multiple agents in `main`, `dev`, `redesign`, and feature worktrees should not overwrite or merge the same workflow-state files.
-- Current pain point: Request state and installer/template support were not fully aligned with run-scoped artifacts.
-- Expected value: Active workflow memory is namespaced by run id and merge-safe by default.
+- Problem being solved: `scripts/install.sh` references parallel coordination template files that must exist under `templates/_workflow/runs/parallel/`; missing or incomplete templates can break installs or leave parallel workflow docs inconsistent.
+- Why it matters: The workflow kit must install cleanly into target repos and preserve worktree-safe workflow state for long-lived branch work.
+- Current pain point: Existing untracked parallel templates are present locally, but the audit found they omit the required `Notes` field in all three files. The current docs also need a focused consistency check for the exact template source path and run-scoped request-state model.
+- Expected value: Installer behavior, template files, and docs agree; target repos receive reusable parallel coordination templates; active workflow artifacts remain branch/worktree scoped.
 
 ## 5. Current State Analysis
-- Existing behavior: Most workflow artifacts were under `_workflow/runs/<run-id>/`, but request state still referenced root `WORK_REQUEST.md`; installer did not ship parallel templates; README/RUN_WORKFLOW/AGENTS/prompts had inconsistent request-state language.
-- Existing architecture/components: Documentation/template repository with root files mirrored into `templates/` and copied by `scripts/install.sh`.
-- Existing files/modules likely involved: `README.md`, `RUN_WORKFLOW.md`, `AGENTS.md`, `docs/PROMPTS.md`, `WORK_REQUEST.md`, `scripts/install.sh`, `templates/**`, `_workflow/**`.
-- Existing data flow: Agent request intake creates spec, tasks, progress, handoff, review, verification, release notes, summary.
-- Existing API/UI/CLI/workflow behavior: Docs/templates only; no app runtime behavior.
-- Existing tests or verification coverage: Targeted `rg`, installer shell syntax check, template existence checks, root/template mirror check, final diff audit.
+- Existing behavior: `scripts/install.sh` currently copies `templates/_workflow/runs/parallel/claims.md`, `locks.md`, and `agent-status.md` into `_workflow/runs/parallel/` in the target repo. Local untracked template files already exist at the requested source path.
+- Existing architecture/components: This is a docs/template/installer repository. Root workflow files are mirrored into `templates/` for installation into other repos.
+- Existing files/modules likely involved: `templates/_workflow/runs/parallel/claims.md`, `templates/_workflow/runs/parallel/locks.md`, `templates/_workflow/runs/parallel/agent-status.md`, `scripts/install.sh`, `README.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/WORK_REQUEST.md`, and run-scoped workflow artifacts.
+- Existing data flow: The installer copies template files from `templates/` into a target repository. Workflow runs create active artifacts under `_workflow/runs/<run-id>/`; parallel execution copies or initializes coordination files under `<artifact-root>/parallel/`.
+- Existing API/UI/CLI/workflow behavior: CLI installer only; no app runtime behavior and no UI.
+- Existing tests or verification coverage: Manual/documentation checks via `Test-Path`, `rg`, `bash -n scripts/install.sh`, and final diff audit.
 
 ## 6. Desired End State
-- Expected final behavior: Active request state is stored at `<artifact-root>/request.md`; all active workflow artifacts are run-scoped.
-- User-facing outcome: README documents worktree-safe run folders and merge safety rules.
-- Developer-facing outcome: Installer ships `_workflow` guidance and parallel templates.
-- System/workflow outcome: Root `WORK_REQUEST.md` remains optional/manual compatibility input only.
-- Backward compatibility expectations: Older repos may keep root `WORK_REQUEST.md` and legacy `_spec`, `_task`, `_progress`, `_handoff`, `_review`, `_release`, `_summary` folders.
+- Expected final behavior: All three parallel template files exist under `templates/_workflow/runs/parallel/`, include all required fields including `Notes`, and are installed by `scripts/install.sh`.
+- User-facing outcome: Users installing the kit receive complete parallel coordination templates.
+- Developer-facing outcome: README and workflow templates clearly describe run-scoped request state, compatibility-only `WORK_REQUEST.md`, and merge-safe active workflow memory.
+- System/workflow outcome: Active artifacts are branch/worktree scoped; no active workflow artifact requires multiple branches to edit the same file.
+- Backward compatibility expectations: Root `WORK_REQUEST.md` remains as optional/manual compatibility input. Installer target paths remain `_workflow/runs/parallel/...` unless evidence shows behavior must change.
 
 ## 7. Scope
-- In scope: Workflow docs, templates, installer, `_workflow` guidance, parallel template files, run-scoped workflow artifacts for this run.
-- Out of scope: App code, dependency changes, deployment changes, deleting legacy artifacts.
-- Non-goals: Solving implementation-file merge conflicts.
-- Explicit boundaries: No active workflow artifact should require multiple worktrees to edit the same file.
+- In scope: Complete the three parallel template markdown files, verify installer copy behavior, fix documentation inconsistencies in the requested files, run final audit, and update run-scoped workflow artifacts.
+- Out of scope: App/runtime code, dependency changes, deployment changes, deleting legacy workflow artifacts, changing installer target behavior unless required by the audit.
+- Non-goals: Reworking the full workflow system, changing parallel execution semantics beyond template/docs consistency, or committing changes.
+- Explicit boundaries: Keep edits limited to requested template, docs, installer, and workflow artifact files.
 
 ## 8. Users And Use Cases
-- Primary users: Developers running Codex agents in long-lived git worktrees.
-- Secondary users: Teams installing this workflow kit into existing repos.
-- Main use cases: `main`, `dev`, and `redesign` worktrees run independent workflows.
-- Edge use cases: Branch names with slashes, detached HEAD, legacy repos with root `WORK_REQUEST.md`.
+- Primary users: Developers and agents installing or using codex-workflow-kit.
+- Secondary users: Parallel worker/orchestrator agents using installed coordination files.
+- Main use cases: Install workflow kit into a target repo; initialize run-scoped parallel claims/locks/status files; run multiple long-lived worktrees without workflow-state merge conflicts.
+- Edge use cases: Existing target files are skipped unless `--force`; legacy users may still manually use root `WORK_REQUEST.md`; multiple worktrees may merge `_workflow` history later.
 
 ## 9. Functional Requirements
-- Required behaviors: Run-scoped request state; root `WORK_REQUEST.md` compatibility only; committed parallel templates; installer copies required `_workflow` files; docs include merge safety rules.
-- Inputs: Direct user prompt, `<artifact-root>/request.md`, optional root `WORK_REQUEST.md` as legacy input.
-- Outputs: Updated docs/templates/installer and final audit.
-- State changes: Active workflow request state moves to run scope.
-- Error states: Missing run request may fall back to root `WORK_REQUEST.md` only as manual legacy input.
+- Required behaviors: Create/complete `claims.md`, `locks.md`, and `agent-status.md`; include every user-listed field; keep templates reusable; ensure installer references the template source files; align requested docs.
+- Inputs: Existing docs/templates/installer and the latest user request.
+- Outputs: Updated markdown templates/docs and any required run-scoped workflow artifacts.
+- State changes: Repository file content changes only; no runtime state.
+- Error states: Installer should not fail because referenced template source files are absent.
 - Permissions/auth expectations: Not applicable.
 
 ## 10. Non-Functional Requirements
-- Performance expectations: Not applicable.
-- Reliability expectations: Deterministic run-scoped paths.
-- Security/privacy expectations: No secrets added.
-- Accessibility expectations: Documentation stays clear and scannable.
-- Maintainability expectations: Root/template workflow docs remain mirrored.
-- DX expectations: Installer output explains the new model.
+- Performance expectations: Not applicable beyond fast shell checks.
+- Reliability expectations: Installer source files must exist and shell syntax must remain valid.
+- Security/privacy expectations: Do not add secrets or sensitive values.
+- Accessibility expectations: Not applicable; no UI.
+- Maintainability expectations: Markdown templates should be clear, reusable, and field-complete.
+- DX expectations: Installed templates should make worker claims, file locks, and status easy to fill in consistently.
 
 ## 11. Affected Surfaces
-- Files likely affected: `README.md`, `RUN_WORKFLOW.md`, `AGENTS.md`, `WORK_REQUEST.md`, `docs/PROMPTS.md`, `scripts/install.sh`, `templates/**`, `_workflow/**`, `_workflow/runs/main/**`.
-- Directories likely affected: `_workflow/`, `templates/_workflow/`.
+- Files likely affected: `templates/_workflow/runs/parallel/claims.md`, `templates/_workflow/runs/parallel/locks.md`, `templates/_workflow/runs/parallel/agent-status.md`, possibly `README.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/WORK_REQUEST.md`, `scripts/install.sh`.
+- Directories likely affected: `templates/_workflow/runs/parallel/`, `_workflow/runs/main/`.
 - UI surfaces: Not applicable.
 - API routes: Not applicable.
 - Components: Not applicable.
 - Services: Not applicable.
 - Database/schema: Not applicable.
-- Config/env vars: `CODEX_WORKFLOW_RUN_ID` documentation only.
-- Tests: Docs/search verification.
-- Docs: Core workflow docs and templates.
-- Workflow artifacts: Run-scoped artifacts under `_workflow/runs/main/`.
+- Config/env vars: Not applicable.
+- Tests: Documentation and installer checks only.
+- Docs: Requested README/workflow/template docs.
+- Workflow artifacts: `_workflow/runs/main/request.md`, `_workflow/runs/main/spec.md`, later task/progress/review/release/summary/verification/handoff artifacts after approval.
 
 ## 12. Dependency And Integration Map
-- Internal dependencies: `RUN_WORKFLOW.md` mirrors `templates/RUN_WORKFLOW.md`; `scripts/install.sh` depends on `templates/_workflow/**` existing.
-- External packages/services: None.
-- Integration points: Git branch/worktree detection; installer file copy.
-- Ordering constraints: Add templates before installer verification.
-- Migration/setup requirements: Keep legacy files as compatibility only.
+- Internal dependencies: `scripts/install.sh` depends on the source files under `templates/_workflow/runs/parallel/`.
+- External packages/services: Bash for installer syntax check; ripgrep for audit searches when available.
+- Integration points: Installed target repo receives `_workflow/runs/parallel/claims.md`, `locks.md`, and `agent-status.md`.
+- Ordering constraints: Approve spec, generate task plan, then edit templates/docs/installer and verify.
+- Migration/setup requirements: None.
 
 ## 13. Data And State Impact
 - Data models: Not applicable.
 - Database changes: None.
-- State management changes: Workflow state path changes in docs/templates.
+- State management changes: Workflow state documentation only.
 - Cache/session/local storage impact: None.
-- Backward compatibility impact: Root `WORK_REQUEST.md` remains manual input only.
+- Backward compatibility impact: Preserves `WORK_REQUEST.md` as manual compatibility input; installer still skips existing files unless `--force`.
 
 ## 14. UX / API / Workflow Expectations
 - UX expectations: Not applicable.
 - API contract expectations: Not applicable.
-- CLI/workflow behavior: Detect run context first; write active state to `<artifact-root>/request.md` and sibling run-scoped files.
-- Error handling expectations: Preserve run folders and regenerate aggregate/index state after merge.
+- CLI/workflow behavior: `scripts/install.sh` should continue to copy the three parallel templates from `templates/_workflow/runs/parallel/`.
+- Error handling expectations: Installer should not reference absent source files.
 - Empty/loading/success/failure states: Not applicable.
 
 ## 15. Execution Strategy
-- Recommended implementation approach: Update canonical docs, add templates, update installer, mirror template files, run final audit.
-- Suggested sequencing: Request model first, templates/installer second, final consistency audit third.
-- Safe rollout/migration approach: Retain root `WORK_REQUEST.md` and legacy folders as compatibility only.
-- Files to inspect before editing: README, RUN_WORKFLOW, AGENTS, install script, templates, `_workflow` guidance.
-- Decisions to avoid until more evidence exists: No deletion of historical artifacts.
+- Recommended implementation approach: Treat this as one docs/template vertical slice. First repair the three template files to include all required fields, especially `Notes`; then audit installer and requested docs; change only inconsistencies found; finally run targeted checks and final diff audit.
+- Suggested sequencing: Template completion, installer audit, docs consistency audit, verification/final artifacts.
+- Safe rollout/migration approach: Keep target install paths unchanged unless verification shows a real mismatch.
+- Files to inspect before editing: Requested template files, `scripts/install.sh`, `README.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/WORK_REQUEST.md`.
+- Decisions to avoid until more evidence exists: Do not introduce new parallel formats or installer behavior beyond requested consistency.
 
 ## 16. Verification Strategy
-- Required automated checks: `rg` consistency checks, template existence checks, `bash -n scripts/install.sh`, `git diff --check`, final diff audit.
-- Required manual checks: Answer the seven requested audit questions.
-- Test types needed: Documentation/template verification.
-- Build/lint/typecheck expectations: Not applicable for docs-only change.
-- Acceptance evidence required: Command outputs and final verdict.
-- Proof of completion: Updated docs/templates/installer and run-scoped verification/review/summary.
+- Required automated checks: `Test-Path` for the three template files; `rg` checks for required fields and requested wording; `bash -n scripts/install.sh`; final `git diff --stat` and `git diff`.
+- Required manual checks: Confirm docs agree on run-scoped request state, compatibility-only `WORK_REQUEST.md`, template source location, branch/worktree scoped memory, and no shared active artifact requirement.
+- Test types needed: Documentation/template/installer checks only.
+- Build/lint/typecheck expectations: No build needed; installer shell syntax check required.
+- Acceptance evidence required: Final audit answering all seven user questions with `PASSED`, `PARTIAL`, or `FAILED`.
+- Proof of completion: Changed files list, verification command results, and workflow artifacts after implementation.
 
 ## 17. Acceptance Criteria
-- [x] Active request state uses `_workflow/runs/<run-id>/request.md`.
-- [x] Root `WORK_REQUEST.md` is compatibility/manual only.
-- [x] Parallel templates exist and contain required fields.
-- [x] Installer ships `_workflow/index.md`, `_workflow/runs/README.md`, and parallel templates.
-- [x] README and RUN_WORKFLOW are consistent.
-- [x] `main`, `dev`, and `redesign` worktrees can write workflow state to separate run folders.
-- [x] Merge safety rules are explicit.
+- [ ] `templates/_workflow/runs/parallel/claims.md` exists and includes Task ID, Worker ID, Branch, Worktree Path, Run ID, Claim Status, Start Time, End Time, Files Expected, Files Changed, Verification Status, and Notes.
+- [ ] `templates/_workflow/runs/parallel/locks.md` exists and includes File Path, Lock Owner, Worker ID, Task ID, Run ID, Reason, Lock Status, Acquired At, Released At, and Notes.
+- [ ] `templates/_workflow/runs/parallel/agent-status.md` exists and includes Worker ID, Role, Branch, Worktree Path, Run ID, Current Task, Changed Files, Verification Result, Blocker, Final Status, and Notes.
+- [ ] `scripts/install.sh` copies all three templates from `templates/_workflow/runs/parallel/`.
+- [ ] Requested docs consistently state run-scoped `request.md`, compatibility/manual-only `WORK_REQUEST.md`, parallel template location, branch/worktree-scoped memory, and no shared active artifact requirement.
+- [ ] Final audit answers the seven requested questions and reports `PASSED`, `PARTIAL`, or `FAILED`.
 
 ## 18. Edge Cases And Failure Modes
-- Edge cases: Legacy repos with root request file; branches with slash characters; installer target already has files.
-- Failure modes: Stale docs reintroduce root auto-sync; installer omits templates.
-- Regression risks: Weakening spec approval or task evidence rules while editing workflow docs.
-- Recovery expectations: Search for stale phrases and mirror canonical docs.
+- Edge cases: Template files already exist but are incomplete; installer source exists but docs use ambiguous source/installed path wording; untracked files overlap with planned edits.
+- Failure modes: `bash -n` failure, missing field in template, stale doc wording implying root `WORK_REQUEST.md` is active, or docs suggesting active workflow artifacts are shared.
+- Regression risks: Accidentally changing installer target behavior or broad workflow semantics.
+- Recovery expectations: Fix only in-scope docs/template/script issues and rerun the exact failing check.
 
 ## 19. Risks And Mitigations
-- Technical risks: Mixed legacy/current language. Mitigation: targeted stale-reference searches.
-- Product/UX risks: Users may misunderstand `WORK_REQUEST.md`. Mitigation: mark compatibility/manual only in README, RUN_WORKFLOW, AGENTS, templates, installer output.
-- Security risks: None found.
-- Scope risks: Legacy cleanup beyond request. Mitigation: preserve compatibility.
-- Mitigation plan: Final audit and diff review.
+- Technical risks: Existing dirty/untracked files overlap with the planned template paths. Mitigation: surface the overlap before implementation and modify only the requested files after explicit spec approval.
+- Product/UX risks: Confusing source template paths with installed target paths. Mitigation: use explicit wording where needed.
+- Security risks: Low; avoid adding secrets.
+- Scope risks: Workflow docs are broad. Mitigation: limit changes to requested consistency issues.
+- Mitigation plan: Use targeted `rg` searches and final diff audit.
 
 ## 20. Assumptions
-- Explicit assumptions: Docs-only verification is sufficient; no runtime tests are needed because no app code changed.
+- Explicit assumptions: The existing installer target paths `_workflow/runs/parallel/...` are intentional static installed templates, while source templates live under `templates/_workflow/runs/parallel/...`.
 - Confidence level: High.
-- What to revisit if assumptions are wrong: Add installer integration tests or a helper script in a future task.
+- What to revisit if assumptions are wrong: If target repos should instead install only under a specific run id, installer behavior would need a broader design change outside this request.
 
 ## 21. Open Questions
-- Blocking questions: None.
-- Non-blocking questions: Whether to remove root `WORK_REQUEST.md` from future major versions.
-- Execution impact: None.
+- Blocking questions: Existing dirty/untracked files overlap the planned edit paths. Approval of this spec will be treated as approval to update those in-scope files in place.
+- Non-blocking questions: None.
+- Execution impact: No implementation will proceed until the spec is approved.
 
 ## 22. Task Extraction Notes
-- Suggested vertical task boundaries: one docs/template/installer consistency pass.
-- Suggested first task: Move request-state guidance to `<artifact-root>/request.md`.
-- Suggested task ordering: Request model, parallel templates, installer, README/RUN consistency, audit.
-- Areas that should not become separate tasks: App code and legacy artifact deletion.
-- How the 3-pass Build -> Refine -> Polish loop should apply: Build primary edits, refine stale references, polish with final audit.
+- Suggested vertical task boundaries: One task is sufficient: complete parallel templates and align installer/docs.
+- Suggested first task: `TASK-001: Complete parallel templates and consistency audit`.
+- Suggested task ordering: Create/complete templates, verify installer, audit docs, finalize workflow artifacts.
+- Areas that should not become separate tasks: App code, deployment, dependency changes, broad workflow redesign.
+- How the 3-pass Build -> Refine -> Polish loop should apply: Build completes the templates, Refine repairs installer/docs inconsistencies, Polish runs verification and final audit.

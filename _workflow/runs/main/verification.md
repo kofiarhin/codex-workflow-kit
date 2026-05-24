@@ -1,56 +1,46 @@
-# Verification: Worktree-Safe Workflow Model Completion
+# Verification: Fix Missing Parallel Template Files
 
-Date: 2026-05-24
-Request: Audit and complete the worktree-safe workflow model in codex-workflow-kit.
+## Request
+Fix the missing parallel template file issue in codex-workflow-kit.
+
+## Spec And Task Plan
+- Spec: `_workflow/runs/main/spec.md`
+- Task plan: `_workflow/runs/main/tasks.md`
 
 ## Commands Run
-
-- `Test-Path templates\_workflow\runs\parallel\claims.md; Test-Path templates\_workflow\runs\parallel\locks.md; Test-Path templates\_workflow\runs\parallel\agent-status.md; Test-Path _workflow\runs\parallel\claims.md; Test-Path _workflow\runs\parallel\locks.md; Test-Path _workflow\runs\parallel\agent-status.md`
-  - Result: all returned `True`.
-- `rg -n "task id|worker id|branch|worktree path|run id|claim status|start time|end time|files expected|files changed|verification status" templates\_workflow\runs\parallel\claims.md -i`
-  - Result: required claims fields found.
-- `rg -n "file path|lock owner|worker id|task id|run id|reason|lock status|acquired at|released at" templates\_workflow\runs\parallel\locks.md -i`
-  - Result: required lock fields found.
-- `rg -n "worker id|role|branch|worktree path|run id|current task|changed files|verification result|blocker|final status" templates\_workflow\runs\parallel\agent-status.md -i`
-  - Result: required agent status fields found.
-- `rg -n "copy_file.*_workflow/runs/parallel|Root WORK_REQUEST|request.md|_workflow/index.md|_workflow/runs/README.md" scripts\install.sh`
-  - Result: installer copies required workflow files and setup messaging mentions run-scoped request state.
-- `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`
-  - Result: no content differences; line-ending warnings only.
-- `rg -n "sync WORK_REQUEST|sync.*WORK_REQUEST|auto-managed|only shared active request|execute it using WORK_REQUEST|Using WORK_REQUEST|Read WORK_REQUEST|WORK_REQUEST.md synced|Work request: WORK_REQUEST|Source prompt / WORK_REQUEST" ...`
-  - Result: no stale active-root request guidance found; remaining `WORK_REQUEST.md` mentions are compatibility/manual-only or explicit non-auto-update rules.
-- `rg -n "copy_file.*_workflow/runs/parallel|_workflow/runs/<run-id>/request.md|<artifact-root>/request.md|Never merge workflow reports|Regenerate.*aggregate|Final orchestration|_workflow/runs/dev|_workflow/runs/redesign" ...`
-  - Result: required request, installer, merge safety, and dev/redesign path guidance found.
+- `Test-Path templates\_workflow\runs\parallel\claims.md; Test-Path templates\_workflow\runs\parallel\locks.md; Test-Path templates\_workflow\runs\parallel\agent-status.md`
+  - Result: passed; all returned `True`.
+- `rg "Task ID|Worker ID|Branch|Worktree Path|Run ID|Claim Status|Start Time|End Time|Files Expected|Files Changed|Verification Status|Notes" templates\_workflow\runs\parallel\claims.md`
+  - Result: passed; header with all fields found.
+- `rg "File Path|Lock Owner|Worker ID|Task ID|Run ID|Reason|Lock Status|Acquired At|Released At|Notes" templates\_workflow\runs\parallel\locks.md`
+  - Result: passed; header with all fields found.
+- `rg "Worker ID|Role|Branch|Worktree Path|Run ID|Current Task|Changed Files|Verification Result|Blocker|Final Status|Notes" templates\_workflow\runs\parallel\agent-status.md`
+  - Result: passed; header with all fields found.
+- `rg "$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md|$TEMPLATE_ROOT/_workflow/runs/parallel/locks.md|$TEMPLATE_ROOT/_workflow/runs/parallel/agent-status.md" scripts\install.sh`
+  - Result: passed; installer copy lines found.
 - `bash -n scripts/install.sh`
   - Result: passed.
+- `rg` consistency checks across `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/WORK_REQUEST.md`, and `scripts/install.sh`
+  - Result: passed; run-scoped request state, compatibility-only `WORK_REQUEST.md`, source template path, installed template path, branch/worktree memory, and no shared active artifact wording found.
+- `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`
+  - Result: passed; no content differences, line-ending warnings only.
 - `git diff --check`
-  - Result: passed with line-ending warnings only.
+  - Result: passed; line-ending warnings only.
 - `git diff --stat`
-  - Result: ran. Diff includes requested workflow files plus pre-existing unrelated `notes.txt` modification.
-- `git diff -- <scoped workflow files>`
-  - Result: ran for final audit.
+  - Result: ran; tracked diff matched requested docs/workflow artifact scope. Untracked template files are visible in `git status --short`.
+- `git diff`
+  - Result: ran; tracked diff showed requested documentation and workflow artifact changes only.
 - `git status --short`
-  - Result: ran; shows workflow/doc/template changes plus pre-existing `M notes.txt`.
-- `git status --short client server`
-  - Result: no app/runtime changes.
+  - Result: ran; showed requested tracked docs/workflow artifacts and untracked parallel template directories.
 
-## Requested Final Audit
-
-1. Are ALL active workflow artifacts run-scoped?
-   - Yes. Active request, spec, tasks, progress, handoff, review, verification, release notes, summary, and parallel coordination paths are documented under `<artifact-root>` / `_workflow/runs/<run-id>/`.
-2. Is root WORK_REQUEST now compatibility-only?
-   - Yes. Root and template `WORK_REQUEST.md`, README, RUN_WORKFLOW, AGENTS, and installer messaging mark it optional/manual compatibility only and prohibit normal auto-updates.
-3. Do parallel templates exist?
-   - Yes. `templates/_workflow/runs/parallel/claims.md`, `locks.md`, and `agent-status.md` exist with required fields.
-4. Does installer ship them?
-   - Yes. `scripts/install.sh` copies `_workflow/index.md`, `_workflow/runs/README.md`, and the three parallel templates.
-5. Are README and RUN_WORKFLOW consistent?
-   - Yes. Both document run-scoped request state, run folders, compatibility-only root request state, and merge safety rules.
-6. Can dev/redesign/main worktrees run without workflow-state merge conflicts?
-   - Yes for workflow state. They write active artifacts to `_workflow/runs/main/`, `_workflow/runs/dev/`, and `_workflow/runs/redesign/`; shared `_workflow/index.md` and `_workflow/runs/README.md` are optional/static or append-only.
-7. Remaining gaps.
-   - None for the requested model. Existing legacy folders remain for backward compatibility.
+## Final Audit Answers
+1. Were the 3 parallel template files created? `Yes`. They exist under `templates/_workflow/runs/parallel/` and contain required fields including `Notes`.
+2. Does `scripts/install.sh` install them? `Yes`. It copies `$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md`, `locks.md`, and `agent-status.md` to `_workflow/runs/parallel/`.
+3. Is README aligned? `Yes`. It documents run-scoped request state, compatibility-only `WORK_REQUEST.md`, no shared active workflow artifacts, and `templates/_workflow/runs/parallel/`.
+4. Is RUN_WORKFLOW aligned? `Yes`. Root and template workflow prompts both describe run-scoped request state and source/installed parallel template paths.
+5. Is WORK_REQUEST compatibility-only? `Yes`. `templates/WORK_REQUEST.md` marks it optional/manual compatibility input only.
+6. Can long-lived worktrees (`main`, `dev`, `redesign`) now run without workflow-state merge conflicts? `Yes` for workflow state. Active workflow artifacts are under `_workflow/runs/<run-id>/`; normal source files can still conflict like any git workflow.
+7. Remaining gaps: None for the requested scope.
 
 ## Verdict
-
 PASSED

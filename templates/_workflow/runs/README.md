@@ -30,6 +30,6 @@ Agents must only update their own run directory. For example, an agent in `dev` 
 
 Active request state lives in `<artifact-root>/request.md`. Root `WORK_REQUEST.md` is optional/manual compatibility input only and must not be auto-updated during normal worktree-safe workflow runs.
 
-Parallel coordination files live under `<artifact-root>/parallel/` during a run. The templates in `_workflow/runs/parallel/` are static starting points for `claims.md`, `locks.md`, and `agent-status.md`.
+Parallel coordination files live under `<artifact-root>/parallel/` during a run. In codex-workflow-kit, the committed source templates live under `templates/_workflow/runs/parallel/`; after installation, `_workflow/runs/parallel/` contains static starting points for `claims.md`, `locks.md`, and `agent-status.md`.
 
 Never merge generated workflow reports line by line manually. If `_workflow` conflicts during a merge, preserve each run directory, regenerate any aggregate/index state after branches merge, treat run folders as branch/worktree-local memory, and perform final orchestration after branch merge.

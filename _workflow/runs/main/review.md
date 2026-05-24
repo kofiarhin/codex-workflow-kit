@@ -1,7 +1,7 @@
-# Review: Worktree-Safe Workflow Model Completion
+# Review: Fix Missing Parallel Template Files
 
 ## Request
-Audit and complete the worktree-safe workflow model in codex-workflow-kit.
+Fix the missing parallel template file issue in codex-workflow-kit.
 
 ## Spec File Used
 `_workflow/runs/main/spec.md`
@@ -10,36 +10,44 @@ Audit and complete the worktree-safe workflow model in codex-workflow-kit.
 `_workflow/runs/main/tasks.md`
 
 ## Tasks Reviewed
-- `TASK-001: Complete run-scoped request and parallel template model`
+- `TASK-001: Complete parallel templates and consistency audit`
+
+## Iteration Evidence Reviewed
+- Iteration 1 Build: Template `Notes` field completion verified.
+- Iteration 2 Refine: Installer and requested docs consistency verified.
+- Iteration 3 Polish: Final checks and diff audit completed.
+
+## TDD-First Evidence Reviewed
+Docs/template-only change. Runtime TDD is not applicable. Missing-test exception is justified because no app/runtime behavior changed.
 
 ## Bugs Found
-None.
+None after the fix. Initial defect was incomplete existing templates missing `Notes`.
 
 ## Scope Creep Check
-Scope stayed within workflow docs, templates, installer behavior, and run-scoped workflow artifacts. No app/runtime files under `client/` or `server/` were modified.
+Scope respected. Changes were limited to parallel templates, requested workflow docs, installer verification, and run-scoped workflow artifacts.
 
 ## Final Diff Audit
-- Diff matches request: yes.
-- Unrelated files touched by this run: no. `notes.txt` was already dirty before this task and remains unrelated.
-- Workflow artifacts updated correctly: yes.
-- Tests added/updated for changed behavior: not applicable; docs/template-only change.
-- Generated junk/temp files: none found.
-- Sensitive values/secrets: none found.
+- `git diff --stat` and `git diff` ran.
+- Tracked diff matches the saved spec.
+- Untracked `templates/_workflow/runs/parallel/` contains the requested template files.
+- Pre-existing untracked `_workflow/runs/parallel/` remains visible and was not modified for this task.
+- No runtime app files changed.
+- No generated junk or secrets found.
 
 ## Failure Recovery Notes
 None.
 
 ## Missing Tests
-No runtime tests were added because no runtime code changed. Verification used targeted docs/template checks, installer syntax, and diff audit.
+No automated runtime tests were added because this is a docs/template/installer change. Verification used targeted file, field, docs, syntax, and diff checks.
 
 ## Security Concerns
 None.
 
 ## Architecture Concerns
-None. The model preserves backward compatibility while making active workflow state run-scoped.
+None. Run-scoped workflow state remains branch/worktree scoped.
 
 ## Follow-Up Tasks
 None required.
 
 ## Final Review Verdict
-PASSED. The workflow model is fully run-scoped and merge-safe for active workflow state.
+PASSED

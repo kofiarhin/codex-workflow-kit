@@ -28,6 +28,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `_workflow/runs/<run-id>/release-notes.md`: Release notes for that run.
 - `_workflow/runs/<run-id>/summary.md`: Completion summary for that run.
 - `_workflow/runs/<run-id>/parallel/`: Optional run-scoped parallel coordination files for task claims, file locks, and worker status.
+- `templates/_workflow/runs/parallel/`: Committed source templates for installed parallel `claims.md`, `locks.md`, and `agent-status.md` files.
 - `_workflow/index.md`: Optional index only. Prefer post-merge updates; append only if edited during a run.
 - `_workflow/runs/README.md`: Static or append-only guidance for run directories.
 - `_decisions/`: Decision logs for meaningful architecture or product decisions.

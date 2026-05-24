@@ -1,18 +1,16 @@
-# Release Notes: Worktree-Safe Workflow Model Completion
+# Release Notes: Fix Missing Parallel Template Files
 
 ## Request
-Audit and complete the worktree-safe workflow model in codex-workflow-kit.
+Fix the missing parallel template file issue in codex-workflow-kit.
 
 ## User-Facing Changes
-- Active workflow request state is now documented at `_workflow/runs/<run-id>/request.md`.
-- Root `WORK_REQUEST.md` is compatibility/manual only.
-- README now shows `main`, `dev`, and `redesign` worktree run folders and explicit merge safety rules.
+- Added complete parallel coordination source templates under `templates/_workflow/runs/parallel/`.
+- Clarified source and installed parallel template paths in README and workflow docs.
 
 ## Developer Changes
-- RUN_WORKFLOW and AGENTS now use `<artifact-root>/request.md` for active request state.
-- Added parallel templates for claims, locks, and agent status.
-- Installer now copies `_workflow/index.md`, `_workflow/runs/README.md`, and parallel templates.
-- Prompt docs and workflow guidance were aligned with the run-scoped model.
+- Added `Notes` fields to `claims.md`, `locks.md`, and `agent-status.md`.
+- Confirmed `scripts/install.sh` already installs all three templates.
+- Updated root/template workflow docs so parallel templates are described consistently.
 
 ## New Routes/APIs
 none
@@ -27,21 +25,22 @@ none
 none
 
 ## Test Commands Run
-- Template existence checks with `Test-Path`.
-- Required field checks with `rg`.
-- Stale request-state checks with `rg`.
-- `bash -n scripts/install.sh`.
-- `git diff --check`.
-- `git diff --stat`.
-- Scoped `git diff`.
-- `git status --short`.
-- `git status --short client server`.
+- `Test-Path` template existence checks
+- `rg` required field checks
+- `rg` installer copy checks
+- `bash -n scripts/install.sh`
+- `rg` docs consistency checks
+- `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`
+- `git diff --check`
+- `git diff --stat`
+- `git diff`
+- `git status --short`
 
 ## Known Limitations
-Legacy folders and root `WORK_REQUEST.md` remain for compatibility.
+None for requested scope.
 
 ## Follow-Up Work
 None required.
 
 ## Suggested Commit Message
-`docs: make workflow request state run-scoped`
+`docs: add parallel workflow templates`

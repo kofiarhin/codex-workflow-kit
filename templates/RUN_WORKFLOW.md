@@ -126,7 +126,7 @@ Read:
 - `<artifact-root>/progress.md`, creating it if missing.
 - The latest relevant run-scoped `summary.md` in `_workflow/runs/`, if any.
 
-If `_workflow/`, `_workflow/runs/`, the current run directory, or `_decisions/` is missing, create it before continuing. If `<artifact-root>/request.md` is missing, create it from the latest direct project-work prompt or, only when no direct project-work prompt exists, from root `WORK_REQUEST.md` for legacy compatibility. If `<artifact-root>/handoff.md` is missing, create it from the handoff template. If `<artifact-root>/progress.md` is missing, create it with an initial heading. If parallel mode is selected and `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, or `<artifact-root>/parallel/agent-status.md` is missing, create it from the parallel templates before workers claim tasks.
+If `_workflow/`, `_workflow/runs/`, the current run directory, or `_decisions/` is missing, create it before continuing. If `<artifact-root>/request.md` is missing, create it from the latest direct project-work prompt or, only when no direct project-work prompt exists, from root `WORK_REQUEST.md` for legacy compatibility. If `<artifact-root>/handoff.md` is missing, create it from the handoff template. If `<artifact-root>/progress.md` is missing, create it with an initial heading. If parallel mode is selected and `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, or `<artifact-root>/parallel/agent-status.md` is missing, create it from the installed parallel templates before workers claim tasks. In codex-workflow-kit, those committed source templates live under `templates/_workflow/runs/parallel/` and install into `_workflow/runs/parallel/`.
 
 Request source rules:
 

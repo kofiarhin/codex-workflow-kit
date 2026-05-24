@@ -1,38 +1,98 @@
-# Task Plan: Worktree-Safe Workflow Model Completion
+# Task Plan: Fix Missing Parallel Template Files
 
 - Spec file used: `_workflow/runs/main/spec.md`
 - Planning date: 2026-05-24
+- Spec approval: Approved by user with `approve spec`
 - Progress and summary files read: `_workflow/runs/main/progress.md`, `_workflow/runs/main/summary.md`
-- Detailed spec sections used: 6 Desired End State, 9 Functional Requirements, 11 Affected Surfaces, 15 Execution Strategy, 16 Verification Strategy, 17 Acceptance Criteria, 18 Edge Cases, 19 Risks.
+- Detailed spec sections used: 6 Desired End State, 9 Functional Requirements, 11 Affected Surfaces, 12 Dependency And Integration Map, 14 UX / API / Workflow Expectations, 15 Execution Strategy, 16 Verification Strategy, 17 Acceptance Criteria, 18 Edge Cases And Failure Modes, 19 Risks And Mitigations, 20 Assumptions, 21 Open Questions, 22 Task Extraction Notes.
 
-## TASK-001: Complete run-scoped request and parallel template model
+## TASK-001: Complete parallel templates and consistency audit
 
 - Status: Done
-- Objective: Make request state run-scoped, add parallel templates, update installer, and align workflow docs.
-- Files likely affected: `README.md`, `RUN_WORKFLOW.md`, `AGENTS.md`, `WORK_REQUEST.md`, `docs/PROMPTS.md`, `scripts/install.sh`, `templates/**`, `_workflow/**`.
+- Objective: Complete the three parallel coordination templates, confirm installer copy behavior, align requested docs if needed, and produce the final audit verdict.
+- Files likely affected:
+  - `templates/_workflow/runs/parallel/claims.md`
+  - `templates/_workflow/runs/parallel/locks.md`
+  - `templates/_workflow/runs/parallel/agent-status.md`
+  - `templates/_workflow/runs/README.md`
+  - `README.md`
+  - `RUN_WORKFLOW.md`
+  - `templates/RUN_WORKFLOW.md`
+  - `templates/WORK_REQUEST.md`
+  - `scripts/install.sh`
+  - `_workflow/runs/main/*`
 - Checklist:
-  - [x] Replace active root `WORK_REQUEST.md` assumptions with `<artifact-root>/request.md`.
-  - [x] Mark root `WORK_REQUEST.md` compatibility/manual only.
-  - [x] Add `claims.md`, `locks.md`, and `agent-status.md` templates.
-  - [x] Update installer copy list and setup messaging.
-  - [x] Add merge safety rules.
-  - [x] Run final audit.
-- Iteration plan for Iteration 1 Build: Update canonical docs/templates and add missing files.
-- Iteration plan for Iteration 2 Refine: Search for stale shared request assumptions and repair inconsistencies.
-- Iteration plan for Iteration 3 Polish: Run syntax, existence, mirror, diff, and final audit checks.
-- Test plan: Documentation searches, template existence checks, installer syntax, final diff audit.
-- Red phase evidence: Docs-only missing-test exception; no runtime code changed.
-- Green phase evidence: Required searches and template checks passed.
-- Refactor phase evidence: Root/template RUN_WORKFLOW mirror check passed.
-- Test commands run: recorded in `_workflow/runs/main/verification.md`.
+  - [x] Ensure `claims.md` includes all required fields, including `Notes`.
+  - [x] Ensure `locks.md` includes all required fields, including `Notes`.
+  - [x] Ensure `agent-status.md` includes all required fields, including `Notes`.
+  - [x] Confirm `scripts/install.sh` copies all three source templates.
+  - [x] Fix requested doc inconsistencies around source template path and installed parallel templates.
+  - [x] Run verification and final audit.
+- Iteration 1 - Build:
+  - Goal: Complete the parallel template files.
+  - Changes made: Added `Notes` columns and placeholder values to `claims.md`, `locks.md`, and `agent-status.md`.
+  - Test plan: `Test-Path` for files and `rg` for required fields.
+  - Red phase evidence: Docs-only missing-test exception; no runtime code changed. Pre-edit audit found all three template tables lacked the required `Notes` field.
+  - Green phase evidence: Required field searches found all requested fields in each template.
+  - Refactor phase evidence: Table format remained consistent after adding the extra field.
+  - Test commands run: `Test-Path ...`; `rg` required field checks for all three templates.
+  - Verification command/result: Passed.
+  - Review findings: Template files now satisfy the requested field lists.
+  - Acceptance status: Met for template field criteria.
+  - Remaining issues: Installer/docs audit still needed.
+  - Next action: Refine installer/docs consistency.
+- Iteration 2 - Refine:
+  - Goal: Audit installer and requested docs, repairing inconsistencies only if found.
+  - Changes made: Confirmed `scripts/install.sh` already copies the three templates. Added explicit source-template path wording to `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, and `templates/_workflow/runs/README.md`.
+  - Test plan: `rg` checks across requested files and `bash -n scripts/install.sh`.
+  - Red phase evidence: Docs-only missing-test exception; no runtime code changed. Audit found source template path wording was implied but not explicit enough in all requested docs.
+  - Green phase evidence: Consistency searches found run-scoped request state, compatibility-only `WORK_REQUEST.md`, source template path, branch/worktree-scoped memory, and no shared active artifact wording.
+  - Refactor phase evidence: Root `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md` remained aligned; `git diff --no-index` showed no content differences except line-ending warnings.
+  - Test commands run: `rg` consistency checks; `rg "$TEMPLATE_ROOT/_workflow/runs/parallel/..." scripts/install.sh`; `bash -n scripts/install.sh`; `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`.
+  - Verification command/result: Passed.
+  - Review findings: Installer behavior did not need code changes; docs now call out source and installed template locations.
+  - Acceptance status: Met for installer/docs criteria.
+  - Remaining issues: Final audit artifacts needed.
+  - Next action: Polish with final audit and workflow artifacts.
+- Iteration 3 - Polish:
+  - Goal: Run final checks, diff audit, and write workflow artifacts.
+  - Changes made: Ran final template, installer, docs, diff, and status checks; created current verification/review/release/summary/handoff evidence.
+  - Test plan: Final `rg`, `bash -n`, `git diff --check`, `git diff --stat`, `git diff`, `git status --short`.
+  - Red phase evidence: Docs-only missing-test exception; no runtime code changed.
+  - Green phase evidence: Final checks passed.
+  - Refactor phase evidence: `git diff --check` passed with line-ending warnings only; final diff audit ran.
+  - Test commands run: template `Test-Path`; required template `rg`; installer `rg`; `bash -n scripts/install.sh`; docs consistency `rg`; `git diff --no-index`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`.
+  - Verification command/result: Passed.
+  - Review findings: No scope creep, no runtime/app files changed, no secrets, and installer behavior remains stable.
+  - Acceptance status: All criteria met.
+  - Remaining issues: `_workflow/runs/parallel/` remains a pre-existing untracked static template directory not modified by this task.
+  - Next action: Final response.
+- Test plan: Documentation/template checks, installer syntax check, and final diff audit.
+- Red phase evidence: Docs-only missing-test exception; no runtime code changed, so TDD-first runtime tests are not applicable.
+- Green phase evidence: Required checks passed.
+- Refactor phase evidence: Final diff and syntax checks passed.
+- Test commands run: See `_workflow/runs/main/verification.md`.
 - Acceptance criteria:
-  - [x] Active workflow artifacts are run-scoped.
-  - [x] Root `WORK_REQUEST.md` is compatibility-only.
-  - [x] Parallel templates exist.
-  - [x] Installer ships required templates.
-  - [x] README and RUN_WORKFLOW are consistent.
-  - [x] dev/redesign/main worktrees avoid workflow-state merge conflicts.
-- Acceptance result: all criteria met.
-- Verification commands: recorded in `_workflow/runs/main/verification.md`.
-- Stop condition: stop if stale root auto-sync remains or required templates are missing.
-- Out-of-scope items: app code, commits, deleting legacy artifacts.
+  - [x] `templates/_workflow/runs/parallel/claims.md` exists and includes Task ID, Worker ID, Branch, Worktree Path, Run ID, Claim Status, Start Time, End Time, Files Expected, Files Changed, Verification Status, and Notes.
+  - [x] `templates/_workflow/runs/parallel/locks.md` exists and includes File Path, Lock Owner, Worker ID, Task ID, Run ID, Reason, Lock Status, Acquired At, Released At, and Notes.
+  - [x] `templates/_workflow/runs/parallel/agent-status.md` exists and includes Worker ID, Role, Branch, Worktree Path, Run ID, Current Task, Changed Files, Verification Result, Blocker, Final Status, and Notes.
+  - [x] `scripts/install.sh` copies all three templates from `templates/_workflow/runs/parallel/`.
+  - [x] Requested docs consistently state run-scoped `request.md`, compatibility/manual-only `WORK_REQUEST.md`, parallel template location, branch/worktree-scoped memory, and no shared active artifact requirement.
+  - [x] Final audit answers the seven requested questions and reports `PASSED`.
+- Acceptance result: All criteria met.
+- Verification commands:
+  - `Test-Path templates\_workflow\runs\parallel\claims.md`
+  - `Test-Path templates\_workflow\runs\parallel\locks.md`
+  - `Test-Path templates\_workflow\runs\parallel\agent-status.md`
+  - `rg "Task ID|Worker ID|Branch|Worktree Path|Run ID|Claim Status|Start Time|End Time|Files Expected|Files Changed|Verification Status|Notes" templates\_workflow\runs\parallel\claims.md`
+  - `rg "File Path|Lock Owner|Worker ID|Task ID|Run ID|Reason|Lock Status|Acquired At|Released At|Notes" templates\_workflow\runs\parallel\locks.md`
+  - `rg "Worker ID|Role|Branch|Worktree Path|Run ID|Current Task|Changed Files|Verification Result|Blocker|Final Status|Notes" templates\_workflow\runs\parallel\agent-status.md`
+  - `rg "$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md|$TEMPLATE_ROOT/_workflow/runs/parallel/locks.md|$TEMPLATE_ROOT/_workflow/runs/parallel/agent-status.md" scripts\install.sh`
+  - `bash -n scripts/install.sh`
+  - `rg` consistency checks across requested docs
+  - `git diff --check`
+  - `git diff --stat`
+  - `git diff`
+  - `git status --short`
+- Stop condition: Not reached.
+- Out-of-scope items: Runtime app code, dependency changes, deployment configuration, broad workflow redesign, deleting legacy compatibility files.

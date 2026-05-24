@@ -603,3 +603,29 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Review result: Reviewed; see `_workflow/runs/main/review.md`.
 - Blockers: none.
 - Next step: Commit requested files separately from unrelated `notes.txt` when ready.
+
+### 2026-05-24 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/_workflow/runs/parallel/claims.md`, `templates/_workflow/runs/parallel/locks.md`, `templates/_workflow/runs/parallel/agent-status.md`, `_workflow/runs/main/request.md`, `_workflow/runs/main/spec.md`, `_workflow/runs/main/tasks.md`, `_workflow/runs/main/verification.md`, `_workflow/runs/main/review.md`, `_workflow/runs/main/release-notes.md`, `_workflow/runs/main/summary.md`, `_workflow/runs/main/handoff.md`
+- Dirty worktree protection: Initial status showed overlapping untracked workflow/template paths: `_workflow/runs/main/request.md`, `_workflow/runs/parallel/`, and `templates/_workflow/runs/parallel/`. The template path was in scope and edited only after spec approval. `_workflow/runs/parallel/` remained unmodified by this task.
+- Parallel metadata: `Priority=P1; Parallel safe=no; Depends on=none; Blocks=final response; File locks=templates/_workflow/runs/parallel/*, README.md, RUN_WORKFLOW.md, templates/RUN_WORKFLOW.md, templates/_workflow/runs/README.md, scripts/install.sh, _workflow/runs/main/*; Claim status=done; Claimed by=orchestrator; Agent role=orchestrator; Merge risk=low`
+- Parallel claim/lock status: Sequential `complete-workflow`; no worker claims or active locks were used.
+- Worker status: Orchestrator-owned sequential task; final status Done.
+- Merge review status: Not applicable for sequential execution.
+- Test plan: Docs/template verification, installer syntax, root/template mirror check, final diff audit.
+- Red phase evidence: Docs-only missing-test exception; no runtime code changed. Initial audit found the three existing source templates lacked the required `Notes` field.
+- Green phase evidence: Required template fields, installer copy lines, and docs consistency searches passed.
+- Refactor phase evidence: Root/template `RUN_WORKFLOW.md` remained aligned; `git diff --check` passed with line-ending warnings only.
+- Test commands run: `Test-Path` template checks; required template `rg` checks; installer `rg`; `bash -n scripts/install.sh`; docs consistency `rg`; `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added `Notes` fields to `claims.md`, `locks.md`, and `agent-status.md`. Verification found all required fields. Acceptance met for the three templates.
+  - Iteration 2 - Refine: Confirmed `scripts/install.sh` already copies the three templates and clarified source/installed template path wording in README and workflow docs. Installer syntax and consistency checks passed. Acceptance met for installer/docs.
+  - Iteration 3 - Polish: Ran final checks, diff audit, status check, and wrote verification/review/release/summary/handoff artifacts. Final verdict: PASSED.
+- Acceptance result: all criteria checked `[x]`.
+- Verification result: Passed; see `_workflow/runs/main/verification.md`.
+- Failure recovery notes: none.
+- Review result: Reviewed; see `_workflow/runs/main/review.md`.
+- Blockers: none.
+- Next step: Final response.

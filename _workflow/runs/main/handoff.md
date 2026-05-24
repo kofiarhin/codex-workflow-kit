@@ -1,10 +1,10 @@
 # Current Workflow Handoff
 
 ## Current Request
-Audit and complete the worktree-safe workflow model in codex-workflow-kit.
+Fix the missing parallel template file issue in codex-workflow-kit.
 
 ## Request ID
-2026-05-24-worktree-safe-workflow-model
+2026-05-24-fix-parallel-template-files
 
 ## Current Phase
 Complete.
@@ -40,19 +40,19 @@ complete-workflow
 `_workflow/runs/main/summary.md`
 
 ## Last Completed Task
-`TASK-001: Complete run-scoped request and parallel template model`
+`TASK-001: Complete parallel templates and consistency audit`
 
 ## Current Task
 None.
 
 ## Current Iteration
-None. Build, Refine, and Polish are complete for the docs/template task.
+None. Build, Refine, and Polish are complete.
 
 ## Next Task
 None.
 
 ## Dirty Worktree Status
-Initial dirty file: `notes.txt`, unrelated and not touched. Current status includes requested workflow docs/templates/artifacts plus the pre-existing `notes.txt` change.
+Initial `git status --short` showed overlapping untracked workflow/template paths. The in-scope `templates/_workflow/runs/parallel/` files were updated after spec approval. Final status also shows pre-existing untracked `_workflow/runs/parallel/`.
 
 ## Acceptance Status
 All acceptance criteria checked `[x]`.
@@ -61,7 +61,7 @@ All acceptance criteria checked `[x]`.
 Passed. See `_workflow/runs/main/verification.md`.
 
 ## Workflow Health Status
-Passed for the requested implementation and audit.
+Passed.
 
 ## Blockers
 None.
