@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
+request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task iteration and after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
 ```
 
 The grill-me skill is the workflow intake engine. It stress-tests a rough request through focused questions (one at a time, each with a recommended answer), inspects the repo when the answer is already there, and produces a Shared Understanding Handoff that feeds the rest of the workflow. It replaces the old generic clarification phase.
@@ -437,6 +437,44 @@ Use `_decisions/` for meaningful architecture or product decisions only. Routine
 
 Each decision file should include date, decision, context, options considered, selected option, consequences, affected files, and follow-up tasks.
 
+
+## Token Budget / Resume Safety Protocol
+
+Before long work, each agent must estimate whether the next task or iteration can fit in the remaining context/output budget. Use tool-agnostic wording such as: *when remaining context/output budget appears low*.
+
+If budget appears low:
+
+1. Stop before starting a risky edit.
+2. Update `_workflow/runs/<run-id>/handoff.md` first.
+3. Append a checkpoint to `_workflow/runs/<run-id>/progress.md`.
+4. Include exact next prompt: `continue workflow`.
+
+Handoff must always contain a `Token / Resume State` section with:
+
+- current phase
+- current task
+- current iteration
+- last completed safe checkpoint
+- files already changed
+- files planned next
+- tests already run
+- exact next command/action
+- whether it is safe to continue automatically
+
+### Low Token Stop Protocol
+
+When remaining context/output budget appears low, do not start a risky edit. Write handoff state first, append progress checkpoint second, and stop with next prompt `continue workflow`.
+
+### Crash/Interrupted Resume Protocol
+
+If a previous session ended without updating handoff:
+
+1. Run `git status --short`.
+2. Inspect run-scoped `progress.md`.
+3. Inspect run-scoped `tasks.md`.
+4. Infer partial work from changed files and iteration evidence.
+5. If safe completion cannot be proven, mark the affected task `Needs Human Review`.
+
 ## Handoff / Resume
 
 `_workflow/runs/<run-id>/handoff.md` stores the live workflow state for the active request. It should name the current request, request ID, phase, current branch, worktree path, run id, artifact root, active spec, task plan, review and summary files, last completed task, current task, current iteration, next task, blockers, iteration evidence status, verification status, workflow health status, suggested next prompt, and notes for continuation.
@@ -447,7 +485,7 @@ Use this prompt to resume interrupted work:
 continue workflow
 ```
 
-The agent first detects the current run id and artifact root, starts from `_workflow/runs/<run-id>/handoff.md`, then checks `_workflow/runs/<run-id>/progress.md` for completed task and iteration history. If handoff and progress disagree, progress is trusted for completed task history and the handoff is updated.
+The agent first detects the current run id and artifact root, starts from `_workflow/runs/<run-id>/handoff.md`, then checks `_workflow/runs/<run-id>/progress.md` second for completed task and iteration history, runs `git status --short`, and reconciles changed files against handoff Token / Resume State before continuing. If handoff and progress disagree, progress is trusted for completed task history and the handoff is updated.
 
 The handoff is updated after each task and after the summary. `_workflow/runs/<run-id>/progress.md` is append-only task history, `_workflow/runs/<run-id>/handoff.md` is current live state, and `_workflow/runs/<run-id>/summary.md` is completed workflow history.
 

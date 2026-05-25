@@ -53,8 +53,8 @@ direct user prompt or <artifact-root>/request.md
 -> run each executable task through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish
 -> for every code-changing task, run Red -> Green -> Refactor inside each iteration
 -> verify, review, and record evidence inside each iteration
--> update <artifact-root>/progress.md after each task
--> update <artifact-root>/handoff.md after each task
+-> update <artifact-root>/progress.md after each task iteration and after each task
+-> update <artifact-root>/handoff.md after each task iteration and after each task
 -> in parallel modes, orchestrator validates claims, locks, worker status, and merge review
 -> final diff audit
 -> review in <artifact-root>/review.md
@@ -140,23 +140,66 @@ Sync the active request into `<artifact-root>/request.md` before questioning and
 
 Before planning, read `<artifact-root>/handoff.md` if it exists. If no handoff exists, create it and populate the current request, request ID, current phase, current branch, current worktree path, run id, artifact root, blockers, verification status, workflow health status, suggested next prompt, and continuation notes.
 
+
+## 1A. Token Budget / Resume Safety Protocol
+
+Apply this protocol before starting any long task, risky edit, or new iteration:
+
+1. Estimate whether the next task or iteration can fit in the remaining context/output budget.
+2. If the remaining budget appears low, do not start or continue risky edits.
+3. First update `<artifact-root>/handoff.md` with a complete resume-safe state.
+4. Append a progress checkpoint to `<artifact-root>/progress.md` that records the stop reason as low budget.
+5. Include the exact next prompt `continue workflow` in both handoff and progress checkpoint notes.
+6. Stop after writing those artifacts so another agent/session can resume safely.
+
+Low Token Stop Protocol (required):
+
+- Stop before starting a risky edit when remaining context/output budget appears low.
+- Write current state to `<artifact-root>/handoff.md` first.
+- Append a progress checkpoint entry to `<artifact-root>/progress.md`.
+- Record the exact next prompt: `continue workflow`.
+
+Crash/Interrupted Resume Protocol (required):
+
+When a prior session ended without a fresh handoff update:
+
+1. Inspect `git status --short`.
+2. Inspect `<artifact-root>/progress.md`.
+3. Inspect `<artifact-root>/tasks.md`.
+4. Infer partial work from changed files and task/iteration evidence.
+5. If safe completion cannot be proven, mark the affected task `Needs Human Review` and record why.
+
+Handoff must always be safe to resume. Include a required `Token / Resume State` section with:
+
+- current phase
+- current task
+- current iteration
+- last completed safe checkpoint
+- files already changed
+- files planned next
+- tests already run
+- exact next command/action
+- whether it is safe to continue automatically
+
 ## 1A. Continue Workflow Command
 
 If the active user prompt is exactly or primarily `continue workflow`, resume instead of restarting intake:
 
 1. Resolve current branch, worktree path, run id, and artifact root first.
 2. Read `<artifact-root>/handoff.md` first and use it as the primary resume source.
-3. If no handoff exists, create it, then fall back to `<artifact-root>/progress.md`, the latest relevant run-scoped `summary.md`, `<artifact-root>/tasks.md`, and the referenced spec to reconstruct the live state.
-4. Read `<artifact-root>/progress.md` to verify completed task history.
-5. If `<artifact-root>/handoff.md` conflicts with `<artifact-root>/progress.md`, trust `<artifact-root>/progress.md` for completed task history and update handoff accordingly.
+3. Read `<artifact-root>/progress.md` second to verify completed task and iteration history.
+4. Run `git status --short` and reconcile changed files against the handoff `Token / Resume State` section before continuing.
+5. If no handoff exists, create it, then fall back to `<artifact-root>/progress.md`, the latest relevant run-scoped `summary.md`, `<artifact-root>/tasks.md`, and the referenced spec to reconstruct the live state.
+6. If `<artifact-root>/handoff.md` conflicts with `<artifact-root>/progress.md`, trust `<artifact-root>/progress.md` for completed task history and update handoff accordingly.
+7. Reconcile `git status --short` output with files recorded in handoff and progress; document mismatches before resuming edits.
 6. Read the latest relevant run-scoped `summary.md`, if any.
 7. If a spec exists but no task plan exists for the active request, resume at the spec approval gate: read the saved spec, show the approval prompt from section 5A, and stop for explicit user approval. Do not generate tasks automatically.
 8. If a task plan exists, read the task plan referenced by `<artifact-root>/handoff.md`, or `<artifact-root>/tasks.md` if handoff has no task plan.
 9. Read the spec referenced by that task plan.
-10. Find the next task whose status is not `Done` and the current iteration recorded in `<artifact-root>/handoff.md`.
-11. Continue from that task and iteration.
-12. Do not ask the original intake questions again unless a current ambiguity blocks safe continuation.
-13. Do not regenerate the entire spec unless the request changed.
+12. Find the next unfinished task and unfinished iteration from `<artifact-root>/tasks.md` plus handoff/progress evidence.
+13. Continue only from the next unfinished task/iteration; do not repeat completed iterations.
+14. Do not ask the original intake questions again unless a current ambiguity blocks safe continuation.
+15. Do not regenerate the entire spec unless the request changed or required artifacts are missing/corrupt.
 14. Continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached, preserving the Build -> Refine -> Polish loop for each executable task.
 15. If all tasks are `Done`, complete any missing run-scoped review, release notes, summary, handoff update, workflow health check, or final response step.
 
@@ -775,7 +818,7 @@ After each task, append:
 
 Do not rewrite previous progress entries except to correct factual errors.
 
-After each task and before any stop, update `<artifact-root>/handoff.md` with the current task and current iteration. Do not leave handoff stale after task execution.
+After each task iteration and before any stop, update `<artifact-root>/handoff.md` with the current task and current iteration. Do not leave handoff stale after task execution.
 
 ## 10. Final Diff Audit
 
