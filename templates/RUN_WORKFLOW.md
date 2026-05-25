@@ -833,6 +833,7 @@ git diff
 
 Document:
 
+- Frontend taste skill compliance (when applicable).
 - Does the diff match the saved spec?
 - Were unrelated files touched?
 - Were workflow artifacts updated correctly?
@@ -990,6 +991,7 @@ Before the final response, check:
 - For every code-changing task, was passing verification recorded after implementation and after refactor?
 - For every code-changing task without first-test evidence, was a missing-test exception explicitly justified?
 - Was scope respected?
+- For frontend work, was `design-taste-frontend` applied and recorded across spec, tasks, review, summary, and health check?
 - Were decisions recorded if needed?
 - For parallel modes, did every task include priority, parallel-safe flag, dependencies, file locks, claim status, claimed by, agent role, and merge risk?
 - For parallel modes, were `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, and `<artifact-root>/parallel/agent-status.md` updated?

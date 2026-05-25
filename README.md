@@ -8,7 +8,9 @@ The kit turns a plain-English request into a clarified, specified, task-by-task 
 request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task iteration and after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
 ```
 
-The grill-me skill is the workflow intake engine. It stress-tests a rough request through focused questions (one at a time, each with a recommended answer), inspects the repo when the answer is already there, and produces a Shared Understanding Handoff that feeds the rest of the workflow. It replaces the old generic clarification phase.
+The grill-me skill is the workflow intake engine.
+
+The `design-taste-frontend` skill is a conditional execution/review skill for frontend/UI scope; grill-me decides WHAT to build, and design-taste-frontend controls HOW frontend/UI work is designed, coded, reviewed, and verified. It stress-tests a rough request through focused questions (one at a time, each with a recommended answer), inspects the repo when the answer is already there, and produces a Shared Understanding Handoff that feeds the rest of the workflow. It replaces the old generic clarification phase.
 
 It does not generate an app, install dependencies, or force a framework. MERN is the default example, but the workflow is stack-neutral.
 
@@ -19,6 +21,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `RUN_WORKFLOW.md`: The master orchestration prompt that tells the agent how to run the workflow.
 - `AGENTS.md`: Repository operating rules for coding agents.
 - `.agents/skills/grill-me/SKILL.md`: The workflow intake skill. Replaces the old generic clarification phase with focused, one-question-at-a-time intake that produces a Shared Understanding Handoff before the spec is written.
+- `.agents/skills/design-taste-frontend/SKILL.md`: Conditional frontend taste/design engineering skill used whenever work touches frontend/UI surfaces.
 - `_workflow/runs/<run-id>/spec.md`: Saved detailed execution blueprint for one branch/worktree run.
 - `_workflow/runs/<run-id>/tasks.md`: Saved vertical task plan generated from the approved spec.
 - `_workflow/runs/<run-id>/progress.md`: Append-only task progress log for that run.
@@ -233,11 +236,13 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, detect the branch/worktree/run id/artifact root, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, sync the normalized request into `_workflow/runs/<run-id>/request.md`, run dirty worktree protection, generate a detailed execution blueprint spec in the current run directory, show the spec path and summary, stop for explicit approval, generate a vertical task plan from that approved blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, detect the branch/worktree/run id/artifact root, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, then detect frontend scope and apply `.agents/skills/design-taste-frontend/SKILL.md` when applicable, sync the normalized request into `_workflow/runs/<run-id>/request.md`, run dirty worktree protection, generate a detailed execution blueprint spec in the current run directory, show the spec path and summary, stop for explicit approval, generate a vertical task plan from that approved blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
 
 Manual editing of root `WORK_REQUEST.md`, `_workflow/runs/<run-id>/`, or `_decisions/` is optional, not required. Root `WORK_REQUEST.md` is compatibility/manual only; active runs use `_workflow/runs/<run-id>/request.md`.
 
 ### Step 3: Answer Grill-Me Questions
+
+The installer now installs both `.agents/skills/grill-me/SKILL.md` and `.agents/skills/design-taste-frontend/SKILL.md`.
 
 The agent invokes the grill-me skill at `.agents/skills/grill-me/SKILL.md` before writing code. Grill-me asks one focused question at a time, includes a recommended answer with every question, and inspects the repo instead of asking when the answer is already discoverable. It covers:
 

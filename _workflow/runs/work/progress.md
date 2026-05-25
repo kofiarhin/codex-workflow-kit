@@ -38,3 +38,25 @@
   - Fixed RUN_WORKFLOW numbering: Token section is 1A, Continue Workflow is 1B.
   - Fixed Continue Workflow list numbering sequence.
   - Fixed README handoff/progress update cadence wording.
+
+## 2026-05-25 (design-taste-frontend integration)
+
+- Task: Add first-class conditional `design-taste-frontend` skill across templates/workflow/installer/docs.
+- Iterations: Build/Refine/Polish completed for docs+script scope.
+- Status: Done.
+- Files changed:
+  - templates/.agents/skills/design-taste-frontend/SKILL.md
+  - scripts/install.sh
+  - templates/AGENTS.md
+  - templates/RUN_WORKFLOW.md
+  - README.md
+  - _workflow/runs/work/tasks.md
+- Verification evidence:
+  - `bash -n scripts/install.sh` passed.
+  - `shellcheck scripts/install.sh` skipped (not available in environment).
+  - `git diff --stat` executed.
+  - `git diff` executed.
+- Acceptance:
+  - New skill template added verbatim.
+  - Installer now copies both grill-me and design-taste-frontend skills.
+  - Workflow docs include frontend taste detection + late discovery pause/update behavior.

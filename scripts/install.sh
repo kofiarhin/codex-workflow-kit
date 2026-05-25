@@ -93,6 +93,7 @@ copy_file "$TEMPLATE_ROOT/AGENTS.md" "AGENTS.md"
 copy_file "$TEMPLATE_ROOT/WORK_REQUEST.md" "WORK_REQUEST.md"
 copy_file "$TEMPLATE_ROOT/RUN_WORKFLOW.md" "RUN_WORKFLOW.md"
 copy_file "$TEMPLATE_ROOT/.agents/skills/grill-me/SKILL.md" ".agents/skills/grill-me/SKILL.md"
+copy_file "$TEMPLATE_ROOT/.agents/skills/design-taste-frontend/SKILL.md" ".agents/skills/design-taste-frontend/SKILL.md"
 copy_file "$TEMPLATE_ROOT/_workflow/index.md" "_workflow/index.md"
 copy_file "$TEMPLATE_ROOT/_workflow/runs/README.md" "_workflow/runs/README.md"
 copy_file "$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md" "_workflow/runs/parallel/claims.md"
@@ -123,5 +124,6 @@ echo "4. Review _workflow/runs/<run-id>/, _workflow/index.md, _decisions/, and t
 echo
 echo "Workflow intake now runs through the grill-me skill installed at:"
 echo "   .agents/skills/grill-me/SKILL.md"
+echo "   .agents/skills/design-taste-frontend/SKILL.md"
 echo
 echo "Existing files were skipped unless --force was used."

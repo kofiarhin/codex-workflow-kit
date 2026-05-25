@@ -1,13 +1,22 @@
 # Release Notes (run: work)
 
-## User-facing changes
-- Workflow docs now include token-budget stop/resume safety protocol and crash-interrupted resume guidance.
-
-## Developer changes
-- `continue workflow` sequencing and reconciliation guidance clarified.
-- Handoff/progress update cadence includes each task iteration.
-
-## Breaking/API/env/deps
+- Request: Integrate conditional `design-taste-frontend` skill as first-class workflow behavior.
+- User-facing changes:
+  - New frontend taste skill is included in templates and documented as conditional frontend/UI enforcement.
+- Developer changes:
+  - Installer now copies both grill-me and design-taste-frontend skills.
+  - Workflow templates now require frontend taste detection/application and late-discovery pause behavior.
 - New routes/APIs: none
 - New env vars: none
-- Dependencies: none
+- Database/schema changes: none
+- Dependencies added/removed: none
+- Test commands run:
+  - `bash -n scripts/install.sh`
+  - `git diff --stat`
+  - `git diff`
+- Known limitations:
+  - `shellcheck` unavailable in current environment.
+- Follow-up work:
+  - Optional: add automated lint checks for template markdown policy invariants.
+- Suggested commit message:
+  - `feat: add design-taste-frontend as conditional first-class workflow skill`

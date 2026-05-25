@@ -18,6 +18,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - `WORK_REQUEST.md` (optional/manual compatibility input)
   - `RUN_WORKFLOW.md`
   - `.agents/skills/grill-me/SKILL.md`
+  - `.agents/skills/design-taste-frontend/SKILL.md`
 - Workflow artifact scope:
   - First detect current branch with `git branch --show-current`.
   - First detect current worktree path with `git rev-parse --show-toplevel`.
@@ -56,6 +57,12 @@ Customize placeholders before using this in a production project. MERN is the de
 6. Agents must not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
 7. Agents must continue through `TASK-002`, `TASK-003`, and later tasks automatically when the current task is `Done` and safe to continue.
 8. Workflow requests must use the grill-me skill at `.agents/skills/grill-me/SKILL.md` as the default intake engine before any spec, task plan, or implementation work.
+
+9. If the request touches frontend/UI surfaces, agents must read `.agents/skills/design-taste-frontend/SKILL.md` before writing `<artifact-root>/spec.md`.
+10. Frontend/UI surfaces include React, Next.js, Vite, Tailwind, CSS, components, pages, layouts, forms, dashboards, icons, motion/animation, loading/empty/error states, responsive behavior, accessibility states, visual polish, and frontend review.
+11. For frontend work, the spec must include `Frontend Taste Application`; task planning must include taste-skill acceptance criteria; implementation must follow dependency verification, Tailwind/version guardrails, anti-emoji policy, layout rules, motion/performance rules, state rules, accessibility/state rules, and final pre-flight checklist from the taste skill.
+12. For frontend work, review and workflow health check must explicitly state whether `design-taste-frontend` was applied.
+13. If frontend scope is discovered after spec generation, pause before frontend edits, read the taste skill, update spec/task acceptance criteria, then continue.
 9. Grill-me asks one focused question at a time and includes a recommended answer with every question.
 10. Grill-me inspects the repo (code, docs, workflow files) instead of asking when an answer can be discovered locally.
 11. The normal workflow starts only after grill-me has produced the Shared Understanding Handoff and the normalized request has been synced into `<artifact-root>/request.md`.

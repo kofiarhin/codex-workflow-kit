@@ -1,10 +1,22 @@
 # Summary (run: work)
 
-- Request completed for scope-limited docs/template hardening.
+- Request: Add `design-taste-frontend` as a first-class conditional workflow skill.
+- Spec used: `_workflow/runs/work/spec.md`
+- Task plan used: `_workflow/runs/work/tasks.md`
+- Review used: `_workflow/runs/work/review.md`
+- Tasks completed: TASK-001, TASK-002, TASK-003
 - Files changed:
-  - README.md
+  - templates/.agents/skills/design-taste-frontend/SKILL.md
+  - scripts/install.sh
+  - templates/AGENTS.md
   - templates/RUN_WORKFLOW.md
-  - templates/.agents/skills/grill-me/SKILL.md
-  - _workflow/runs/work/*.md artifacts
-- Verification executed and recorded in `_workflow/runs/work/verification.md`.
-- Workflow health: Passed
+  - README.md
+- Verification run:
+  - `bash -n scripts/install.sh` passed
+  - `shellcheck scripts/install.sh` unavailable
+  - `git diff --stat` + `git diff` executed
+- Acceptance results: met for requested scope
+- Final diff audit: matches requested frontend taste skill integration scope
+- Release notes file: `_workflow/runs/work/release-notes.md`
+- Unresolved issues: none
+- Next recommended work: optional CI lint policy check for workflow docs
