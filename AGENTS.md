@@ -17,6 +17,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - `<artifact-root>/request.md` (active run-scoped request state)
   - `WORK_REQUEST.md` (optional/manual compatibility input)
   - `RUN_WORKFLOW.md`
+  - `.agents/skills/grill-me/SKILL.md`
   - `.agents/skills/design-taste-frontend/SKILL.md`
 - Workflow artifact scope:
   - First detect current branch with `git branch --show-current`.

@@ -43,6 +43,7 @@ direct user prompt or <artifact-root>/request.md
 -> shared understanding handoff
 -> sync <artifact-root>/request.md
 -> dirty worktree check
+-> frontend taste skill detection when frontend/UI surfaces are in scope
 -> spec in <artifact-root>/spec.md
 -> display spec summary and spec path
 -> STOP and wait for explicit user approval or requested changes
@@ -239,6 +240,16 @@ Dirty worktree rules:
 - If dirty files are unrelated, continue but document them in the spec, task plan, `<artifact-root>/handoff.md`, and `<artifact-root>/progress.md`.
 - Never overwrite user changes.
 - Never clean or reset files unless explicitly instructed.
+
+## Frontend Taste Skill Detection
+
+- Detect whether the request touches frontend/UI surfaces after grill-me/shared understanding and repo intake, before writing spec.
+- Frontend/UI surfaces include React, Next.js, Vite, Tailwind, CSS, components, pages, layouts, forms, dashboards, icons, motion/animation, loading/empty/error states, responsive behavior, accessibility states, visual polish, and frontend review.
+- If frontend/UI is in scope, read `.agents/skills/design-taste-frontend/SKILL.md` before writing `<artifact-root>/spec.md`.
+- Record result in spec under `Frontend Taste Application`.
+- Carry the skill through tasks, implementation, review, verification, release notes, summary, and health check.
+- If frontend scope is discovered later, pause before frontend edits, read the skill, update spec/task acceptance criteria, then continue.
+- If frontend is not in scope, record `Frontend Taste Application: Not applicable`.
 
 ## 5. Spec Phase
 
