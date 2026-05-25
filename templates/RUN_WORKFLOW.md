@@ -429,6 +429,10 @@ Detailed spec required sections:
    - Suggested task ordering.
    - Areas that should not become separate tasks.
    - How the 3-pass Build -> Refine -> Polish loop should apply.
+23. Frontend Taste Application:
+   - Applicable or `Not applicable`.
+   - Detection result and reason.
+   - Required propagation points (spec/tasks/implementation/review/verification/release notes/summary/health check).
 
 No implementation may happen until this file exists.
 
@@ -493,7 +497,7 @@ Before planning, read:
 - The saved detailed spec in `<artifact-root>/spec.md`.
 - Relevant durable docs in `docs/`.
 
-Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes.
+Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes. When `Frontend Taste Application` is applicable, include explicit frontend taste acceptance criteria in relevant tasks.
 
 Save the task breakdown at the current run-scoped path:
 
@@ -983,6 +987,7 @@ Before the final response, check:
 - Were release notes created?
 - Was required iteration evidence recorded for every executable task?
 - Was the final diff audit completed or documented?
+- For frontend work, did review and verification explicitly record frontend taste skill compliance?
 - Was the dirty worktree checked?
 - Were acceptance results completed?
 - Were verification commands run or documented?

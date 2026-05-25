@@ -386,6 +386,10 @@ Detailed spec required sections:
    - Suggested task ordering.
    - Areas that should not become separate tasks.
    - How the 3-pass Build -> Refine -> Polish loop should apply.
+23. Frontend Taste Application:
+   - Applicable or `Not applicable`.
+   - Detection result and reason.
+   - Required propagation points (spec/tasks/implementation/review/verification/release notes/summary/health check).
 
 No implementation may happen until this file exists.
 
@@ -450,7 +454,7 @@ Before planning, read:
 - The saved detailed spec in `<artifact-root>/spec.md`.
 - Relevant durable docs in `docs/`.
 
-Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes.
+Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes. When `Frontend Taste Application` is applicable, include explicit frontend taste acceptance criteria in relevant tasks.
 
 Save the task breakdown at the current run-scoped path:
 
@@ -790,6 +794,7 @@ git diff
 
 Document:
 
+- Frontend taste skill compliance (when applicable).
 - Does the diff match the saved spec?
 - Were unrelated files touched?
 - Were workflow artifacts updated correctly?
@@ -939,6 +944,7 @@ Before the final response, check:
 - Were release notes created?
 - Was required iteration evidence recorded for every executable task?
 - Was the final diff audit completed or documented?
+- For frontend work, did review and verification explicitly record frontend taste skill compliance?
 - Was the dirty worktree checked?
 - Were acceptance results completed?
 - Were verification commands run or documented?
@@ -947,6 +953,7 @@ Before the final response, check:
 - For every code-changing task, was passing verification recorded after implementation and after refactor?
 - For every code-changing task without first-test evidence, was a missing-test exception explicitly justified?
 - Was scope respected?
+- For frontend work, was `design-taste-frontend` applied and recorded across spec, tasks, review, summary, and health check?
 - Were decisions recorded if needed?
 - For parallel modes, did every task include priority, parallel-safe flag, dependencies, file locks, claim status, claimed by, agent role, and merge risk?
 - For parallel modes, were `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, and `<artifact-root>/parallel/agent-status.md` updated?
