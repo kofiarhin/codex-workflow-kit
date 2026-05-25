@@ -487,7 +487,7 @@ continue workflow
 
 The agent first detects the current run id and artifact root, starts from `_workflow/runs/<run-id>/handoff.md`, then checks `_workflow/runs/<run-id>/progress.md` second for completed task and iteration history, runs `git status --short`, and reconciles changed files against handoff Token / Resume State before continuing. If handoff and progress disagree, progress is trusted for completed task history and the handoff is updated.
 
-The handoff is updated after each task and after the summary. `_workflow/runs/<run-id>/progress.md` is append-only task history, `_workflow/runs/<run-id>/handoff.md` is current live state, and `_workflow/runs/<run-id>/summary.md` is completed workflow history.
+The handoff and progress artifacts are updated after each task iteration, after each task, and after the summary. `_workflow/runs/<run-id>/progress.md` is append-only task history, `_workflow/runs/<run-id>/handoff.md` is current live state, and `_workflow/runs/<run-id>/summary.md` is completed workflow history.
 
 ## Continue Workflow
 

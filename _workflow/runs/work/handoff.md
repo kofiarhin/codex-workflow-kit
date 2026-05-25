@@ -4,31 +4,38 @@
 Improve codex-workflow-kit for token exhaustion and safe resume behavior.
 
 ## Current State
-- Current phase: Final verification and commit.
-- Current task: Docs/protocol updates.
+- Current phase: Completed.
+- Current task: TASK-001 (Docs/protocol updates and PR fixes).
 - Current iteration: Polish.
-- Last completed task: Docs/protocol updates.
+- Last completed task: TASK-001.
 - Next task: None.
 - Blockers: None.
 
 ## Token / Resume State
-- current phase: Final verification and commit
-- current task: Docs/protocol updates
+- current phase: Completed
+- current task: TASK-001
 - current iteration: Polish
-- last completed safe checkpoint: Protocol edits saved in README.md and templates/RUN_WORKFLOW.md, plus grill-me wording alignment
+- last completed safe checkpoint: All required docs/template fixes and run artifacts saved; verification commands executed and logged
 - files already changed:
-  - templates/RUN_WORKFLOW.md
   - README.md
+  - templates/RUN_WORKFLOW.md
   - templates/.agents/skills/grill-me/SKILL.md
   - _workflow/runs/work/request.md
   - _workflow/runs/work/progress.md
   - _workflow/runs/work/handoff.md
+  - _workflow/runs/work/spec.md
+  - _workflow/runs/work/tasks.md
+  - _workflow/runs/work/review.md
+  - _workflow/runs/work/verification.md
+  - _workflow/runs/work/release-notes.md
+  - _workflow/runs/work/summary.md
 - files planned next:
   - none
 - tests already run:
-  - grep/rg verification checks pending
-- exact next command/action:
   - rg -n "Token Budget / Resume Safety Protocol|Low Token Stop Protocol|Crash/Interrupted Resume Protocol|Token / Resume State|continue workflow" README.md templates/RUN_WORKFLOW.md
+  - bash -n scripts/install.sh
+- exact next command/action:
+  - git status --short
 - whether it is safe to continue automatically:
   - yes
 

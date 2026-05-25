@@ -181,7 +181,7 @@ Handoff must always be safe to resume. Include a required `Token / Resume State`
 - exact next command/action
 - whether it is safe to continue automatically
 
-## 1A. Continue Workflow Command
+## 1B. Continue Workflow Command
 
 If the active user prompt is exactly or primarily `continue workflow`, resume instead of restarting intake:
 
@@ -192,16 +192,16 @@ If the active user prompt is exactly or primarily `continue workflow`, resume in
 5. If no handoff exists, create it, then fall back to `<artifact-root>/progress.md`, the latest relevant run-scoped `summary.md`, `<artifact-root>/tasks.md`, and the referenced spec to reconstruct the live state.
 6. If `<artifact-root>/handoff.md` conflicts with `<artifact-root>/progress.md`, trust `<artifact-root>/progress.md` for completed task history and update handoff accordingly.
 7. Reconcile `git status --short` output with files recorded in handoff and progress; document mismatches before resuming edits.
-6. Read the latest relevant run-scoped `summary.md`, if any.
-7. If a spec exists but no task plan exists for the active request, resume at the spec approval gate: read the saved spec, show the approval prompt from section 5A, and stop for explicit user approval. Do not generate tasks automatically.
-8. If a task plan exists, read the task plan referenced by `<artifact-root>/handoff.md`, or `<artifact-root>/tasks.md` if handoff has no task plan.
-9. Read the spec referenced by that task plan.
+8. Read the latest relevant run-scoped `summary.md`, if any.
+9. If a spec exists but no task plan exists for the active request, resume at the spec approval gate: read the saved spec, show the approval prompt from section 5A, and stop for explicit user approval. Do not generate tasks automatically.
+10. If a task plan exists, read the task plan referenced by `<artifact-root>/handoff.md`, or `<artifact-root>/tasks.md` if handoff has no task plan.
+11. Read the spec referenced by that task plan.
 12. Find the next unfinished task and unfinished iteration from `<artifact-root>/tasks.md` plus handoff/progress evidence.
 13. Continue only from the next unfinished task/iteration; do not repeat completed iterations.
 14. Do not ask the original intake questions again unless a current ambiguity blocks safe continuation.
 15. Do not regenerate the entire spec unless the request changed or required artifacts are missing/corrupt.
-14. Continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached, preserving the Build -> Refine -> Polish loop for each executable task.
-15. If all tasks are `Done`, complete any missing run-scoped review, release notes, summary, handoff update, workflow health check, or final response step.
+16. Continue executing remaining tasks sequentially until all tasks are complete or a stop condition is reached, preserving the Build -> Refine -> Polish loop for each executable task.
+17. If all tasks are `Done`, complete any missing run-scoped review, release notes, summary, handoff update, workflow health check, or final response step.
 
 ## 2. Intake And Questioning
 
