@@ -43,7 +43,7 @@ direct user prompt or <artifact-root>/request.md
 -> shared understanding handoff
 -> sync <artifact-root>/request.md
 -> dirty worktree check
--> frontend taste skill detection when frontend/UI surfaces are in scope
+-> conditional frontend taste skill routing check for task/work surfaces
 -> spec in <artifact-root>/spec.md
 -> display spec summary and spec path
 -> STOP and wait for explicit user approval or requested changes
@@ -284,15 +284,22 @@ Dirty worktree rules:
 - Never overwrite user changes.
 - Never clean or reset files unless explicitly instructed.
 
-## Frontend Taste Skill Detection
+## Conditional Frontend Taste Skill Routing
 
-- Detect whether the request touches frontend/UI surfaces after grill-me/shared understanding and repo intake, before writing spec.
-- Frontend/UI surfaces include React, Next.js, Vite, Tailwind, CSS, components, pages, layouts, forms, dashboards, icons, motion/animation, loading/empty/error states, responsive behavior, accessibility states, visual polish, and frontend review.
-- If frontend/UI is in scope, read `.agents/skills/design-taste-frontend/SKILL.md` before writing `<artifact-root>/spec.md`.
-- Record result in spec under `Frontend Taste Application`.
-- Carry the skill through tasks, implementation, review, verification, release notes, summary, and health check.
-- If frontend scope is discovered later, pause before frontend edits, read the skill, update spec/task acceptance criteria, then continue.
-- If frontend is not in scope, record `Frontend Taste Application: Not applicable`.
+- Preserve the existing workflow sequence. This routing check happens where frontend taste detection already occurs; it does not create a new default workflow or bypass intake, spec approval, task planning, task execution, verification, review, release notes, summary, or health check.
+- Evaluate the active task and, for mixed tasks, each work surface before generating or editing that surface.
+- Load/apply `.skills/design-taste-frontend/SKILL.md` only when the task or work surface involves frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
+- Do not apply `.skills/design-taste-frontend/SKILL.md` for backend-only, API-only, database-only, auth-only, test-only, or docs-only tasks.
+- For mixed frontend/backend tasks, apply `.skills/design-taste-frontend/SKILL.md` only to the frontend UI work. Backend, API, database, auth, test-only, and docs-only work proceeds without the taste skill.
+- When the skill is applied, record this exact line in the relevant task evidence and downstream workflow artifacts:
+
+```txt
+Applied skill: design-taste-frontend
+```
+
+- Do not create a separate taste skill. Use the existing file at `.skills/design-taste-frontend/SKILL.md`.
+- Record the routing result in spec and task evidence. If no frontend UI generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish is in scope, record `Frontend Taste Application: Not applicable`.
+- If frontend UI scope is discovered later, pause before frontend UI edits, read `.skills/design-taste-frontend/SKILL.md`, update spec/task acceptance criteria for the frontend UI work, record `Applied skill: design-taste-frontend`, then continue.
 
 ## 5. Spec Phase
 
@@ -508,7 +515,7 @@ Before planning, read:
 - The saved detailed spec in `<artifact-root>/spec.md`.
 - Relevant durable docs in `docs/`.
 
-Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes. When `Frontend Taste Application` is applicable, include explicit frontend taste acceptance criteria in relevant tasks.
+Generate a vertical implementation plan from the saved detailed spec. Derive tasks from the spec's affected surfaces, dependency/integration map, data/state impact, UX/API/workflow expectations, execution strategy, verification strategy, acceptance criteria, edge cases, risks, assumptions, open questions, and task extraction notes. When a task or work surface requires conditional frontend taste routing, include explicit frontend taste acceptance criteria only for the frontend UI work.
 
 Save the task breakdown at the current run-scoped path:
 
@@ -998,7 +1005,7 @@ Before the final response, check:
 - Were release notes created?
 - Was required iteration evidence recorded for every executable task?
 - Was the final diff audit completed or documented?
-- For frontend work, did review and verification explicitly record frontend taste skill compliance?
+- For frontend UI work, did review and verification explicitly record conditional frontend taste skill compliance?
 - Was the dirty worktree checked?
 - Were acceptance results completed?
 - Were verification commands run or documented?
@@ -1007,7 +1014,7 @@ Before the final response, check:
 - For every code-changing task, was passing verification recorded after implementation and after refactor?
 - For every code-changing task without first-test evidence, was a missing-test exception explicitly justified?
 - Was scope respected?
-- For frontend work, was `design-taste-frontend` applied and recorded across spec, tasks, review, summary, and health check?
+- For frontend UI work, was `design-taste-frontend` applied only to the frontend UI work and recorded as `Applied skill: design-taste-frontend` across task evidence, review, summary, and health check?
 - Were decisions recorded if needed?
 - For parallel modes, did every task include priority, parallel-safe flag, dependencies, file locks, claim status, claimed by, agent role, and merge risk?
 - For parallel modes, were `<artifact-root>/parallel/claims.md`, `<artifact-root>/parallel/locks.md`, and `<artifact-root>/parallel/agent-status.md` updated?

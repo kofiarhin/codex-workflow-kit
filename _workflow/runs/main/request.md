@@ -1,23 +1,27 @@
-# Request
+# Active Request
 
-Fix the missing parallel template file issue in codex-workflow-kit.
+Date: 2026-05-26
 
-## Normalized Request
+Implement conditional frontend skill routing in this repo.
 
-Complete the parallel template implementation by ensuring committed templates exist under `templates/_workflow/runs/parallel/`, contain the required reusable tracking fields including `Notes`, and align installer behavior plus workflow documentation around run-scoped request state, compatibility-only `WORK_REQUEST.md`, branch/worktree-scoped workflow memory, and merge-safe parallel coordination.
+Use the existing skill file at:
+`.skills/design-taste-frontend/SKILL.md`
 
-## Required Outcomes
+Keep the current workflow exactly as-is.
 
-- `templates/_workflow/runs/parallel/claims.md` exists and includes required task-claim fields.
-- `templates/_workflow/runs/parallel/locks.md` exists and includes required file-lock fields.
-- `templates/_workflow/runs/parallel/agent-status.md` exists and includes required worker-status fields.
-- `scripts/install.sh` installs those templates from `templates/_workflow/runs/parallel/`.
-- `README.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/WORK_REQUEST.md`, and `scripts/install.sh` are consistent.
-- Active request state is run-scoped at `<artifact-root>/request.md`.
-- Root `WORK_REQUEST.md` is compatibility/manual only.
-- Long-lived worktrees such as `main`, `dev`, and `redesign` do not need to edit the same active workflow-state file.
-- Final audit reports `PASSED`, `PARTIAL`, or `FAILED`.
+Only add this rule:
+When a task involves frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish, load/apply `.skills/design-taste-frontend/SKILL.md`.
 
-## Execution Preference
+Do not apply it for backend-only, API-only, database-only, auth-only, test-only, or docs-only tasks.
 
-`complete-workflow`
+Requirements:
+1. Preserve the existing workflow sequence.
+2. Do not create a new default workflow.
+3. Do not create a separate taste skill.
+4. Record when it is applied with:
+   `Applied skill: design-taste-frontend`
+5. Add/update tests or fixtures proving:
+   - frontend UI task triggers it
+   - backend-only task does not
+   - mixed frontend/backend task applies it only to frontend UI work
+6. Run available checks and report results.

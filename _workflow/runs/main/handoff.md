@@ -1,10 +1,10 @@
 # Current Workflow Handoff
 
 ## Current Request
-Fix the missing parallel template file issue in codex-workflow-kit.
+Implement conditional frontend skill routing in this repo.
 
 ## Request ID
-2026-05-24-fix-parallel-template-files
+2026-05-26-conditional-frontend-skill-routing
 
 ## Current Phase
 Complete.
@@ -40,7 +40,7 @@ complete-workflow
 `_workflow/runs/main/summary.md`
 
 ## Last Completed Task
-`TASK-001: Complete parallel templates and consistency audit`
+`TASK-001: Add conditional taste routing and validation`
 
 ## Current Task
 None.
@@ -52,7 +52,7 @@ None. Build, Refine, and Polish are complete.
 None.
 
 ## Dirty Worktree Status
-Initial `git status --short` showed overlapping untracked workflow/template paths. The in-scope `templates/_workflow/runs/parallel/` files were updated after spec approval. Final status also shows pre-existing untracked `_workflow/runs/parallel/`.
+Final status shows expected modified workflow docs/templates, package script, run-scoped workflow artifacts, new `scripts/validate-frontend-skill-routing.js`, and untracked `.skills/`. `.skills/design-taste-frontend/SKILL.md` was not edited.
 
 ## Acceptance Status
 All acceptance criteria checked `[x]`.
@@ -65,6 +65,17 @@ Passed.
 
 ## Blockers
 None.
+
+## Token / Resume State
+- Current phase: Complete.
+- Current task: None.
+- Current iteration: None.
+- Last completed safe checkpoint: Review, verification, release notes, summary, progress, and handoff are complete.
+- Files already changed: See `_workflow/runs/main/summary.md`.
+- Files planned next: None.
+- Tests already run: `node scripts/validate-frontend-skill-routing.js`, `npm run test:workflow-routing`, targeted `rg` checks, `npm test`, `git diff --check`, `git diff --stat`, `git diff`, `git status --short`.
+- Exact next command/action: Final response or commit if requested.
+- Safe to continue automatically: No remaining workflow work.
 
 ## Suggested Next Prompt
 `git status --short`

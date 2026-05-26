@@ -1,98 +1,151 @@
-# Task Plan: Fix Missing Parallel Template Files
+# Task Plan: Conditional Frontend Skill Routing
 
 - Spec file used: `_workflow/runs/main/spec.md`
-- Planning date: 2026-05-24
-- Spec approval: Approved by user with `approve spec`
-- Progress and summary files read: `_workflow/runs/main/progress.md`, `_workflow/runs/main/summary.md`
-- Detailed spec sections used: 6 Desired End State, 9 Functional Requirements, 11 Affected Surfaces, 12 Dependency And Integration Map, 14 UX / API / Workflow Expectations, 15 Execution Strategy, 16 Verification Strategy, 17 Acceptance Criteria, 18 Edge Cases And Failure Modes, 19 Risks And Mitigations, 20 Assumptions, 21 Open Questions, 22 Task Extraction Notes.
+- Planning date: 2026-05-26
+- Explicit spec approval: User replied `approve spec`.
+- Progress and summary files read:
+  - `_workflow/runs/main/progress.md`
+  - `_workflow/runs/main/summary.md`
+  - `_workflow/runs/main/handoff.md`
+- Detailed spec sections used:
+  - Section 6 Desired End State: conditional task/work-surface routing.
+  - Section 7 Scope: four required docs/templates, no skill-file edit, no app changes.
+  - Section 9 Functional Requirements: trigger/non-trigger categories and exact record line.
+  - Section 11 Affected Surfaces: docs/templates, package script if needed, validation assets.
+  - Section 12 Dependency And Integration Map: no new dependencies; root/template alignment.
+  - Section 15 Execution Strategy: validation red phase first, docs/templates second, final checks.
+  - Section 16 Verification Strategy: focused validation, targeted `rg`, mirror checks, diff audit.
+  - Section 17 Acceptance Criteria: all nine criteria.
+  - Section 18 Edge Cases And Failure Modes: test-only/docs-only and mixed frontend/backend handling.
+  - Section 19 Risks And Mitigations: avoid workflow sequence changes and overbuilt classifier.
+  - Section 22 Task Extraction Notes: one small vertical task is acceptable because routing docs and validation are tightly coupled.
+  - Section 23 Frontend Taste Application: not applicable for this docs/test implementation.
 
-## TASK-001: Complete parallel templates and consistency audit
+## Task List
 
-- Status: Done
-- Objective: Complete the three parallel coordination templates, confirm installer copy behavior, align requested docs if needed, and produce the final audit verdict.
-- Files likely affected:
-  - `templates/_workflow/runs/parallel/claims.md`
-  - `templates/_workflow/runs/parallel/locks.md`
-  - `templates/_workflow/runs/parallel/agent-status.md`
-  - `templates/_workflow/runs/README.md`
-  - `README.md`
+### TASK-001: Add conditional taste routing and validation
+
+- Task ID: `TASK-001`
+- Status: `Done`
+- Objective: Add conditional frontend taste skill routing to root workflow docs and install templates, then prove the three required routing examples with the smallest executable validation.
+- Files changed:
   - `RUN_WORKFLOW.md`
+  - `AGENTS.md`
   - `templates/RUN_WORKFLOW.md`
-  - `templates/WORK_REQUEST.md`
-  - `scripts/install.sh`
-  - `_workflow/runs/main/*`
+  - `templates/AGENTS.md`
+  - `package.json`
+  - `scripts/validate-frontend-skill-routing.js`
+  - `_workflow/runs/main/request.md`
+  - `_workflow/runs/main/spec.md`
+  - `_workflow/runs/main/tasks.md`
+  - `_workflow/runs/main/progress.md`
+  - `_workflow/runs/main/handoff.md`
+  - `_workflow/runs/main/verification.md`
+  - `_workflow/runs/main/review.md`
+  - `_workflow/runs/main/release-notes.md`
+  - `_workflow/runs/main/summary.md`
 - Checklist:
-  - [x] Ensure `claims.md` includes all required fields, including `Notes`.
-  - [x] Ensure `locks.md` includes all required fields, including `Notes`.
-  - [x] Ensure `agent-status.md` includes all required fields, including `Notes`.
-  - [x] Confirm `scripts/install.sh` copies all three source templates.
-  - [x] Fix requested doc inconsistencies around source template path and installed parallel templates.
-  - [x] Run verification and final audit.
-- Iteration 1 - Build:
-  - Goal: Complete the parallel template files.
-  - Changes made: Added `Notes` columns and placeholder values to `claims.md`, `locks.md`, and `agent-status.md`.
-  - Test plan: `Test-Path` for files and `rg` for required fields.
-  - Red phase evidence: Docs-only missing-test exception; no runtime code changed. Pre-edit audit found all three template tables lacked the required `Notes` field.
-  - Green phase evidence: Required field searches found all requested fields in each template.
-  - Refactor phase evidence: Table format remained consistent after adding the extra field.
-  - Test commands run: `Test-Path ...`; `rg` required field checks for all three templates.
-  - Verification command/result: Passed.
-  - Review findings: Template files now satisfy the requested field lists.
-  - Acceptance status: Met for template field criteria.
-  - Remaining issues: Installer/docs audit still needed.
-  - Next action: Refine installer/docs consistency.
-- Iteration 2 - Refine:
-  - Goal: Audit installer and requested docs, repairing inconsistencies only if found.
-  - Changes made: Confirmed `scripts/install.sh` already copies the three templates. Added explicit source-template path wording to `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, and `templates/_workflow/runs/README.md`.
-  - Test plan: `rg` checks across requested files and `bash -n scripts/install.sh`.
-  - Red phase evidence: Docs-only missing-test exception; no runtime code changed. Audit found source template path wording was implied but not explicit enough in all requested docs.
-  - Green phase evidence: Consistency searches found run-scoped request state, compatibility-only `WORK_REQUEST.md`, source template path, branch/worktree-scoped memory, and no shared active artifact wording.
-  - Refactor phase evidence: Root `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md` remained aligned; `git diff --no-index` showed no content differences except line-ending warnings.
-  - Test commands run: `rg` consistency checks; `rg "$TEMPLATE_ROOT/_workflow/runs/parallel/..." scripts/install.sh`; `bash -n scripts/install.sh`; `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`.
-  - Verification command/result: Passed.
-  - Review findings: Installer behavior did not need code changes; docs now call out source and installed template locations.
-  - Acceptance status: Met for installer/docs criteria.
-  - Remaining issues: Final audit artifacts needed.
-  - Next action: Polish with final audit and workflow artifacts.
-- Iteration 3 - Polish:
-  - Goal: Run final checks, diff audit, and write workflow artifacts.
-  - Changes made: Ran final template, installer, docs, diff, and status checks; created current verification/review/release/summary/handoff evidence.
-  - Test plan: Final `rg`, `bash -n`, `git diff --check`, `git diff --stat`, `git diff`, `git status --short`.
-  - Red phase evidence: Docs-only missing-test exception; no runtime code changed.
-  - Green phase evidence: Final checks passed.
-  - Refactor phase evidence: `git diff --check` passed with line-ending warnings only; final diff audit ran.
-  - Test commands run: template `Test-Path`; required template `rg`; installer `rg`; `bash -n scripts/install.sh`; docs consistency `rg`; `git diff --no-index`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`.
-  - Verification command/result: Passed.
-  - Review findings: No scope creep, no runtime/app files changed, no secrets, and installer behavior remains stable.
-  - Acceptance status: All criteria met.
-  - Remaining issues: `_workflow/runs/parallel/` remains a pre-existing untracked static template directory not modified by this task.
-  - Next action: Final response.
-- Test plan: Documentation/template checks, installer syntax check, and final diff audit.
-- Red phase evidence: Docs-only missing-test exception; no runtime code changed, so TDD-first runtime tests are not applicable.
-- Green phase evidence: Required checks passed.
-- Refactor phase evidence: Final diff and syntax checks passed.
-- Test commands run: See `_workflow/runs/main/verification.md`.
-- Acceptance criteria:
-  - [x] `templates/_workflow/runs/parallel/claims.md` exists and includes Task ID, Worker ID, Branch, Worktree Path, Run ID, Claim Status, Start Time, End Time, Files Expected, Files Changed, Verification Status, and Notes.
-  - [x] `templates/_workflow/runs/parallel/locks.md` exists and includes File Path, Lock Owner, Worker ID, Task ID, Run ID, Reason, Lock Status, Acquired At, Released At, and Notes.
-  - [x] `templates/_workflow/runs/parallel/agent-status.md` exists and includes Worker ID, Role, Branch, Worktree Path, Run ID, Current Task, Changed Files, Verification Result, Blocker, Final Status, and Notes.
-  - [x] `scripts/install.sh` copies all three templates from `templates/_workflow/runs/parallel/`.
-  - [x] Requested docs consistently state run-scoped `request.md`, compatibility/manual-only `WORK_REQUEST.md`, parallel template location, branch/worktree-scoped memory, and no shared active artifact requirement.
-  - [x] Final audit answers the seven requested questions and reports `PASSED`.
-- Acceptance result: All criteria met.
-- Verification commands:
-  - `Test-Path templates\_workflow\runs\parallel\claims.md`
-  - `Test-Path templates\_workflow\runs\parallel\locks.md`
-  - `Test-Path templates\_workflow\runs\parallel\agent-status.md`
-  - `rg "Task ID|Worker ID|Branch|Worktree Path|Run ID|Claim Status|Start Time|End Time|Files Expected|Files Changed|Verification Status|Notes" templates\_workflow\runs\parallel\claims.md`
-  - `rg "File Path|Lock Owner|Worker ID|Task ID|Run ID|Reason|Lock Status|Acquired At|Released At|Notes" templates\_workflow\runs\parallel\locks.md`
-  - `rg "Worker ID|Role|Branch|Worktree Path|Run ID|Current Task|Changed Files|Verification Result|Blocker|Final Status|Notes" templates\_workflow\runs\parallel\agent-status.md`
-  - `rg "$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md|$TEMPLATE_ROOT/_workflow/runs/parallel/locks.md|$TEMPLATE_ROOT/_workflow/runs/parallel/agent-status.md" scripts\install.sh`
-  - `bash -n scripts/install.sh`
-  - `rg` consistency checks across requested docs
+  - [x] Add no-dependency executable validation for frontend, backend-only, and mixed routing examples.
+  - [x] Add a discoverable validation command.
+  - [x] Update `RUN_WORKFLOW.md` with conditional task/work-surface routing.
+  - [x] Update `AGENTS.md` with matching conditional routing.
+  - [x] Update `templates/RUN_WORKFLOW.md` with matching conditional routing.
+  - [x] Update `templates/AGENTS.md` with matching conditional routing.
+  - [x] Preserve existing workflow sequence.
+  - [x] Run focused validation and available checks.
+  - [x] Complete review, release notes, summary, and handoff.
+
+#### Iteration 1 - Build
+
+- Goal: Create the routing validation and make the minimal workflow doc/template changes needed for the required examples.
+- Changes made: Added `scripts/validate-frontend-skill-routing.js`, added `npm run test:workflow-routing`, and replaced broad frontend taste routing language in the four required docs/templates with conditional task/work-surface routing.
+- Test plan: Run `node scripts/validate-frontend-skill-routing.js` and `npm run test:workflow-routing`.
+- Red phase evidence: `node scripts/validate-frontend-skill-routing.js` failed with `MODULE_NOT_FOUND`, proving the validation did not exist before implementation.
+- Green phase evidence: `node scripts/validate-frontend-skill-routing.js` passed with `frontend skill routing validation passed`.
+- Refactor phase evidence: `npm run test:workflow-routing` passed after adding the package script.
+- Test commands run:
+  - `node scripts/validate-frontend-skill-routing.js`
+  - `npm run test:workflow-routing`
+- Verification command/result: `npm run test:workflow-routing` passed.
+- Review findings: Build satisfied the required examples but refinement found stale broad health-check wording and numbering issues in `AGENTS` operating rules.
+- Acceptance status: Partially met pending refinement.
+- Remaining issues: Remove stale broad wording and repair numbering.
+- Next action: Iteration 2 - Refine.
+
+#### Iteration 2 - Refine
+
+- Goal: Tighten routing language, mixed-task handling, stale path checks, and root/template alignment.
+- Changes made: Reworded remaining health-check language from broad frontend work to conditional frontend UI work and mechanically renumbered `AGENTS.md` and `templates/AGENTS.md` operating rules.
+- Test plan: Re-run routing validation and targeted `rg` checks for path, exact record line, trigger categories, non-trigger categories, mixed guidance, and stale broad/default wording.
+- Red phase evidence: Targeted stale-wording check found remaining broad `For frontend work` lines in `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md`; numbering check showed duplicate numbering in `AGENTS.md` and `templates/AGENTS.md`.
+- Green phase evidence: `npm run test:workflow-routing` passed after fixes. Stale wording search returned no matches.
+- Refactor phase evidence: Numbering check showed repaired sequence in `AGENTS.md`; validation remained green.
+- Test commands run:
+  - `npm run test:workflow-routing`
+  - `rg -n "\.agents/skills/design-taste-frontend|If the request touches frontend/UI|when frontend/UI surfaces are in scope|Carry the skill through|For frontend work|Frontend Taste Skill Detection|frontend taste skill detection" RUN_WORKFLOW.md AGENTS.md templates/RUN_WORKFLOW.md templates/AGENTS.md`
+  - `rg -n "^([0-9]+)\." AGENTS.md templates\AGENTS.md`
+- Verification command/result: Focused validation passed; stale broad/default wording search returned no matches.
+- Review findings: Scope still limited to docs/templates, validation script, package script, and workflow artifacts.
+- Acceptance status: All behavior criteria met.
+- Remaining issues: Run full checks and final diff audit.
+- Next action: Iteration 3 - Polish.
+
+#### Iteration 3 - Polish
+
+- Goal: Finalize validation, run available checks, complete final diff audit, and write workflow artifacts.
+- Changes made: Ran full test suite, diff checks, final targeted routing checks, and wrote run-scoped verification/review/release/summary/handoff artifacts.
+- Test plan: Run focused validation, `npm test`, `git diff --check`, `git diff --stat`, `git diff`, and final status checks.
+- Red phase evidence: No new failing final case was needed; Iteration 1 and 2 captured the required Red evidence. Missing-test exception for additional Red phase: final polish was verification/artifact finalization with no new behavior change.
+- Green phase evidence: `npm run test:workflow-routing` passed; `npm test` passed with client 7 tests and server 14 tests.
+- Refactor phase evidence: `git diff --check` passed with line-ending warnings only; final targeted routing check passed.
+- Test commands run:
+  - `npm run test:workflow-routing`
+  - `npm test`
   - `git diff --check`
+  - `rg -n "\.skills/design-taste-frontend/SKILL.md|Applied skill: design-taste-frontend|frontend UI code generation|JSX/TSX markup|CSS/Tailwind styling|backend-only|API-only|database-only|auth-only|test-only|docs-only|mixed frontend/backend|only to the frontend UI work" RUN_WORKFLOW.md AGENTS.md templates/RUN_WORKFLOW.md templates/AGENTS.md`
   - `git diff --stat`
   - `git diff`
   - `git status --short`
-- Stop condition: Not reached.
-- Out-of-scope items: Runtime app code, dependency changes, deployment configuration, broad workflow redesign, deleting legacy compatibility files.
+- Verification command/result: All available checks passed.
+- Review findings: No bugs, no scope creep, no app implementation edits, no new dependencies, no secrets.
+- Acceptance status: Complete.
+- Remaining issues: None.
+- Final verdict: Done.
+
+#### Acceptance Result
+
+- [x] `RUN_WORKFLOW.md`, `AGENTS.md`, `templates/RUN_WORKFLOW.md`, and `templates/AGENTS.md` preserve the existing workflow sequence.
+- [x] The only behavior rule added is conditional routing to `.skills/design-taste-frontend/SKILL.md` for frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
+- [x] The workflow explicitly does not apply the skill for backend-only, API-only, database-only, auth-only, test-only, or docs-only tasks.
+- [x] Mixed frontend/backend guidance applies the skill only to frontend UI work.
+- [x] The exact record line `Applied skill: design-taste-frontend` is required whenever the skill is applied.
+- [x] No new default workflow is created.
+- [x] No separate taste skill is created.
+- [x] Executable validation proves frontend UI triggers, backend-only does not, and mixed frontend/backend applies only to frontend UI work.
+- [x] Available checks are run and reported.
+
+#### Verification Commands
+
+- `node scripts/validate-frontend-skill-routing.js` - failed before script creation with `MODULE_NOT_FOUND`, then passed after implementation.
+- `npm run test:workflow-routing` - passed.
+- Targeted stale wording `rg` - returned no stale broad/default matches.
+- Targeted required routing `rg` - found required path, record line, trigger categories, non-trigger categories, and mixed-task guidance.
+- `npm test` - passed.
+- `git diff --check` - passed with line-ending warnings only.
+- `git diff --stat` - ran.
+- `git diff` - ran.
+- `git status --short` - ran.
+
+#### Stop Condition
+
+Not reached.
+
+#### Out-of-Scope Items
+
+- No frontend app UI changes.
+- No backend/API/database/auth changes.
+- No deployment changes.
+- No new dependencies.
+- No new default workflow.
+- No separate taste skill.
+- No edits to `.skills/design-taste-frontend/SKILL.md`.

@@ -629,3 +629,29 @@ Parallel modes must also record task priority, parallel-safe flag, dependencies,
 - Review result: Reviewed; see `_workflow/runs/main/review.md`.
 - Blockers: none.
 - Next step: Final response.
+
+### 2026-05-26 - TASK-001
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `RUN_WORKFLOW.md`, `AGENTS.md`, `templates/RUN_WORKFLOW.md`, `templates/AGENTS.md`, `package.json`, `scripts/validate-frontend-skill-routing.js`, `_workflow/runs/main/request.md`, `_workflow/runs/main/spec.md`, `_workflow/runs/main/tasks.md`, `_workflow/runs/main/progress.md`, `_workflow/runs/main/handoff.md`, `_workflow/runs/main/verification.md`, `_workflow/runs/main/review.md`, `_workflow/runs/main/release-notes.md`, `_workflow/runs/main/summary.md`.
+- Dirty worktree protection: Initial status after spec approval showed modified run-scoped workflow artifacts from this run and untracked `.skills/`. Planned files overlapped only with run-scoped artifacts and required docs/templates. `.skills/design-taste-frontend/SKILL.md` was input only and was not edited.
+- Parallel metadata: `Priority=P1; Parallel safe=no; Depends on=none; Blocks=final response; File locks=RUN_WORKFLOW.md, AGENTS.md, templates/RUN_WORKFLOW.md, templates/AGENTS.md, package.json, scripts/validate-frontend-skill-routing.js, _workflow/runs/main/*; Claim status=done; Claimed by=orchestrator; Agent role=orchestrator; Merge risk=low`
+- Parallel claim/lock status: Sequential `complete-workflow`; no worker claims or active locks.
+- Worker status: Orchestrator-owned sequential task; final status Done.
+- Merge review status: Not applicable for sequential execution.
+- Test plan: Add a no-dependency routing validation, run focused validation, run targeted routing/stale wording checks, run full `npm test`, run `git diff --check`, and run final diff audit.
+- Red phase evidence: `node scripts/validate-frontend-skill-routing.js` failed before implementation with `MODULE_NOT_FOUND`. Iteration 2 stale wording check found remaining broad `For frontend work` lines and duplicate operating-rule numbering before refinement.
+- Green phase evidence: `node scripts/validate-frontend-skill-routing.js` and `npm run test:workflow-routing` passed after implementation. `npm test` passed with client 7 tests and server 14 tests.
+- Refactor phase evidence: After wording cleanup and numbering repair, `npm run test:workflow-routing` still passed, stale wording search returned no matches, and `git diff --check` passed with line-ending warnings only.
+- Test commands run: `node scripts/validate-frontend-skill-routing.js`; `npm run test:workflow-routing`; targeted stale wording `rg`; targeted required routing `rg`; operating-rule numbering `rg`; `npm test`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added the validation script, package command, and initial conditional routing docs/templates. Red command failed with missing script; Green and Refactor validation passed. Review found stale health-check wording and numbering issues.
+  - Iteration 2 - Refine: Fixed broad health-check wording and repaired operating-rule numbering in root/template AGENTS docs. Validation passed and stale broad/default search returned no matches. Acceptance became complete.
+  - Iteration 3 - Polish: Ran full test suite, final targeted routing checks, `git diff --check`, final diff audit, and wrote final workflow artifacts. Final verdict: Done.
+- Acceptance result: all criteria checked `[x]`.
+- Verification result: Passed; see `_workflow/runs/main/verification.md`.
+- Failure recovery notes: None.
+- Review result: Reviewed; see `_workflow/runs/main/review.md`.
+- Blockers: None.
+- Next step: Final response.

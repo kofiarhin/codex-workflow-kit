@@ -1,16 +1,18 @@
-# Release Notes: Fix Missing Parallel Template Files
+# Release Notes: Conditional Frontend Skill Routing
 
 ## Request
-Fix the missing parallel template file issue in codex-workflow-kit.
+Implement conditional frontend skill routing in this repo.
 
 ## User-Facing Changes
-- Added complete parallel coordination source templates under `templates/_workflow/runs/parallel/`.
-- Clarified source and installed parallel template paths in README and workflow docs.
+No application user-facing changes.
 
 ## Developer Changes
-- Added `Notes` fields to `claims.md`, `locks.md`, and `agent-status.md`.
-- Confirmed `scripts/install.sh` already installs all three templates.
-- Updated root/template workflow docs so parallel templates are described consistently.
+- Updated root workflow docs and install templates to apply `.skills/design-taste-frontend/SKILL.md` only for frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
+- Added explicit exclusions for backend-only, API-only, database-only, auth-only, test-only, and docs-only tasks.
+- Added mixed frontend/backend guidance so the skill applies only to frontend UI work.
+- Added the exact required record line: `Applied skill: design-taste-frontend`.
+- Added `scripts/validate-frontend-skill-routing.js`.
+- Added `npm run test:workflow-routing`.
 
 ## New Routes/APIs
 none
@@ -25,22 +27,21 @@ none
 none
 
 ## Test Commands Run
-- `Test-Path` template existence checks
-- `rg` required field checks
-- `rg` installer copy checks
-- `bash -n scripts/install.sh`
-- `rg` docs consistency checks
-- `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`
+- `node scripts/validate-frontend-skill-routing.js`
+- `npm run test:workflow-routing`
+- Targeted stale wording `rg`
+- Targeted required routing `rg`
+- `npm test`
 - `git diff --check`
 - `git diff --stat`
 - `git diff`
 - `git status --short`
 
 ## Known Limitations
-None for requested scope.
+The validation script is intentionally small and checks the required examples plus required doc contract terms; it is not a general natural-language classifier.
 
 ## Follow-Up Work
-None required.
+none
 
 ## Suggested Commit Message
-`docs: add parallel workflow templates`
+`feat: add conditional frontend taste skill routing`

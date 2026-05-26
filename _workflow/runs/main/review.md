@@ -1,7 +1,7 @@
-# Review: Fix Missing Parallel Template Files
+# Review: Conditional Frontend Skill Routing
 
 ## Request
-Fix the missing parallel template file issue in codex-workflow-kit.
+Implement conditional frontend skill routing in this repo.
 
 ## Spec File Used
 `_workflow/runs/main/spec.md`
@@ -10,44 +10,52 @@ Fix the missing parallel template file issue in codex-workflow-kit.
 `_workflow/runs/main/tasks.md`
 
 ## Tasks Reviewed
-- `TASK-001: Complete parallel templates and consistency audit`
+- `TASK-001: Add conditional taste routing and validation`
 
 ## Iteration Evidence Reviewed
-- Iteration 1 Build: Template `Notes` field completion verified.
-- Iteration 2 Refine: Installer and requested docs consistency verified.
-- Iteration 3 Polish: Final checks and diff audit completed.
+- Iteration 1 Build: Red failure captured for missing validation script, then validation passed after implementation.
+- Iteration 2 Refine: Stale broad wording and numbering issues were found and fixed; validation remained green.
+- Iteration 3 Polish: Full checks, final targeted routing checks, and diff audit ran.
 
 ## TDD-First Evidence Reviewed
-Docs/template-only change. Runtime TDD is not applicable. Missing-test exception is justified because no app/runtime behavior changed.
+- Relevant validation was added before completing the behavior change.
+- Initial Red evidence: missing validation script failed with `MODULE_NOT_FOUND`.
+- Additional Red evidence: stale wording and duplicate numbering were detected in refinement before fixes.
+- Green evidence: focused validation and full tests passed.
+- Refactor evidence: checks remained green after wording cleanup and numbering repair.
 
 ## Bugs Found
-None after the fix. Initial defect was incomplete existing templates missing `Notes`.
+None remaining.
 
 ## Scope Creep Check
-Scope respected. Changes were limited to parallel templates, requested workflow docs, installer verification, and run-scoped workflow artifacts.
+Passed. Changes stayed within workflow docs/templates, a small validation script, package script, and run-scoped workflow artifacts. No frontend app, backend API, database, auth, deployment, dependency, or skill-file changes were made.
 
 ## Final Diff Audit
 - `git diff --stat` and `git diff` ran.
-- Tracked diff matches the saved spec.
-- Untracked `templates/_workflow/runs/parallel/` contains the requested template files.
-- Pre-existing untracked `_workflow/runs/parallel/` remains visible and was not modified for this task.
-- No runtime app files changed.
-- No generated junk or secrets found.
+- Diff matches the saved spec.
+- Workflow sequence was preserved while the existing frontend taste detection step was rewritten as conditional task/work-surface routing.
+- Tests/fixtures were added via `scripts/validate-frontend-skill-routing.js` and `npm run test:workflow-routing`.
+- No generated junk was found.
+- No secrets or sensitive values were added.
+- Untracked `.skills/` remains present as a pre-existing input location; `.skills/design-taste-frontend/SKILL.md` was not edited.
 
 ## Failure Recovery Notes
 None.
 
 ## Missing Tests
-No automated runtime tests were added because this is a docs/template/installer change. Verification used targeted file, field, docs, syntax, and diff checks.
+None for the requested scope. The new validation is intentionally no-dependency and focused on the three required examples.
 
 ## Security Concerns
 None.
 
 ## Architecture Concerns
-None. Run-scoped workflow state remains branch/worktree scoped.
+None. No new default workflow or separate taste skill was introduced.
+
+## Frontend Taste Skill Compliance
+Not applicable to this implementation because no frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish was performed.
 
 ## Follow-Up Tasks
 None required.
 
 ## Final Review Verdict
-PASSED
+Passed.

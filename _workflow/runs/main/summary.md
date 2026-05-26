@@ -145,3 +145,76 @@ None.
 
 ## Next Recommended Work
 Commit the requested workflow template/docs changes.
+
+---
+
+# Summary: Conditional Frontend Skill Routing
+
+## Request
+Implement conditional frontend skill routing in this repo.
+
+## Spec File Used
+`_workflow/runs/main/spec.md`
+
+## Detailed Spec Completeness
+Complete. All required detailed spec sections are present, including frontend taste application as not applicable for this docs/test implementation.
+
+## Task Plan Used
+`_workflow/runs/main/tasks.md`
+
+## Review File Used
+`_workflow/runs/main/review.md`
+
+## Tasks Completed
+- `TASK-001: Add conditional taste routing and validation`
+
+## Iteration Evidence Summary
+- Build: Added the missing validation script and package command, then updated required docs/templates with conditional routing. Red failure was the missing validation script.
+- Refine: Removed stale broad frontend-work wording and repaired operating-rule numbering. Focused validation stayed green.
+- Polish: Ran full checks, final targeted routing checks, final diff audit, and wrote workflow artifacts.
+
+## Files Changed
+- `RUN_WORKFLOW.md`
+- `AGENTS.md`
+- `templates/RUN_WORKFLOW.md`
+- `templates/AGENTS.md`
+- `package.json`
+- `scripts/validate-frontend-skill-routing.js`
+- `_workflow/runs/main/request.md`
+- `_workflow/runs/main/spec.md`
+- `_workflow/runs/main/tasks.md`
+- `_workflow/runs/main/progress.md`
+- `_workflow/runs/main/handoff.md`
+- `_workflow/runs/main/verification.md`
+- `_workflow/runs/main/review.md`
+- `_workflow/runs/main/release-notes.md`
+- `_workflow/runs/main/summary.md`
+
+## Verification Run
+See `_workflow/runs/main/verification.md`.
+
+## Acceptance Results
+- [x] Required docs/templates preserve the existing workflow sequence.
+- [x] Conditional routing uses `.skills/design-taste-frontend/SKILL.md` for frontend UI generation/markup/styling/redesign/polish.
+- [x] Backend-only, API-only, database-only, auth-only, test-only, and docs-only tasks do not apply the skill.
+- [x] Mixed frontend/backend tasks apply the skill only to frontend UI work.
+- [x] `Applied skill: design-taste-frontend` is required whenever applied.
+- [x] No new default workflow was created.
+- [x] No separate taste skill was created.
+- [x] Executable validation proves the required examples.
+- [x] Available checks were run and passed.
+
+## Failure Recovery Notes
+None.
+
+## Final Diff Audit
+`git diff --stat` and `git diff` ran. Diff matches the saved spec. No app runtime files, deployment files, dependencies, secrets, generated junk, or `.skills/design-taste-frontend/SKILL.md` edits were found. Untracked `.skills/` remains present as an input location.
+
+## Release Notes File Used
+`_workflow/runs/main/release-notes.md`
+
+## Unresolved Issues
+None.
+
+## Next Recommended Work
+Commit the conditional routing update.

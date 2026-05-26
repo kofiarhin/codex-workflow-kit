@@ -18,7 +18,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - `WORK_REQUEST.md` (optional/manual compatibility input)
   - `RUN_WORKFLOW.md`
   - `.agents/skills/grill-me/SKILL.md`
-  - `.agents/skills/design-taste-frontend/SKILL.md`
+  - `.skills/design-taste-frontend/SKILL.md`
 - Workflow artifact scope:
   - First detect current branch with `git branch --show-current`.
   - First detect current worktree path with `git rev-parse --show-toplevel`.
@@ -56,54 +56,60 @@ Customize placeholders before using this in a production project. MERN is the de
    - `complete-workflow`: ask questions, write spec, stop for spec approval, write task plan only after approval, then execute all generated tasks sequentially until the request/spec is complete or a stop condition is reached; each executable task must complete the full 3-pass hardening loop before the next task starts.
 6. Agents must not stop after `TASK-001` unless execution mode is explicitly `single-task` or a stop condition is reached.
 7. Agents must continue through `TASK-002`, `TASK-003`, and later tasks automatically when the current task is `Done` and safe to continue.
-8. Ask focused clarifying questions before implementation unless the prompt explicitly says `skip questions`.
-9. Keep asking until there is about 90% understanding of the request.
-10. Clarify the goal, users, exact behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope items.
-11. If the request is tiny and obvious, ask fewer questions, but still avoid touching code until the spec and task plan exist.
-12. Do not touch code during the questioning phase.
-13. If the user says `skip questions`, generate a best-effort spec and clearly record assumptions.
-14. No implementation is allowed without a saved spec in `<artifact-root>/spec.md`.
-15. No task plan may be generated until the saved spec has explicit user approval.
-16. No implementation is allowed without a saved task plan in `<artifact-root>/tasks.md`.
-17. Before planning, read `<artifact-root>/handoff.md` if it exists, `<artifact-root>/progress.md`, and the latest relevant file in `<artifact-root>/summary.md`.
-18. Before touching code for any task, read `<artifact-root>/handoff.md`, `<artifact-root>/progress.md`, and the latest relevant file in `<artifact-root>/summary.md`.
-19. Read `RUN_WORKFLOW.md` before planning or editing.
-20. Read `docs/PROJECT_CONTEXT.md` and relevant supporting docs before implementation, updating them only when durable project facts change.
-21. Generate the active spec at `<artifact-root>/spec.md`.
-22. Display the spec summary and path, then stop for explicit approval using the approval gate in `RUN_WORKFLOW.md`.
-23. Generate a vertical task plan in `<artifact-root>/tasks.md` from the approved saved spec.
-24. Tasks must be vertical slices of user-visible or independently verifiable value, not vague frontend/backend/database layers.
-25. Break work into Ralph Wiggum-style tasks: small, literal, safe, sequential steps that are easy to follow and hard to misinterpret.
-26. Implement tasks sequentially, one task at a time.
-27. Keep changes scoped to the active task.
-28. Never implement unrelated work.
-29. Every task must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
-30. Every executable task must run through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`.
-31. For every code-changing task, each Build, Refine, and Polish iteration must embed TDD-first Red -> Green -> Refactor: write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without changing behavior, and verify tests still pass.
-32. Each iteration must include documented goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, and next action.
-33. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
-34. A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
-35. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
-36. A task cannot move to `Reviewed` unless verification was attempted.
-37. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
-38. Never skip verification. If verification cannot run, document the reason and the best available manual check.
-39. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
-40. If verification fails during any iteration, follow the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
-41. After each task, append progress to `<artifact-root>/progress.md`, including separate iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, and any failure recovery notes.
-42. After each task, update `<artifact-root>/handoff.md` so it reflects the latest completed task, current task, current iteration, current phase, blockers, dirty worktree status, verification status, acceptance status, iteration evidence status, and next step.
-43. Always keep `<artifact-root>/handoff.md` current; do not leave handoff stale after task execution.
-44. The handoff file should allow another agent/session to resume without rereading the entire conversation.
-45. `continue workflow` must start from `<artifact-root>/handoff.md`.
-46. If `<artifact-root>/handoff.md` conflicts with `<artifact-root>/progress.md`, trust `<artifact-root>/progress.md` for completed task history and update handoff accordingly.
-47. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
-48. After all executable tasks are complete or a stop condition is reached, create a review file in `<artifact-root>/review.md`.
-49. After review, create release notes in `<artifact-root>/release-notes.md`.
-50. After release notes are complete, create or append a summary in `<artifact-root>/summary.md` and update `<artifact-root>/handoff.md`.
-51. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
-52. Before the final response, run the workflow health check.
-53. Continue to the next task only when the current task completed Build -> Refine -> Polish, is verified, reviewed, documented, all required TDD evidence for code-changing tasks is documented or explicitly excepted, all required acceptance criteria are met, and safe to continue.
-54. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
-55. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
+8. Preserve the existing workflow sequence. Conditional frontend taste routing does not create a new default workflow or bypass intake, spec approval, task planning, task execution, verification, review, release notes, summary, or health check.
+9. Load/apply `.skills/design-taste-frontend/SKILL.md` only when a task or work surface involves frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
+10. Do not apply `.skills/design-taste-frontend/SKILL.md` for backend-only, API-only, database-only, auth-only, test-only, or docs-only tasks.
+11. For mixed frontend/backend tasks, apply `.skills/design-taste-frontend/SKILL.md` only to the frontend UI work. Backend, API, database, auth, test-only, and docs-only work proceeds without the taste skill.
+12. When the skill is applied, record this exact line in task evidence and downstream workflow artifacts: `Applied skill: design-taste-frontend`.
+13. Do not create a separate taste skill.
+14. Ask focused clarifying questions before implementation unless the prompt explicitly says `skip questions`.
+15. Keep asking until there is about 90% understanding of the request.
+16. Clarify the goal, users, exact behavior, edge cases, UI/API expectations, data model, constraints, success criteria, and out-of-scope items.
+17. If the request is tiny and obvious, ask fewer questions, but still avoid touching code until the spec and task plan exist.
+18. Do not touch code during the questioning phase.
+19. If the user says `skip questions`, generate a best-effort spec and clearly record assumptions.
+20. No implementation is allowed without a saved spec in `<artifact-root>/spec.md`.
+21. No task plan may be generated until the saved spec has explicit user approval.
+22. No implementation is allowed without a saved task plan in `<artifact-root>/tasks.md`.
+23. Before planning, read `<artifact-root>/handoff.md` if it exists, `<artifact-root>/progress.md`, and the latest relevant file in `<artifact-root>/summary.md`.
+24. Before touching code for any task, read `<artifact-root>/handoff.md`, `<artifact-root>/progress.md`, and the latest relevant file in `<artifact-root>/summary.md`.
+25. Read `RUN_WORKFLOW.md` before planning or editing.
+26. Read `docs/PROJECT_CONTEXT.md` and relevant supporting docs before implementation, updating them only when durable project facts change.
+27. Generate the active spec at `<artifact-root>/spec.md`.
+28. Display the spec summary and path, then stop for explicit approval using the approval gate in `RUN_WORKFLOW.md`.
+29. Generate a vertical task plan in `<artifact-root>/tasks.md` from the approved saved spec.
+30. Tasks must be vertical slices of user-visible or independently verifiable value, not vague frontend/backend/database layers.
+31. Break work into Ralph Wiggum-style tasks: small, literal, safe, sequential steps that are easy to follow and hard to misinterpret.
+32. Implement tasks sequentially, one task at a time.
+33. Keep changes scoped to the active task.
+34. Never implement unrelated work.
+35. Every task must move through `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`.
+36. Every executable task must run through Iteration 1 Build, Iteration 2 Refine, and Iteration 3 Polish before it can be marked `Done`.
+37. For every code-changing task, each Build, Refine, and Polish iteration must embed TDD-first Red -> Green -> Refactor: write or update the failing test first, verify the expected failure, implement the smallest passing change, verify tests pass, refactor without changing behavior, and verify tests still pass.
+38. Each iteration must include documented goal, changes made, test plan, Red phase evidence, Green phase evidence, Refactor phase evidence, test commands run, verification command/result, review findings, acceptance status, remaining issues, and next action.
+39. Allowed terminal task states are `Done`, `Blocked`, and `Needs Human Review`.
+40. A task cannot be `Done` unless all three iterations are complete, verification was attempted in each iteration, the task was reviewed in each iteration, and final acceptance is complete.
+41. A code-changing task cannot be `Done` unless relevant tests were added or updated first, the failing test was observed before implementation when possible, passing verification was recorded after implementation and after refactor, and any missing-test exception is explicitly justified.
+42. A task cannot move to `Reviewed` unless verification was attempted.
+43. If verification cannot run, the task can be `Needs Human Review`, not `Done`.
+44. Never skip verification. If verification cannot run, document the reason and the best available manual check.
+45. Record acceptance results for every task. A task cannot be `Done` unless every required acceptance criterion is checked `[x]`; `[ ]` or `[~]` means `Blocked` or `Needs Human Review`.
+46. If verification fails during any iteration, follow the failure recovery protocol inside that iteration: identify the failing command, capture the error, classify the failure, fix only in-scope issues, rerun the exact failing command, and stop with `Needs Human Review` if targeted recovery does not prove the task.
+47. After each task, append progress to `<artifact-root>/progress.md`, including separate iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, and any failure recovery notes.
+48. After each task, update `<artifact-root>/handoff.md` so it reflects the latest completed task, current task, current iteration, current phase, blockers, dirty worktree status, verification status, acceptance status, iteration evidence status, and next step.
+49. Always keep `<artifact-root>/handoff.md` current; do not leave handoff stale after task execution.
+50. The handoff file should allow another agent/session to resume without rereading the entire conversation.
+51. `continue workflow` must start from `<artifact-root>/handoff.md`.
+52. If `<artifact-root>/handoff.md` conflicts with `<artifact-root>/progress.md`, trust `<artifact-root>/progress.md` for completed task history and update handoff accordingly.
+53. Before final review and summary, run or document the final diff audit with `git diff --stat` and `git diff` when available.
+54. After all executable tasks are complete or a stop condition is reached, create a review file in `<artifact-root>/review.md`.
+55. After review, create release notes in `<artifact-root>/release-notes.md`.
+56. After release notes are complete, create or append a summary in `<artifact-root>/summary.md` and update `<artifact-root>/handoff.md`.
+57. Record meaningful architecture or product decisions in `_decisions/`; do not create decision files for routine edits.
+58. Before the final response, run the workflow health check.
+59. Continue to the next task only when the current task completed Build -> Refine -> Polish, is verified, reviewed, documented, all required TDD evidence for code-changing tasks is documented or explicitly excepted, all required acceptance criteria are met, and safe to continue.
+60. Stop if scope is unclear, risky, destructive, unverified, blocked, or requires unavailable access.
+61. Final review, release notes, and summary must represent the full completed request or documented stop state, not only the first task.
 
 ## Required Workflow
 

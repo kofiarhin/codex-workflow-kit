@@ -1,46 +1,55 @@
-# Verification: Fix Missing Parallel Template Files
+# Verification: Conditional Frontend Skill Routing
 
 ## Request
-Fix the missing parallel template file issue in codex-workflow-kit.
+Implement conditional frontend skill routing in this repo.
 
-## Spec And Task Plan
-- Spec: `_workflow/runs/main/spec.md`
-- Task plan: `_workflow/runs/main/tasks.md`
+## Spec File Used
+`_workflow/runs/main/spec.md`
 
-## Commands Run
-- `Test-Path templates\_workflow\runs\parallel\claims.md; Test-Path templates\_workflow\runs\parallel\locks.md; Test-Path templates\_workflow\runs\parallel\agent-status.md`
-  - Result: passed; all returned `True`.
-- `rg "Task ID|Worker ID|Branch|Worktree Path|Run ID|Claim Status|Start Time|End Time|Files Expected|Files Changed|Verification Status|Notes" templates\_workflow\runs\parallel\claims.md`
-  - Result: passed; header with all fields found.
-- `rg "File Path|Lock Owner|Worker ID|Task ID|Run ID|Reason|Lock Status|Acquired At|Released At|Notes" templates\_workflow\runs\parallel\locks.md`
-  - Result: passed; header with all fields found.
-- `rg "Worker ID|Role|Branch|Worktree Path|Run ID|Current Task|Changed Files|Verification Result|Blocker|Final Status|Notes" templates\_workflow\runs\parallel\agent-status.md`
-  - Result: passed; header with all fields found.
-- `rg "$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md|$TEMPLATE_ROOT/_workflow/runs/parallel/locks.md|$TEMPLATE_ROOT/_workflow/runs/parallel/agent-status.md" scripts\install.sh`
-  - Result: passed; installer copy lines found.
-- `bash -n scripts/install.sh`
-  - Result: passed.
-- `rg` consistency checks across `README.md`, `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `templates/_workflow/runs/README.md`, `templates/WORK_REQUEST.md`, and `scripts/install.sh`
-  - Result: passed; run-scoped request state, compatibility-only `WORK_REQUEST.md`, source template path, installed template path, branch/worktree memory, and no shared active artifact wording found.
-- `git diff --no-index -- RUN_WORKFLOW.md templates\RUN_WORKFLOW.md`
-  - Result: passed; no content differences, line-ending warnings only.
+## Task Plan Used
+`_workflow/runs/main/tasks.md`
+
+## Frontend Taste Application
+Not applicable to this implementation. This task changed workflow docs and validation, not frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
+
+## Commands And Results
+
+- `node scripts/validate-frontend-skill-routing.js`
+  - Red result before implementation: failed with `MODULE_NOT_FOUND`.
+  - Green result after implementation: passed with `frontend skill routing validation passed`.
+- `npm run test:workflow-routing`
+  - Passed.
+- Targeted stale wording check:
+  - Command: `rg -n "\.agents/skills/design-taste-frontend|If the request touches frontend/UI|when frontend/UI surfaces are in scope|Carry the skill through|For frontend work|Frontend Taste Skill Detection|frontend taste skill detection" RUN_WORKFLOW.md AGENTS.md templates/RUN_WORKFLOW.md templates/AGENTS.md`
+  - Passed by returning no stale broad/default matches after refinement.
+- Targeted required routing check:
+  - Command: `rg -n "\.skills/design-taste-frontend/SKILL.md|Applied skill: design-taste-frontend|frontend UI code generation|JSX/TSX markup|CSS/Tailwind styling|backend-only|API-only|database-only|auth-only|test-only|docs-only|mixed frontend/backend|only to the frontend UI work" RUN_WORKFLOW.md AGENTS.md templates/RUN_WORKFLOW.md templates/AGENTS.md`
+  - Passed; required terms were found in all required docs/templates.
+- `npm test`
+  - Passed.
+  - Client: 1 test file, 7 tests passed.
+  - Server: 5 test suites, 14 tests passed.
+  - Existing React Router future-flag warnings appeared during client tests.
 - `git diff --check`
-  - Result: passed; line-ending warnings only.
+  - Passed with line-ending warnings only.
 - `git diff --stat`
-  - Result: ran; tracked diff matched requested docs/workflow artifact scope. Untracked template files are visible in `git status --short`.
+  - Ran for final diff audit.
 - `git diff`
-  - Result: ran; tracked diff showed requested documentation and workflow artifact changes only.
+  - Ran for final diff audit.
 - `git status --short`
-  - Result: ran; showed requested tracked docs/workflow artifacts and untracked parallel template directories.
+  - Ran before and after implementation.
 
-## Final Audit Answers
-1. Were the 3 parallel template files created? `Yes`. They exist under `templates/_workflow/runs/parallel/` and contain required fields including `Notes`.
-2. Does `scripts/install.sh` install them? `Yes`. It copies `$TEMPLATE_ROOT/_workflow/runs/parallel/claims.md`, `locks.md`, and `agent-status.md` to `_workflow/runs/parallel/`.
-3. Is README aligned? `Yes`. It documents run-scoped request state, compatibility-only `WORK_REQUEST.md`, no shared active workflow artifacts, and `templates/_workflow/runs/parallel/`.
-4. Is RUN_WORKFLOW aligned? `Yes`. Root and template workflow prompts both describe run-scoped request state and source/installed parallel template paths.
-5. Is WORK_REQUEST compatibility-only? `Yes`. `templates/WORK_REQUEST.md` marks it optional/manual compatibility input only.
-6. Can long-lived worktrees (`main`, `dev`, `redesign`) now run without workflow-state merge conflicts? `Yes` for workflow state. Active workflow artifacts are under `_workflow/runs/<run-id>/`; normal source files can still conflict like any git workflow.
-7. Remaining gaps: None for the requested scope.
+## Acceptance Verification
 
-## Verdict
-PASSED
+- [x] Frontend UI task triggers conditional routing in executable validation.
+- [x] Backend-only task does not trigger conditional routing in executable validation.
+- [x] Mixed frontend/backend task applies only to frontend UI work in executable validation.
+- [x] Required docs/templates reference `.skills/design-taste-frontend/SKILL.md`.
+- [x] Required docs/templates require `Applied skill: design-taste-frontend`.
+- [x] Required docs/templates include trigger and non-trigger categories.
+- [x] Required docs/templates include mixed frontend/backend guidance.
+- [x] No new dependencies were added.
+- [x] `.skills/design-taste-frontend/SKILL.md` was not edited.
+
+## Final Result
+Passed.
