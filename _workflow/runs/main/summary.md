@@ -218,3 +218,78 @@ None.
 
 ## Next Recommended Work
 Commit the conditional routing update.
+
+---
+
+# Summary: polish-ui Workflow
+
+## Request
+Add a reusable `polish-ui` workflow path that activates only for UI redesign/polish/refinement tasks, preserves the default workflow, keeps existing frontend skill routing intact, reuses `.skills/design-taste-frontend/SKILL.md`, and creates/uses `.workflow/artifacts/polish-ui/`.
+
+## Spec File Used
+`_workflow/runs/main/spec.md`
+
+## Detailed Spec Completeness
+Complete. All required detailed spec sections are present. No missing sections needed repair before planning.
+
+## Task Plan Used
+`_workflow/runs/main/tasks.md`
+
+## Review File Used
+`_workflow/runs/main/review.md`
+
+## Tasks Completed
+- `TASK-001: Add polish-ui workflow routing and validation`
+
+## Iteration Evidence Summary
+- Build: Added failing `polish-ui` routing validation, observed the expected missing-doc failure, implemented classifier/docs/templates/scaffold, then refactored the script exports.
+- Refine: Added stricter validation for screenshot fallback, scaffold files, existing skill presence, and no new taste skill; observed the expected AGENTS fallback failure, then fixed docs/templates.
+- Polish: Ran full tests/build, helper import check, diff checks, final audit, and completed final artifacts.
+
+## Files Changed
+- `RUN_WORKFLOW.md`
+- `templates/RUN_WORKFLOW.md`
+- `AGENTS.md`
+- `templates/AGENTS.md`
+- `scripts/validate-frontend-skill-routing.js`
+- `.workflow/artifacts/polish-ui/*`
+- `_workflow/runs/main/request.md`
+- `_workflow/runs/main/spec.md`
+- `_workflow/runs/main/tasks.md`
+- `_workflow/runs/main/progress.md`
+- `_workflow/runs/main/handoff.md`
+- `_workflow/runs/main/verification.md`
+- `_workflow/runs/main/review.md`
+- `_workflow/runs/main/release-notes.md`
+- `_workflow/runs/main/summary.md`
+
+## Verification Run
+See `_workflow/runs/main/verification.md`.
+
+## Acceptance Results
+- [x] `polish-ui` is documented in root/template workflow docs.
+- [x] Default workflow remains intact.
+- [x] Existing conditional frontend taste routing remains intact.
+- [x] `polish-ui` reuses `.skills/design-taste-frontend/SKILL.md` before and after implementation.
+- [x] `Applied skill: design-taste-frontend` is required for polish-ui taste application evidence.
+- [x] `.workflow/artifacts/polish-ui/` scaffold exists.
+- [x] Polish prompts classify as `polish-ui`.
+- [x] Backend-only tasks do not classify as `polish-ui`.
+- [x] Frontend generation tasks still use existing conditional routing.
+- [x] Validation proves no new taste skill was created.
+- [x] Available checks were run and passed.
+
+## Failure Recovery Notes
+None.
+
+## Final Diff Audit
+`git diff --stat` and `git diff` ran. Diff matches the saved spec. `git status --short` shows expected modified workflow docs/templates/script/run artifacts and untracked `.workflow/` scaffold. No app runtime files, dependencies, secrets, deployment config, database/schema files, or `.skills/design-taste-frontend/SKILL.md` edits were found.
+
+## Release Notes File Used
+`_workflow/runs/main/release-notes.md`
+
+## Unresolved Issues
+None.
+
+## Next Recommended Work
+Commit the polish-ui workflow update.

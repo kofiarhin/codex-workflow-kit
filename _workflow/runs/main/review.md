@@ -1,7 +1,7 @@
-# Review: Conditional Frontend Skill Routing
+# Review: polish-ui Workflow
 
 ## Request
-Implement conditional frontend skill routing in this repo.
+Add a reusable `polish-ui` workflow path while preserving the default workflow, existing frontend skill routing, and `.skills/design-taste-frontend/SKILL.md` reuse.
 
 ## Spec File Used
 `_workflow/runs/main/spec.md`
@@ -10,51 +10,37 @@ Implement conditional frontend skill routing in this repo.
 `_workflow/runs/main/tasks.md`
 
 ## Tasks Reviewed
-- `TASK-001: Add conditional taste routing and validation`
-
-## Iteration Evidence Reviewed
-- Iteration 1 Build: Red failure captured for missing validation script, then validation passed after implementation.
-- Iteration 2 Refine: Stale broad wording and numbering issues were found and fixed; validation remained green.
-- Iteration 3 Polish: Full checks, final targeted routing checks, and diff audit ran.
-
-## TDD-First Evidence Reviewed
-- Relevant validation was added before completing the behavior change.
-- Initial Red evidence: missing validation script failed with `MODULE_NOT_FOUND`.
-- Additional Red evidence: stale wording and duplicate numbering were detected in refinement before fixes.
-- Green evidence: focused validation and full tests passed.
-- Refactor evidence: checks remained green after wording cleanup and numbering repair.
+- `TASK-001: Add polish-ui workflow routing and validation`
 
 ## Bugs Found
-None remaining.
+None.
 
 ## Scope Creep Check
-Passed. Changes stayed within workflow docs/templates, a small validation script, package script, and run-scoped workflow artifacts. No frontend app, backend API, database, auth, deployment, dependency, or skill-file changes were made.
+Passed. Changes are limited to workflow docs/templates, the existing routing validation script, the requested `.workflow/artifacts/polish-ui/` scaffold, and run-scoped workflow artifacts.
 
 ## Final Diff Audit
-- `git diff --stat` and `git diff` ran.
+- `git diff --stat` ran.
+- `git diff` ran.
 - Diff matches the saved spec.
-- Workflow sequence was preserved while the existing frontend taste detection step was rewritten as conditional task/work-surface routing.
-- Tests/fixtures were added via `scripts/validate-frontend-skill-routing.js` and `npm run test:workflow-routing`.
-- No generated junk was found.
-- No secrets or sensitive values were added.
-- Untracked `.skills/` remains present as a pre-existing input location; `.skills/design-taste-frontend/SKILL.md` was not edited.
+- `.workflow/artifacts/polish-ui/` is untracked in normal `git diff` output until added, but `git status --short` shows the scaffold.
+- No app runtime files under `client/` or `server/` were changed.
+- No dependencies, deployment config, database/schema files, or env files were changed.
+- No secrets or credentials were added.
+- `.skills/design-taste-frontend/SKILL.md` was not edited.
 
 ## Failure Recovery Notes
 None.
 
 ## Missing Tests
-None for the requested scope. The new validation is intentionally no-dependency and focused on the three required examples.
+None for the requested workflow behavior. Validation was added to the existing routing script and broad repo tests/build passed.
 
 ## Security Concerns
-None.
+None found.
 
 ## Architecture Concerns
-None. No new default workflow or separate taste skill was introduced.
+None. The default workflow remains intact; `polish-ui` is documented as a specialized workflow path only for UI polish/redesign/refinement prompts.
 
-## Frontend Taste Skill Compliance
-Not applicable to this implementation because no frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish was performed.
-
-## Follow-Up Tasks
+## Follow-up Tasks
 None required.
 
 ## Final Review Verdict

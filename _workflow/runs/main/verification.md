@@ -1,55 +1,45 @@
-# Verification: Conditional Frontend Skill Routing
+# Verification: polish-ui Workflow
 
 ## Request
-Implement conditional frontend skill routing in this repo.
+Add a reusable `polish-ui` workflow path while preserving the default workflow and existing conditional frontend skill routing.
 
-## Spec File Used
-`_workflow/runs/main/spec.md`
-
-## Task Plan Used
-`_workflow/runs/main/tasks.md`
-
-## Frontend Taste Application
-Not applicable to this implementation. This task changed workflow docs and validation, not frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
-
-## Commands And Results
+## Commands Run
 
 - `node scripts/validate-frontend-skill-routing.js`
-  - Red result before implementation: failed with `MODULE_NOT_FOUND`.
-  - Green result after implementation: passed with `frontend skill routing validation passed`.
+  - Red 1: failed with `RUN_WORKFLOW.md must document the polish-ui workflow path`.
+  - Red 2: failed with `AGENTS.md must document the polish-ui screenshot fallback`.
+  - Final result: passed.
 - `npm run test:workflow-routing`
-  - Passed.
-- Targeted stale wording check:
-  - Command: `rg -n "\.agents/skills/design-taste-frontend|If the request touches frontend/UI|when frontend/UI surfaces are in scope|Carry the skill through|For frontend work|Frontend Taste Skill Detection|frontend taste skill detection" RUN_WORKFLOW.md AGENTS.md templates/RUN_WORKFLOW.md templates/AGENTS.md`
-  - Passed by returning no stale broad/default matches after refinement.
-- Targeted required routing check:
-  - Command: `rg -n "\.skills/design-taste-frontend/SKILL.md|Applied skill: design-taste-frontend|frontend UI code generation|JSX/TSX markup|CSS/Tailwind styling|backend-only|API-only|database-only|auth-only|test-only|docs-only|mixed frontend/backend|only to the frontend UI work" RUN_WORKFLOW.md AGENTS.md templates/RUN_WORKFLOW.md templates/AGENTS.md`
-  - Passed; required terms were found in all required docs/templates.
+  - Result: passed.
+- Targeted `rg` checks for `polish-ui`, `.workflow/artifacts/polish-ui/`, `.skills/design-taste-frontend/SKILL.md`, `Applied skill: design-taste-frontend`, screenshot fallback, and no new taste skill.
+  - Result: passed.
+- `Get-ChildItem .workflow/artifacts/polish-ui -Recurse -File`
+  - Result: required scaffold files exist, including `before/.gitkeep` and `after/.gitkeep`.
+- Helper import check with `node -e`
+  - Result: passed.
 - `npm test`
-  - Passed.
-  - Client: 1 test file, 7 tests passed.
-  - Server: 5 test suites, 14 tests passed.
-  - Existing React Router future-flag warnings appeared during client tests.
+  - Result: passed. Client: 7 tests passed. Server: 14 tests passed. React Router future-flag warnings were emitted by existing client tests.
+- `npm run build`
+  - Result: passed.
 - `git diff --check`
-  - Passed with line-ending warnings only.
+  - Result: passed with line-ending warnings only.
 - `git diff --stat`
-  - Ran for final diff audit.
+  - Result: ran.
 - `git diff`
-  - Ran for final diff audit.
+  - Result: ran.
 - `git status --short`
-  - Ran before and after implementation.
+  - Result: ran.
 
 ## Acceptance Verification
 
-- [x] Frontend UI task triggers conditional routing in executable validation.
-- [x] Backend-only task does not trigger conditional routing in executable validation.
-- [x] Mixed frontend/backend task applies only to frontend UI work in executable validation.
-- [x] Required docs/templates reference `.skills/design-taste-frontend/SKILL.md`.
-- [x] Required docs/templates require `Applied skill: design-taste-frontend`.
-- [x] Required docs/templates include trigger and non-trigger categories.
-- [x] Required docs/templates include mixed frontend/backend guidance.
-- [x] No new dependencies were added.
-- [x] `.skills/design-taste-frontend/SKILL.md` was not edited.
+- [x] `polish ui` and equivalent prompts classify as `polish-ui`.
+- [x] Backend-only tasks do not classify as `polish-ui`.
+- [x] Frontend generation tasks still use existing conditional frontend taste routing and are not swallowed by `polish-ui`.
+- [x] `polish-ui` reuses `.skills/design-taste-frontend/SKILL.md`.
+- [x] No `.skills/polish-ui` or `.skills/polish-ui/SKILL.md` exists.
+- [x] `.workflow/artifacts/polish-ui/` scaffold exists.
+- [x] Default workflow preservation is documented.
+- [x] Screenshot fallback is documented.
 
-## Final Result
+## Final Status
 Passed.

@@ -1,10 +1,10 @@
 # Current Workflow Handoff
 
 ## Current Request
-Implement conditional frontend skill routing in this repo.
+Add a reusable `polish-ui` workflow to this repo without replacing the default workflow, changing existing frontend skill routing, or duplicating `.skills/design-taste-frontend/SKILL.md`.
 
 ## Request ID
-2026-05-26-conditional-frontend-skill-routing
+2026-05-26-polish-ui-workflow
 
 ## Current Phase
 Complete.
@@ -40,7 +40,7 @@ complete-workflow
 `_workflow/runs/main/summary.md`
 
 ## Last Completed Task
-`TASK-001: Add conditional taste routing and validation`
+`TASK-001: Add polish-ui workflow routing and validation`
 
 ## Current Task
 None.
@@ -52,7 +52,7 @@ None. Build, Refine, and Polish are complete.
 None.
 
 ## Dirty Worktree Status
-Final status shows expected modified workflow docs/templates, package script, run-scoped workflow artifacts, new `scripts/validate-frontend-skill-routing.js`, and untracked `.skills/`. `.skills/design-taste-frontend/SKILL.md` was not edited.
+Final status is expected to show modified workflow docs/templates, routing validation script, run-scoped artifacts, and untracked `.workflow/` scaffold. No unrelated dirty files were present before this workflow. `.skills/design-taste-frontend/SKILL.md` was not edited.
 
 ## Acceptance Status
 All acceptance criteria checked `[x]`.
@@ -73,7 +73,7 @@ None.
 - Last completed safe checkpoint: Review, verification, release notes, summary, progress, and handoff are complete.
 - Files already changed: See `_workflow/runs/main/summary.md`.
 - Files planned next: None.
-- Tests already run: `node scripts/validate-frontend-skill-routing.js`, `npm run test:workflow-routing`, targeted `rg` checks, `npm test`, `git diff --check`, `git diff --stat`, `git diff`, `git status --short`.
+- Tests already run: `node scripts/validate-frontend-skill-routing.js`, `npm run test:workflow-routing`, targeted `rg` checks, scaffold listing, helper import check, `npm test`, `npm run build`, `git diff --check`, `git diff --stat`, `git diff`, `git status --short`.
 - Exact next command/action: Final response or commit if requested.
 - Safe to continue automatically: No remaining workflow work.
 

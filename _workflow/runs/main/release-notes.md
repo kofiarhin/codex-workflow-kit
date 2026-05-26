@@ -1,18 +1,16 @@
-# Release Notes: Conditional Frontend Skill Routing
+# Release Notes: polish-ui Workflow
 
 ## Request
-Implement conditional frontend skill routing in this repo.
+Add a reusable `polish-ui` workflow path.
 
 ## User-Facing Changes
-No application user-facing changes.
+- Added documented support for UI polish prompts such as `polish ui`, `redesign ui`, `improve this interface`, `make this screen production-ready`, `visual polish pass`, and `refine this frontend`.
+- Added `.workflow/artifacts/polish-ui/` as the reusable artifact structure for polish-specific evidence and workflow outputs.
 
 ## Developer Changes
-- Updated root workflow docs and install templates to apply `.skills/design-taste-frontend/SKILL.md` only for frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
-- Added explicit exclusions for backend-only, API-only, database-only, auth-only, test-only, and docs-only tasks.
-- Added mixed frontend/backend guidance so the skill applies only to frontend UI work.
-- Added the exact required record line: `Applied skill: design-taste-frontend`.
-- Added `scripts/validate-frontend-skill-routing.js`.
-- Added `npm run test:workflow-routing`.
+- Extended `scripts/validate-frontend-skill-routing.js` with a minimal `classifyWorkflowPath` helper and `polish-ui` validation.
+- Preserved existing conditional frontend taste routing.
+- Required `polish-ui` to reuse `.skills/design-taste-frontend/SKILL.md` before and after implementation.
 
 ## New Routes/APIs
 none
@@ -29,19 +27,19 @@ none
 ## Test Commands Run
 - `node scripts/validate-frontend-skill-routing.js`
 - `npm run test:workflow-routing`
-- Targeted stale wording `rg`
-- Targeted required routing `rg`
+- targeted `rg` checks
 - `npm test`
+- `npm run build`
 - `git diff --check`
 - `git diff --stat`
 - `git diff`
 - `git status --short`
 
 ## Known Limitations
-The validation script is intentionally small and checks the required examples plus required doc contract terms; it is not a general natural-language classifier.
+- Browser screenshots are not forced; the workflow records code-surface review fallback when browser automation is unavailable.
 
-## Follow-Up Work
+## Follow-up Work
 none
 
 ## Suggested Commit Message
-`feat: add conditional frontend taste skill routing`
+`feat: add polish-ui workflow path`

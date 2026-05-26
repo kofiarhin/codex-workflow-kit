@@ -1,251 +1,403 @@
-# Detailed Spec: Conditional Frontend Skill Routing
+# Detailed Spec: polish-ui Workflow
 
 ## 1. Metadata
 - Spec filename: `_workflow/runs/main/spec.md`
 - Date: 2026-05-26
-- Request ID / slug: `2026-05-26-conditional-frontend-skill-routing`
-- Request source: Latest user prompt synced to `_workflow/runs/main/request.md`
+- Request ID / slug: `2026-05-26-polish-ui-workflow`
+- Request source: latest direct user prompt plus clarification response in `_workflow/runs/main/request.md`
 - Execution mode: `complete-workflow`
-- Request classification: `feature`
-- Scope level: `medium`
-- Risk level: `medium`
+- Request classification: `feature` with workflow documentation and validation script changes
+- Scope level: medium
+- Risk level: medium
 
 ## 2. Original Request
-- Raw user request: Implement conditional frontend skill routing in this repo using `.skills/design-taste-frontend/SKILL.md`, preserving the current workflow and applying the skill only when a task involves frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish. Record application as `Applied skill: design-taste-frontend`, add/update tests or fixtures for frontend, backend-only, and mixed frontend/backend routing, run checks, and report results.
-- Normalized request: Update root workflow docs and install templates so frontend taste skill application is conditional at task/work-surface level rather than a broad default. Add the smallest executable validation for routing examples if no repo-native workflow-routing test pattern exists.
+- Raw user request: Add a reusable `polish-ui` workflow that activates for UI polish/redesign/refinement prompts, preserves the default workflow, does not change existing frontend skill routing, reuses `.skills/design-taste-frontend/SKILL.md`, creates `.workflow/artifacts/polish-ui/` artifacts, and adds validation.
+- Normalized request: Extend the existing workflow kit with a documented `polish-ui` workflow path and minimal classifier/helper support so UI polish prompts route into a structured UI discovery, baseline capture, taste audit, polish spec, vertical task plan, execution, recapture, final taste review, verification, and final artifact flow.
 - Source prompt / `<artifact-root>/request.md` reference: `_workflow/runs/main/request.md`
 
 ## 3. Questions And Answers
 - Questions asked:
-  - Should the conditional rule be applied to root workflow docs and install templates, specifically `RUN_WORKFLOW.md`, `AGENTS.md`, `templates/RUN_WORKFLOW.md`, and `templates/AGENTS.md`?
-  - Should validation use docs/fixtures or an executable script if there is no existing test pattern?
+  - Should `.workflow/artifacts/polish-ui/` be literal while `_workflow/runs/main/` remains the current run artifact root?
+  - Should `polish-ui` be only documented behavior or also backed by a small classifier/helper?
+  - Should validation extend the current workflow-routing script or use a separate script?
 - Answers received:
-  - Apply it to both root workflow docs and install templates: `RUN_WORKFLOW.md`, `AGENTS.md`, `templates/RUN_WORKFLOW.md`, and `templates/AGENTS.md`.
-  - Use executable tests/fixtures if the repo already has a test pattern. If not, add the smallest validation script possible that checks the routing examples automatically.
-- Questions skipped: None.
-- Remaining open questions: None blocking.
+  - Use literal `.workflow/artifacts/polish-ui/` for `polish-ui` artifacts, while this active run continues to use `_workflow/runs/main/`.
+  - Add `polish-ui` as documented behavior in `RUN_WORKFLOW.md` and templates, plus the smallest script/helper needed to classify polish prompts into the `polish-ui` workflow.
+  - Extend `scripts/validate-frontend-skill-routing.js` if cleanest; add a separate focused validation script only if extending becomes messy.
+  - Proceed with the spec and stop at the approval gate.
+- Questions skipped: none
+- Remaining open questions: none blocking; exact classifier function export shape can be chosen during implementation.
 
 ## 4. Problem Definition
-- Problem being solved: The workflow currently treats frontend taste skill application too broadly and references the older `.agents/skills/design-taste-frontend/SKILL.md` path in several workflow surfaces. The desired behavior is task-sensitive routing to `.skills/design-taste-frontend/SKILL.md`.
-- Why it matters: Agents should apply the design taste skill only for actual frontend UI generation or polish, avoiding unnecessary process overhead and incorrect application to backend, API, database, auth, test-only, or docs-only tasks.
-- Current pain point: Existing docs imply broad frontend/UI scope detection and carry the skill across the whole workflow once detected. That conflicts with mixed frontend/backend tasks where only frontend UI work should use the skill.
-- Expected value: Clearer agent behavior, preserved workflow sequence, and executable proof that examples route correctly.
+- Problem being solved: The workflow has conditional frontend taste skill routing, but it does not yet expose a reusable `polish-ui` workflow path for UI polish/redesign/refinement requests.
+- Why it matters: UI polish requests need more structure than generic implementation tasks because they require baseline capture, taste critique, before/after evidence, and final visual review.
+- Current pain point: Prompts like `polish ui` or `make this screen production-ready` currently rely on the default workflow and conditional taste routing, without a dedicated polish artifact model or classification proof.
+- Expected value: Agents can consistently run a UI polish process while preserving the existing workflow sequence, skill reuse, and safety checks.
 
 ## 5. Current State Analysis
-- Existing behavior: `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md` include a `Frontend Taste Skill Detection` section that applies the skill when a request touches frontend/UI surfaces and carries it through many workflow artifacts. `AGENTS.md` and `templates/AGENTS.md` contain similar frontend taste language and currently mention `.agents/skills/design-taste-frontend/SKILL.md`.
-- Existing architecture/components: This repo is a reusable workflow kit plus a MERN boilerplate. Workflow docs live at root and in `templates/`; executable scripts currently only include `scripts/install.sh`.
+- Existing behavior:
+  - `RUN_WORKFLOW.md` defines the canonical workflow sequence: request sync, dirty check, conditional frontend taste routing, spec, approval, task plan, execution, verification, review, release notes, summary, and health check.
+  - `AGENTS.md` and templates already require `.skills/design-taste-frontend/SKILL.md` only for frontend UI generation, JSX/TSX, CSS/Tailwind, UI redesign, or UI polish.
+  - `scripts/validate-frontend-skill-routing.js` validates existing taste routing examples.
+- Existing architecture/components:
+  - Root workflow docs: `RUN_WORKFLOW.md`, `AGENTS.md`.
+  - Templates: `templates/RUN_WORKFLOW.md`, `templates/AGENTS.md`.
+  - Validation: `scripts/validate-frontend-skill-routing.js` invoked by `npm run test:workflow-routing`.
+  - Current run artifacts: `_workflow/runs/main/`.
 - Existing files/modules likely involved:
   - `RUN_WORKFLOW.md`
-  - `AGENTS.md`
   - `templates/RUN_WORKFLOW.md`
+  - `AGENTS.md`
   - `templates/AGENTS.md`
-  - A small validation script and fixture location to be chosen during task planning, likely under `scripts/` and/or a lightweight fixture file.
-  - `package.json` if a new npm script is needed for the validation command.
-- Existing data flow: Agents read workflow docs, classify requests/tasks, create workflow artifacts, then execute task iterations. No runtime app data flow is involved.
-- Existing API/UI/CLI/workflow behavior: Workflow sequence is request sync, intake, dirty worktree check, skill detection, spec, approval gate, task plan, implementation, verification, review, release notes, summary, and health check. That sequence must remain intact.
-- Existing tests or verification coverage: Frontend and backend app tests exist via npm workspaces. No existing workflow-routing unit test or validation script pattern was found. `scripts/install.sh` is syntax-checked in prior workflows.
+  - `scripts/validate-frontend-skill-routing.js`
+  - `package.json` only if script naming needs adjustment
+  - `_workflow/runs/main/*` for this run's artifacts
+- Existing data flow:
+  - User prompt -> run-scoped request -> spec approval -> task plan -> task execution -> final artifacts.
+  - Existing validation script reads docs and tests prompt/category examples in process.
+- Existing API/UI/CLI/workflow behavior:
+  - No API or UI runtime behavior is affected.
+  - CLI validation currently runs with `npm run test:workflow-routing`.
+- Existing tests or verification coverage:
+  - `npm run test:workflow-routing`
+  - `npm test`
+  - `npm run build`
+  - `git diff --check`, `git diff --stat`, `git diff`
 
 ## 6. Desired End State
-- Expected final behavior: Workflow docs and templates instruct agents to load/apply `.skills/design-taste-frontend/SKILL.md` only for task portions involving frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
-- User-facing outcome: Not applicable; no app UI changes are intended.
-- Developer-facing outcome: Agents and maintainers can see exact routing rules and can run a small automatic validation proving the examples.
-- System/workflow outcome: Existing workflow sequence remains unchanged; only the conditional routing rule and its recording requirement are added.
-- Backward compatibility expectations: Existing spec approval, task planning, 3-pass hardening, TDD-first, run-scoped artifact, and final review requirements remain unchanged.
+- Expected final behavior:
+  - A documented reusable workflow path called `polish-ui` exists.
+  - UI polish/redesign/refinement prompts classify to `polish-ui`.
+  - Backend-only prompts do not classify to `polish-ui`.
+  - Frontend generation tasks continue using existing conditional frontend taste skill routing and are not replaced by `polish-ui`.
+  - `polish-ui` reuses `.skills/design-taste-frontend/SKILL.md` before implementation for audit/critique and after implementation for final UI review.
+- User-facing outcome:
+  - Users can ask for UI polish using phrases like `polish ui`, `redesign ui`, `improve this interface`, `make this screen production-ready`, `visual polish pass`, or `refine this frontend`, and the agent has clear workflow instructions.
+- Developer-facing outcome:
+  - Maintainers have small validation proving trigger behavior and skill reuse.
+- System/workflow outcome:
+  - Default workflow remains intact.
+  - Existing frontend skill routing remains intact.
+  - `polish-ui` artifacts use `.workflow/artifacts/polish-ui/`.
+- Backward compatibility expectations:
+  - Existing docs, templates, and `npm run test:workflow-routing` should continue to support current conditional frontend routing behavior.
 
 ## 7. Scope
 - In scope:
-  - Update `RUN_WORKFLOW.md`, `AGENTS.md`, `templates/RUN_WORKFLOW.md`, and `templates/AGENTS.md`.
-  - Change taste skill path references for this rule to `.skills/design-taste-frontend/SKILL.md`.
-  - Add explicit trigger and non-trigger categories.
-  - Require exact recording line `Applied skill: design-taste-frontend` when applied.
-  - Add executable validation for three examples: frontend UI task triggers, backend-only task does not, mixed frontend/backend task applies only to frontend UI work.
-  - Run available checks and record results.
+  - Document `polish-ui` in canonical workflow docs and templates.
+  - Add or extend minimal prompt classification logic for `polish-ui`.
+  - Extend validation for:
+    - `polish ui` triggers `polish-ui`
+    - backend-only tasks do not trigger `polish-ui`
+    - frontend generation tasks still use existing conditional frontend skill routing
+    - `polish-ui` reuses `.skills/design-taste-frontend/SKILL.md`
+  - Document `.workflow/artifacts/polish-ui/` and required files/directories.
+  - Preserve current workflow sequence and approval gate.
 - Out of scope:
-  - Creating a new default workflow.
-  - Creating a separate taste skill.
+  - Creating a new frontend taste skill.
   - Editing `.skills/design-taste-frontend/SKILL.md`.
-  - Changing frontend app components, backend APIs, database schemas, auth logic, or deployment.
+  - Replacing the default workflow.
+  - Replacing or weakening existing conditional frontend skill routing.
+  - Implementing browser screenshot automation beyond documenting fallback behavior.
+  - Changing app runtime UI/backend behavior.
 - Non-goals:
-  - Building a generalized natural-language classifier package.
-  - Replacing grill-me, spec approval, task planning, or the 3-pass hardening loop.
-- Explicit boundaries: Keep edits scoped to workflow docs/templates, minimal validation assets, package script if needed, and run-scoped workflow artifacts.
+  - Building an actual polished UI in this repo.
+  - Adding new dependencies unless a no-dependency approach proves impractical.
+- Explicit boundaries:
+  - `.workflow/artifacts/polish-ui/` is the reusable polish workflow artifact path, not the current agent run artifact root.
+  - `_workflow/runs/main/` remains the active artifact root for this implementation workflow.
 
 ## 8. Users And Use Cases
-- Primary users: AI coding agents and developers using this workflow kit.
-- Secondary users: Template consumers who install the workflow into another repo.
+- Primary users:
+  - AI coding agents operating in this repository.
+  - Developers who use the workflow kit to run UI polish work.
+- Secondary users:
+  - Maintainers reviewing workflow behavior and validation.
 - Main use cases:
-  - A frontend UI task loads/applies the design taste skill and records `Applied skill: design-taste-frontend`.
-  - A backend-only task does not load/apply the design taste skill.
-  - A mixed frontend/backend task applies the skill only before/while doing frontend UI work, not for backend/API/database work.
+  - A user asks `polish ui`; the workflow selects `polish-ui`.
+  - A user asks `make this screen production-ready`; the workflow selects `polish-ui`.
+  - A user asks for backend-only API work; the workflow does not select `polish-ui`.
+  - A user asks for frontend UI generation; the existing conditional taste skill routing still applies.
 - Edge use cases:
-  - Test-only tasks that mention frontend tests but do not generate UI should not apply the skill.
-  - Docs-only tasks that document frontend behavior should not apply the skill unless they include frontend UI code generation or markup/styling output.
+  - Mixed frontend/backend prompt: only UI polish/refinement surfaces should enter `polish-ui` or trigger taste review.
+  - Screenshot tooling unavailable: workflow falls back to code-surface review and records why.
+  - Ambiguous prompt with both UI polish and unrelated refactor: agent should clarify scope or isolate the UI polish surface.
 
 ## 9. Functional Requirements
 - Required behaviors:
-  - Preserve the current workflow sequence exactly.
-  - Conditionalize taste skill routing at task/work-surface level.
-  - Load/apply `.skills/design-taste-frontend/SKILL.md` for frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
-  - Do not apply it for backend-only, API-only, database-only, auth-only, test-only, or docs-only tasks.
-  - Record exact line `Applied skill: design-taste-frontend` whenever applied.
-  - Include mixed-task guidance stating backend work proceeds without the taste skill while frontend UI work uses it.
-  - Validate the three required examples automatically.
-- Inputs: Workflow requests/tasks and validation examples.
-- Outputs: Updated docs/templates, validation result output, and workflow artifacts.
-- State changes: Documentation and validation assets only.
-- Error states: Validation script should fail non-zero if a routing example does not match expected behavior.
-- Permissions/auth expectations: Not applicable.
+  - Define `polish-ui` as a reusable workflow path for UI redesign/polish/refinement tasks only.
+  - Specify trigger examples and exclusions.
+  - Preserve sequence: spec -> approval -> task plan -> execute -> verify -> review -> release notes -> summary -> health check.
+  - Define `polish-ui` steps:
+    1. UI Discovery
+    2. Baseline Capture
+    3. Taste Audit
+    4. UI Polish Spec
+    5. Vertical Task Plan
+    6. Execute
+    7. Re-Capture
+    8. Final Taste Review
+    9. Verification
+    10. Final Workflow Artifacts
+  - Require `.skills/design-taste-frontend/SKILL.md` before implementation and after implementation.
+  - Require recording `Applied skill: design-taste-frontend` in audit/task/review/final artifacts when used.
+  - Define `.workflow/artifacts/polish-ui/` with `spec.md`, `task-plan.md`, `progress.md`, `audit.md`, `before/`, `after/`, `review.md`, `verification.md`, `release-notes.md`, `summary.md`, and `handoff.md`.
+  - Add minimal prompt classification/helper behavior.
+  - Extend validation if clean; otherwise add a focused script.
+- Inputs:
+  - User prompt text.
+  - Repository workflow docs/templates.
+  - Existing design taste skill path.
+  - Optional browser automation availability.
+- Outputs:
+  - Updated workflow docs/templates.
+  - Updated or added validation helper/script.
+  - Passing validation output.
+  - Run-scoped workflow artifacts for this request.
+- State changes:
+  - Documentation and validation files change.
+  - No runtime app state changes.
+- Error states:
+  - Missing `.skills/design-taste-frontend/SKILL.md` should be flagged by validation or documented as a blocker.
+  - Missing browser automation should not block `polish-ui`; fallback to code review is required.
+- Permissions/auth expectations:
+  - Not applicable.
 
 ## 10. Non-Functional Requirements
-- Performance expectations: Validation should be lightweight and fast.
-- Reliability expectations: Validation should not depend on network access or app servers.
-- Security/privacy expectations: No secrets or credentials; do not expose sensitive data.
-- Accessibility expectations: Not applicable; no UI changes.
-- Maintainability expectations: Routing language should be concise, unambiguous, and mirrored in root docs/templates.
-- DX expectations: A single command should prove the routing examples; if added to `package.json`, it should be discoverable.
+- Performance expectations:
+  - Classification validation should be fast and dependency-free.
+- Reliability expectations:
+  - Validation should fail with clear error messages when routing contracts are missing.
+- Security/privacy expectations:
+  - No secrets, credentials, tokens, or environment-specific URLs.
+- Accessibility expectations:
+  - `polish-ui` audit checklist must include UI states and mobile UX; accessibility can be considered during UI review where relevant.
+- Maintainability expectations:
+  - Keep docs and templates aligned.
+  - Prefer extending the existing routing validation script over adding new tooling if clean.
+- DX expectations:
+  - `npm run test:workflow-routing` should remain the focused command for routing validation unless a strong reason requires a new script.
 
 ## 11. Affected Surfaces
 - Files likely affected:
   - `RUN_WORKFLOW.md`
-  - `AGENTS.md`
   - `templates/RUN_WORKFLOW.md`
+  - `AGENTS.md`
   - `templates/AGENTS.md`
-  - `package.json` if adding a validation script entry
-  - A new minimal validation script and/or fixtures, likely under `scripts/`
-  - `_workflow/runs/main/*` workflow artifacts
-- Directories likely affected: `templates/`, `scripts/`, `_workflow/runs/main/`
-- UI surfaces: Not applicable; this implementation does not alter app UI.
+  - `scripts/validate-frontend-skill-routing.js`
+  - `package.json` if script metadata changes are needed
+  - `_workflow/runs/main/request.md`
+  - `_workflow/runs/main/spec.md`
+  - `_workflow/runs/main/tasks.md`
+  - `_workflow/runs/main/progress.md`
+  - `_workflow/runs/main/handoff.md`
+  - `_workflow/runs/main/review.md`
+  - `_workflow/runs/main/verification.md`
+  - `_workflow/runs/main/release-notes.md`
+  - `_workflow/runs/main/summary.md`
+- Directories likely affected:
+  - `scripts/`
+  - `templates/`
+  - `_workflow/runs/main/`
+  - `.workflow/artifacts/polish-ui/` may be documented; actual directory creation should occur only if implementation decides artifact scaffolding is required to satisfy acceptance.
+- UI surfaces: Not applicable.
 - API routes: Not applicable.
 - Components: Not applicable.
 - Services: Not applicable.
 - Database/schema: Not applicable.
-- Config/env vars: No env vars. `package.json` scripts may be touched for validation.
-- Tests: Minimal executable validation for routing examples.
-- Docs: Root workflow docs and install templates.
-- Workflow artifacts: Request, handoff, spec, tasks, progress, verification, review, release notes, summary.
+- Config/env vars: Not applicable.
+- Tests:
+  - `scripts/validate-frontend-skill-routing.js`
+  - `npm run test:workflow-routing`
+- Docs:
+  - Workflow documentation and templates.
+- Workflow artifacts:
+  - Current run artifacts under `_workflow/runs/main/`.
+  - Reusable polish artifact path documented as `.workflow/artifacts/polish-ui/`.
 
 ## 12. Dependency And Integration Map
 - Internal dependencies:
-  - Root docs should align with template docs.
-  - Validation should inspect or encode the same trigger/non-trigger expectations documented in the workflow.
-  - `scripts/install.sh` may not need changes unless the new validation assets are intended to install into target repos.
-- External packages/services: None expected.
+  - `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md` should remain aligned.
+  - `AGENTS.md` and `templates/AGENTS.md` should remain aligned on operating rules.
+  - Validation reads docs and asserts routing contracts.
+- External packages/services:
+  - None expected.
 - Integration points:
-  - `npm test` already runs app workspace tests.
-  - A new script may be added as a focused validation command if no existing pattern fits.
+  - `npm run test:workflow-routing`.
+  - Existing `npm test` and `npm run build` checks.
 - Ordering constraints:
-  - Spec approval before task planning.
+  - Spec approval before task plan.
   - Task plan before implementation.
-  - Validation red phase before doc/script implementation when feasible.
-- Migration/setup requirements: None.
+  - Validation Red -> Green -> Refactor evidence before marking code-changing tasks done.
+- Migration/setup requirements:
+  - None.
 
 ## 13. Data And State Impact
 - Data models: Not applicable.
-- Database changes: None.
-- State management changes: None.
-- Cache/session/local storage impact: None.
-- Backward compatibility impact: Workflow docs remain compatible with existing sequence and modes.
+- Database changes: none.
+- State management changes: none.
+- Cache/session/local storage impact: none.
+- Backward compatibility impact:
+  - Existing workflow commands and routing should continue working.
+  - The default workflow remains the fallback.
 
 ## 14. UX / API / Workflow Expectations
-- UX expectations: Not applicable for application UX.
-- API contract expectations: Not applicable.
+- UX expectations:
+  - Not applicable to runtime UI.
+  - The `polish-ui` workflow itself should instruct agents to evaluate spacing, hierarchy, typography, color, responsiveness, motion, loading states, empty states, error states, card overuse, generic AI patterns, and mobile UX issues.
+- API contract expectations:
+  - Not applicable.
 - CLI/workflow behavior:
-  - Existing workflow sequence remains unchanged.
-  - Conditional taste routing occurs when evaluating task scope or a mixed task's frontend UI sub-work.
-  - When applied, artifacts/evidence include `Applied skill: design-taste-frontend`.
-  - When not applied, artifacts can record not applicable without the applied line.
-- Error handling expectations: Validation command fails clearly when expected examples no longer match.
-- Empty/loading/success/failure states: Not applicable.
+  - `polish-ui` activates only for UI redesign/polish/refinement prompts.
+  - Backend-only tasks do not activate `polish-ui`.
+  - Frontend generation tasks still use current conditional frontend taste routing.
+  - Screenshot capture is best-effort when browser automation exists; code-surface review is the fallback.
+- Error handling expectations:
+  - Classifier validation should report clear failures.
+  - Workflow docs should tell agents to record screenshot/tooling gaps rather than forcing screenshots.
+- Empty/loading/success/failure states:
+  - `polish-ui` audit checklist must include loading, empty, and error states for target UI surfaces.
 
 ## 15. Execution Strategy
 - Recommended implementation approach:
-  - First add a minimal executable validation that encodes the three required routing examples and initially fails against the current workflow wording or missing validation assets.
-  - Update root docs and templates with conditional routing language and `.skills/design-taste-frontend/SKILL.md` path.
-  - Keep workflow ordering text intact; edit only the skill detection/routing language and supporting health/review references as needed.
-  - Add a discoverable command if appropriate.
+  - Update `RUN_WORKFLOW.md` with a dedicated `polish-ui` section near conditional frontend taste routing or workflow classification.
+  - Mirror the relevant `RUN_WORKFLOW.md` changes into `templates/RUN_WORKFLOW.md`.
+  - Update `AGENTS.md` and `templates/AGENTS.md` only as needed to make agent operating rules aware of `polish-ui` without changing existing frontend routing.
+  - Extend `scripts/validate-frontend-skill-routing.js` with small prompt classifier helpers such as `classifyWorkflowPath(prompt)` and assertions for `polish-ui`.
+  - Keep `npm run test:workflow-routing` as the primary focused validation command if the same script remains clean.
 - Suggested sequencing:
-  - `TASK-001`: Add route validation fixtures/script and prove current failure.
-  - `TASK-002`: Update root workflow docs and install templates to satisfy conditional routing.
-  - `TASK-003`: Polish mirrors, run full checks, and finalize workflow artifacts.
-- Safe rollout/migration approach: Documentation-only behavior change plus local validation; no app runtime migration.
-- Files to inspect before editing: The four required docs/templates, `package.json`, `scripts/install.sh`, and current validation/test conventions.
-- Decisions to avoid until more evidence exists: Do not add dependencies; do not create a generalized classifier library unless the simple script cannot prove requirements.
+  1. Add failing validation expectations for `polish-ui` classification and skill reuse.
+  2. Implement minimal classifier/helper.
+  3. Update workflow docs/templates to satisfy validation.
+  4. Refine wording to preserve default workflow and existing taste routing.
+  5. Run focused and broad verification.
+- Safe rollout/migration approach:
+  - Docs and no-dependency script changes only.
+- Files to inspect before editing:
+  - `RUN_WORKFLOW.md`
+  - `templates/RUN_WORKFLOW.md`
+  - `AGENTS.md`
+  - `templates/AGENTS.md`
+  - `scripts/validate-frontend-skill-routing.js`
+  - `package.json`
+- Decisions to avoid until more evidence exists:
+  - Do not introduce a new package.
+  - Do not create a new taste skill.
+  - Do not modify app runtime files.
 
 ## 16. Verification Strategy
 - Required automated checks:
-  - New focused routing validation command.
-  - `npm test` if feasible after adding the validation command or at least relevant workspace tests if full test is too broad.
-  - Targeted `rg` checks for exact path, exact applied record line, trigger categories, non-trigger categories, mixed-task guidance, and absence of stale broad-default wording.
-  - Mirror/alignment checks between root and template workflow docs where appropriate.
-  - `git diff --check`, `git diff --stat`, and `git diff`.
+  - `node scripts/validate-frontend-skill-routing.js`
+  - `npm run test:workflow-routing`
+  - `npm test`
+  - `npm run build`
+  - `git diff --check`
+  - `git diff --stat`
+  - `git diff`
+  - `git status --short`
 - Required manual checks:
-  - Confirm workflow sequence was not reordered.
-  - Confirm no new default workflow or separate taste skill was created.
-  - Confirm `.skills/design-taste-frontend/SKILL.md` was not edited.
-- Test types needed: Small executable fixture/script validation for routing examples.
-- Build/lint/typecheck expectations: No lint/typecheck scripts are currently defined at root. `npm test` and focused validation should be attempted.
-- Acceptance evidence required: Passing validation output for frontend, backend-only, and mixed examples, plus targeted text checks.
-- Proof of completion: Review, verification, release notes, summary, and final response list checks run and results.
+  - Confirm diff preserves the default workflow.
+  - Confirm existing conditional frontend skill routing language remains intact.
+  - Confirm no new taste skill is created and `.skills/design-taste-frontend/SKILL.md` is not edited.
+  - Confirm `.workflow/artifacts/polish-ui/` is documented or scaffolded exactly as required.
+- Test types needed:
+  - No-dependency Node validation for classification and doc contract.
+  - Existing repo tests/build for regression confidence.
+- Build/lint/typecheck expectations:
+  - No lint/typecheck script is currently defined.
+  - `npm run build` should pass.
+- Acceptance evidence required:
+  - Red/Green/Refactor evidence for validation script changes.
+  - Focused validation output proving required trigger/non-trigger examples.
+  - Final diff audit.
+- Proof of completion:
+  - Review, verification, release notes, summary, and handoff completed for this workflow run.
 
 ## 17. Acceptance Criteria
-- [ ] `RUN_WORKFLOW.md`, `AGENTS.md`, `templates/RUN_WORKFLOW.md`, and `templates/AGENTS.md` preserve the existing workflow sequence.
-- [ ] The only behavior rule added is conditional routing to `.skills/design-taste-frontend/SKILL.md` for frontend UI code generation, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish.
-- [ ] The workflow explicitly does not apply the skill for backend-only, API-only, database-only, auth-only, test-only, or docs-only tasks.
-- [ ] Mixed frontend/backend guidance applies the skill only to frontend UI work.
-- [ ] The exact record line `Applied skill: design-taste-frontend` is required whenever the skill is applied.
-- [ ] No new default workflow is created.
-- [ ] No separate taste skill is created.
-- [ ] Executable validation proves frontend UI triggers, backend-only does not, and mixed frontend/backend applies only to frontend UI work.
-- [ ] Available checks are run and reported.
+- [ ] `RUN_WORKFLOW.md` and `templates/RUN_WORKFLOW.md` document `polish-ui` as a reusable workflow path for UI redesign/polish/refinement tasks only.
+- [ ] The default workflow remains intact and is not replaced by `polish-ui`.
+- [ ] Existing conditional frontend taste skill routing remains intact for frontend generation/markup/styling work.
+- [ ] `polish-ui` documentation requires `.skills/design-taste-frontend/SKILL.md` before implementation and after implementation.
+- [ ] `polish-ui` documentation requires recording `Applied skill: design-taste-frontend`.
+- [ ] `.workflow/artifacts/polish-ui/` and all required files/directories are documented or scaffolded exactly as requested.
+- [ ] Minimal classifier/helper logic classifies `polish ui` and equivalent polish prompts as `polish-ui`.
+- [ ] Backend-only tasks do not classify as `polish-ui`.
+- [ ] Frontend generation tasks still trigger existing conditional frontend skill routing rather than being swallowed by `polish-ui`.
+- [ ] Validation proves `polish-ui` reuses `.skills/design-taste-frontend/SKILL.md` and does not create a new taste skill.
+- [ ] Available repo checks are run and results are recorded.
 
 ## 18. Edge Cases And Failure Modes
 - Edge cases:
-  - A task mentions React tests but does not generate UI; treat as test-only unless UI generation/styling/polish is part of the task.
-  - Auth-only backend work should not apply the skill even if the app has a login UI elsewhere.
-  - Mixed task should not globally mark the whole task as taste-applied for backend parts.
+  - Prompt includes both backend API work and UI polish: route only UI polish work through `polish-ui` or ask for scope clarification.
+  - Prompt says `refine frontend` but asks for data fetching only: classify based on actual UI polish/refinement surface, not keyword alone if context clearly says non-UI work.
+  - Browser automation unavailable: record fallback to code-surface review.
+  - No frontend app detected: record discovery result and stop or ask, depending on request.
 - Failure modes:
-  - Docs keep stale `.agents/skills/design-taste-frontend/SKILL.md` references for the routing rule.
-  - Validation is too broad and passes despite docs not containing the required exact record line.
-  - Workflow sequence is accidentally reordered.
+  - Overbroad classifier routes backend-only prompts into `polish-ui`.
+  - Docs accidentally imply `polish-ui` replaces default workflow.
+  - Existing taste routing gets duplicated or weakened.
+  - Validation hard-codes too much prose and becomes brittle.
 - Regression risks:
-  - Removing existing approval gate or 3-pass hardening language while editing nearby sections.
-  - Desynchronizing root and template docs.
-- Recovery expectations: Use targeted diff review and exact text checks; if validation fails, fix only the in-scope doc/script issue and rerun the failing command.
+  - `RUN_WORKFLOW.md` and template drift.
+  - Validation script complexity grows beyond its current simple contract checks.
+- Recovery expectations:
+  - Keep classifier simple and test examples explicitly.
+  - Use targeted `rg` checks for no new taste skill and preserved default workflow language.
 
 ## 19. Risks And Mitigations
 - Technical risks:
-  - Risk: Adding a script without a test runner could be overbuilt.
-  - Mitigation: Use the smallest no-dependency Node or shell script.
-- Product/UX risks: None for app UX.
-- Security risks: Low; avoid reading secrets and do not add env vars.
+  - Prompt classification can be too broad. Mitigation: include positive and negative examples in validation.
+  - Validation script can become messy. Mitigation: factor tiny helper functions and only split script if necessary.
+- Product/UX risks:
+  - `polish-ui` may be confused with normal frontend generation. Mitigation: docs distinguish polish/refinement from generation.
+- Security risks:
+  - Low; no secrets or auth changes.
 - Scope risks:
-  - Risk: Existing workflow docs contain several taste-skill references, increasing accidental broader refactor risk.
-  - Mitigation: Limit edits to routing/path/recording language and validation.
-- Mitigation plan: Keep patches small, run mirror checks, review `git diff` carefully.
+  - Adding runtime UI changes or new skill files would exceed scope. Mitigation: acceptance explicitly forbids these.
+- Mitigation plan:
+  - Keep implementation limited to docs/templates/script and run-scoped artifacts.
 
 ## 20. Assumptions
 - Explicit assumptions:
-  - `.skills/design-taste-frontend/SKILL.md` is an existing skill source and should not be modified.
-  - No existing workflow-routing validation pattern exists, so a small validation script is acceptable.
-  - Root docs and install templates are the required durable surfaces; README updates are not required unless implementation discovers a direct inconsistency.
-- Confidence level: High.
-- What to revisit if assumptions are wrong: If a hidden workflow test harness exists, use it instead of adding a new validation script.
+  - `AGENTS.md` and `templates/AGENTS.md` may be updated if needed to keep agent operating rules consistent.
+  - Extending `scripts/validate-frontend-skill-routing.js` will be clean enough.
+  - No new npm dependency is needed.
+  - The literal `.workflow/artifacts/polish-ui/` path can coexist with `_workflow/runs/<run-id>/`.
+- Confidence level: high
+- What to revisit if assumptions are wrong:
+  - If validation becomes hard to maintain, add a separate focused script and document why.
+  - If `.workflow/` conflicts with repo conventions, preserve the user's literal path but document the distinction clearly.
 
 ## 21. Open Questions
-- Blocking questions: None.
-- Non-blocking questions: Whether the new validation script should be installed into downstream repos; default assumption is no unless the docs/templates need it.
-- Execution impact: None.
+- Blocking questions: none
+- Non-blocking questions:
+  - Whether to physically scaffold `.workflow/artifacts/polish-ui/` now or document it as the required runtime path for future polish runs.
+- Execution impact:
+  - Non-blocking; the task plan can decide based on acceptance and diff cleanliness.
 
 ## 22. Task Extraction Notes
 - Suggested vertical task boundaries:
-  - One task can cover validation and routing docs because the behavior is tightly coupled and small.
-  - A second finalization task can cover verification, artifacts, and release notes if the first task grows too large.
-- Suggested first task: Add a minimal executable routing validation and update the four required workflow docs/templates until it passes.
-- Suggested task ordering: Validation red phase first, docs/templates implementation second, final checks/artifacts third.
-- Areas that should not become separate tasks: App frontend, backend API, database, auth, deployment, or skill-file edits.
-- How the 3-pass Build -> Refine -> Polish loop should apply: Each iteration should use Red -> Green -> Refactor for the validation/doc change where feasible: failing validation first, minimal docs/script change to pass, cleanup/mirror verification after refactor.
+  - One likely task can cover the workflow docs/templates, classifier validation, and final artifacts because the requested behavior is a tightly coupled workflow contract.
+  - If split is needed, use:
+    - `TASK-001: Add polish-ui routing validation and classifier`
+    - `TASK-002: Document polish-ui workflow and artifacts`
+    - `TASK-003: Verify routing preservation and finalize artifacts`
+- Suggested first task:
+  - `TASK-001: Add polish-ui workflow routing and validation`
+- Suggested task ordering:
+  - Start with failing validation expectations, then docs/helper implementation, then verification/final artifacts.
+- Areas that should not become separate tasks:
+  - Creating a new design taste skill.
+  - Editing runtime frontend/backend app behavior.
+  - Browser screenshot automation.
+- How the 3-pass Build -> Refine -> Polish loop should apply:
+  - Build: Add failing validation examples and initial docs/helper.
+  - Refine: Tighten classifier exclusions and docs/template alignment.
+  - Polish: Run full checks, final diff audit, and write review/release/summary/handoff.
 
 ## 23. Frontend Taste Application
-- Applicable or `Not applicable`: Not applicable for this implementation task.
-- Detection result and reason: This request changes workflow documentation and validation for when future tasks should apply a frontend skill. It does not generate frontend UI code, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish. Therefore `.skills/design-taste-frontend/SKILL.md` was inspected as an input path but not applied to this docs/test implementation work.
-- Required propagation points: The implemented workflow rule must require future applicable tasks to record `Applied skill: design-taste-frontend` in task evidence/artifacts. This current run should record taste application as not applicable in tasks/review/verification/release notes/summary/health check unless frontend UI implementation is unexpectedly introduced.
+- Applicable or `Not applicable`: Not applicable to this implementation task as no frontend UI code, JSX/TSX markup, CSS/Tailwind styling, UI redesign, or UI polish is being performed in the repo UI itself.
+- Detection result and reason: This request changes workflow documentation and routing validation. It specifies future use of `.skills/design-taste-frontend/SKILL.md` inside `polish-ui`, but does not require applying the skill to current app UI.
+- Required propagation points:
+  - The implemented `polish-ui` workflow must require `Applied skill: design-taste-frontend` in polish audit, task evidence, final UI review, review, verification, release notes, summary, and health check when the `polish-ui` workflow is actually run.
+  - This current run should record that the frontend taste skill file was reused as a referenced workflow dependency and was not edited.

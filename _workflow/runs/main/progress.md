@@ -1,6 +1,40 @@
+## 2026-05-26 - polish-ui-workflow intake
+
+- Status: Spec saved; waiting for approval.
+- Lifecycle transition reached: Request synced -> clarification received -> spec saved -> approval gate.
+- Files changed: `_workflow/runs/main/request.md`, `_workflow/runs/main/handoff.md`, `_workflow/runs/main/progress.md`, `_workflow/runs/main/spec.md`.
+- Dirty worktree protection: Initial `git status --short` was clean before request sync. Current dirty files are expected run-scoped workflow artifacts for this intake.
+- Request summary: Add a reusable `polish-ui` workflow for UI redesign/polish/refinement triggers while preserving the default workflow and existing conditional frontend skill routing. Reuse `.skills/design-taste-frontend/SKILL.md` before and after UI implementation.
+- Clarifications received: Use literal `.workflow/artifacts/polish-ui/`; continue using `_workflow/runs/main/` for this run; add documented workflow behavior plus smallest classifier/helper; extend existing validation script if cleanest.
+- Spec file: `_workflow/runs/main/spec.md`
+- Questions pending: none blocking.
+- Next step: Wait for explicit spec approval before creating `_workflow/runs/main/tasks.md`.
+
 # Progress Log
 
 Agents must read this file before planning and before touching code for each task.
+
+## 2026-05-26 - TASK-001: Add polish-ui workflow routing and validation
+
+- Status: Done
+- Lifecycle transition reached: `Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done`
+- Files changed: `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `AGENTS.md`, `templates/AGENTS.md`, `scripts/validate-frontend-skill-routing.js`, `.workflow/artifacts/polish-ui/*`, `_workflow/runs/main/request.md`, `_workflow/runs/main/spec.md`, `_workflow/runs/main/tasks.md`, `_workflow/runs/main/progress.md`, `_workflow/runs/main/handoff.md`, `_workflow/runs/main/verification.md`, `_workflow/runs/main/review.md`, `_workflow/runs/main/release-notes.md`, `_workflow/runs/main/summary.md`.
+- Dirty worktree protection: Initial `git status --short` was clean before request sync. Dirty files during execution were expected run-scoped artifacts and in-scope workflow docs/templates/script/scaffold files. No unrelated dirty files were present.
+- Test plan: Extend focused workflow routing validation first, run targeted checks, run full repo tests/build, run diff checks and final diff audit.
+- Red phase evidence: Iteration 1 `node scripts/validate-frontend-skill-routing.js` failed with `RUN_WORKFLOW.md must document the polish-ui workflow path`. Iteration 2 failed with `AGENTS.md must document the polish-ui screenshot fallback`.
+- Green phase evidence: Focused validation passed after docs/helper/artifact updates. `npm run test:workflow-routing` passed. `npm test` passed with client 7 tests and server 14 tests. `npm run build` passed.
+- Refactor phase evidence: Validation script was refactored to export helper functions without import side effects; helper import check passed. Targeted `rg` checks passed. `git diff --check` passed with line-ending warnings only.
+- Test commands run: `node scripts/validate-frontend-skill-routing.js`; `npm run test:workflow-routing`; targeted `rg`; `Get-ChildItem .workflow/artifacts/polish-ui -Recurse -File`; helper import command; `npm test`; `npm run build`; `git diff --check`; `git diff --stat`; `git diff`; `git status --short`.
+- Iteration evidence:
+  - Iteration 1 - Build: Added failing validation expectations for `polish-ui`, then implemented minimal classifier, docs/templates, AGENTS guidance, and scaffold files. Validation passed after implementation and script refactor.
+  - Iteration 2 - Refine: Tightened validation for screenshot fallback, scaffold existence, existing skill presence, and no new taste skill. Red failure identified missing AGENTS fallback guidance; after updating AGENTS/template, validation and targeted checks passed.
+  - Iteration 3 - Polish: Ran full tests/build, helper import check, diff checks, final audit, and wrote final workflow artifacts. Missing-test exception: no new Red phase in Polish because the code-changing behavior was already covered by Iterations 1 and 2; Polish focused on regression and final artifact verification.
+- Acceptance result: all criteria checked `[x]`.
+- Verification result: Passed. See `_workflow/runs/main/verification.md`.
+- Failure recovery notes: none.
+- Review result: Reviewed. No app runtime files changed; no new dependencies, secrets, new taste skill, or `.skills/design-taste-frontend/SKILL.md` edits.
+- Blockers: none.
+- Next step: Final response.
 
 Append a new entry after each task. Do not replace previous entries except to correct factual errors.
 

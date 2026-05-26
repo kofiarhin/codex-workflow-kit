@@ -37,6 +37,13 @@ Customize placeholders before using this in a production project. MERN is the de
   - `<artifact-root>/summary.md`
   - `<artifact-root>/release-notes.md`
   - `_decisions/`
+- Reusable `polish-ui` workflow artifacts:
+  - Use `.workflow/artifacts/polish-ui/` for polish-specific evidence and artifacts.
+  - Activate `polish-ui` only for UI redesign, UI polish, and frontend interface refinement tasks such as `polish ui`, `redesign ui`, `improve this interface`, `make this screen production-ready`, `visual polish pass`, and `refine this frontend`.
+  - Keep the default workflow intact and keep existing conditional frontend taste routing for frontend UI code generation, JSX/TSX markup, and CSS/Tailwind styling.
+  - Reuse `.skills/design-taste-frontend/SKILL.md` before implementation for audit and after implementation for final UI review.
+  - Record `Applied skill: design-taste-frontend` whenever the taste skill is applied.
+  - Do not force screenshots when browser automation is unavailable; use code-surface review as the fallback.
 - Supporting docs:
   - `docs/PROJECT_CONTEXT.md`
   - `docs/ARCHITECTURE.md`
