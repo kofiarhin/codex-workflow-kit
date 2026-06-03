@@ -1,16 +1,16 @@
-# Review (run: work)
+# Review: Implement Fallow Quality Layer
 
-- Request: First-class conditional `design-taste-frontend` workflow skill integration.
-- Spec: `_workflow/runs/work/spec.md`
-- Task plan: `_workflow/runs/work/tasks.md`
-- Tasks reviewed: TASK-001, TASK-002, TASK-003
-- Bugs found: none
-- Scope creep check: none
-- Final diff audit:
-  - `git diff --stat` and `git diff` reviewed.
-  - Includes skill template, installer copy line, workflow-template rules, and README docs.
-  - Includes frontend taste skill compliance wording updates in workflow docs.
-- Missing tests: none required (docs/scripts change only)
-- Security concerns: none
-- Architecture concerns: none
-- Final review verdict: Approved
+- Request: Implement Fallow as a reusable workflow quality layer.
+- Spec file used: `_workflow/runs/work/spec.md`
+- Task plan used: `_workflow/runs/work/tasks.md`
+- Tasks reviewed: TASK-001.
+- Bugs found: none in scope.
+- Scope creep check: no broad cleanup/refactor performed; Fallow findings documented as exceptions.
+- Final diff audit: changes are additive workflow/layer docs, installer copy steps, Fallow files, and workflow artifacts.
+- Failure recovery notes: Fallow primary audit returned exit_code 2 for missing base branch; fallback parsed successfully.
+- Missing tests: no dedicated tests for docs-only changes; existing workflow routing validation passed.
+- Security concerns: telemetry remains prohibited; remote config `extends` is treated as untrusted.
+- Architecture concerns: none.
+- Follow-up tasks: consider dedicated cleanup workflow for Fallow findings.
+- Fallow verdict: PARTIAL.
+- Final review verdict: Passed with documented Fallow PARTIAL audit.

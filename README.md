@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task iteration and after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
+request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task iteration and after each task -> final diff audit -> run-scoped review and verification -> Fallow Quality audit in .workflow/fallow-audit.md -> release notes, summary, and handoff -> health check
 ```
 
 The grill-me skill is the workflow intake engine.
@@ -22,6 +22,8 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `AGENTS.md`: Repository operating rules for coding agents.
 - `.agents/skills/grill-me/SKILL.md`: The workflow intake skill. Replaces the old generic clarification phase with focused, one-question-at-a-time intake that produces a Shared Understanding Handoff before the spec is written.
 - `.agents/skills/design-taste-frontend/SKILL.md`: Conditional frontend taste/design engineering skill used whenever work touches frontend/UI surfaces.
+- `layers/fallow-quality/SKILL.md` and `layers/fallow-quality/references/`: Official Fallow skill files stored locally for the reusable Fallow Quality layer.
+- `.workflow/fallow-audit.md`: Mandatory Fallow Quality audit report created after review and before handoff, release notes, and final health check.
 - `_workflow/runs/<run-id>/spec.md`: Saved detailed execution blueprint for one branch/worktree run.
 - `_workflow/runs/<run-id>/tasks.md`: Saved vertical task plan generated from the approved spec.
 - `_workflow/runs/<run-id>/progress.md`: Append-only task progress log for that run.
@@ -63,6 +65,7 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Append progress after each task inside the current run directory.
 - Run a final diff audit with `git diff --stat` and `git diff` before review and summary.
 - Write a review in `_workflow/runs/<run-id>/review.md`.
+- Run Fallow Quality after tests/lint/typecheck/build and review, using JSON commands with `--quiet --explain 2>/dev/null || true`, then write `.workflow/fallow-audit.md`.
 - Write release notes in `_workflow/runs/<run-id>/release-notes.md`.
 - Produce a final summary, workflow health status, final artifact checklist, and suggested commit message.
 
@@ -172,6 +175,15 @@ templates/
     skills/
       grill-me/
         SKILL.md
+  layers/
+    fallow-quality/
+      SKILL.md
+      references/
+        cli-reference.md
+        gotchas.md
+        patterns.md
+  .workflow/
+    fallow-audit.md
   _workflow/
     index.md
     runs/
@@ -236,7 +248,7 @@ Example:
 workflow add battle history with saved results, detail view, and delete action
 ```
 
-Codex should automatically treat that prompt as the active request, detect the branch/worktree/run id/artifact root, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, then detect frontend scope and apply `.agents/skills/design-taste-frontend/SKILL.md` when applicable, sync the normalized request into `_workflow/runs/<run-id>/request.md`, run dirty worktree protection, generate a detailed execution blueprint spec in the current run directory, show the spec path and summary, stop for explicit approval, generate a vertical task plan from that approved blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, create release notes, summarize, and run a health check.
+Codex should automatically treat that prompt as the active request, detect the branch/worktree/run id/artifact root, invoke the grill-me intake skill at `.agents/skills/grill-me/SKILL.md` to build shared understanding, then detect frontend scope and apply `.agents/skills/design-taste-frontend/SKILL.md` when applicable, sync the normalized request into `_workflow/runs/<run-id>/request.md`, run dirty worktree protection, generate a detailed execution blueprint spec in the current run directory, show the spec path and summary, stop for explicit approval, generate a vertical task plan from that approved blueprint, execute all tasks sequentially through Build -> Refine -> Polish, record iteration evidence and acceptance results, update progress and handoff after each task, run a final diff audit, write a workflow review only after the full request is complete or stopped, run the Fallow Quality layer, create release notes, summarize, and run a health check.
 
 Manual editing of root `WORK_REQUEST.md`, `_workflow/runs/<run-id>/`, or `_decisions/` is optional, not required. Root `WORK_REQUEST.md` is compatibility/manual only; active runs use `_workflow/runs/<run-id>/request.md`.
 
@@ -365,7 +377,7 @@ Worker pool rules:
 
 No two workers may claim tasks with overlapping file locks. P0 tasks are claimed before P1 tasks, and P1 tasks before P2 tasks. Among same-priority tasks, choose the lowest dependency risk and lowest merge risk first.
 
-### Step 7: Write Review, Summary, And Health Check
+### Step 7: Write Review, Run Fallow Quality, Summary, And Health Check
 
 After each task, the agent appends to:
 
@@ -386,11 +398,14 @@ After the workflow completes, the agent creates or appends:
 
 ```txt
 _workflow/runs/<run-id>/review.md
+.workflow/fallow-audit.md
 _workflow/runs/<run-id>/release-notes.md
 _workflow/runs/<run-id>/summary.md
 ```
 
 The review file records request, spec file used, task plan used, tasks reviewed, bugs found, scope creep check, final diff audit, failure recovery notes, missing tests, security concerns, architecture concerns, follow-up tasks, and final review verdict.
+
+The Fallow audit file records the command run, parsed JSON summary, findings, fixes applied, remaining exceptions, verification, and a `PASSED`, `PARTIAL`, or `FAILED` verdict.
 
 The release notes file records request, user-facing changes, developer changes, iteration evidence summary, new routes/APIs, new env vars, database/schema changes, dependencies added/removed, test commands run, known limitations, follow-up work, and suggested commit message. If none apply, the file says `none` or states that there are no user-facing changes.
 
@@ -404,7 +419,7 @@ Health checks confirm:
 
 - `_workflow/runs/<run-id>/request.md` synced.
 - Root `WORK_REQUEST.md` was not auto-updated for active state.
-- Spec, task plan, progress, review, release notes, and summary artifacts exist.
+- Spec, task plan, progress, review, `.workflow/fallow-audit.md`, release notes, and summary artifacts exist.
 - The detailed spec includes every required section, or missing sections were repaired before planning.
 - Dirty worktree protection ran.
 - Acceptance results were completed.
@@ -412,10 +427,12 @@ Health checks confirm:
 - TDD-first evidence was completed for every code-changing task, or a missing-test exception was explicitly justified.
 - Final diff audit was completed or documented.
 - Verification commands ran or were documented.
+- Tests/lint/typecheck/build statuses were recorded.
+- Fallow verdict was recorded and matched `.workflow/fallow-audit.md`.
 - Scope was respected.
 - Decisions were recorded when needed.
 
-If release notes, final diff audit, dirty worktree check, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
+If release notes, `.workflow/fallow-audit.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
 
 ## Final Artifact Checklist
 
@@ -550,9 +567,10 @@ Default: `complete-workflow`.
 12. Continue to the next task automatically only when the current task is `Done`.
 13. Run the final diff audit.
 14. Write the workflow review in `_workflow/runs/<run-id>/review.md` after all executable tasks complete or a stop condition is reached.
-15. Write release notes in `_workflow/runs/<run-id>/release-notes.md`.
-16. Write the final summary in `_workflow/runs/<run-id>/summary.md` and update `_workflow/runs/<run-id>/handoff.md`.
-17. Run the workflow health check and include the final artifact checklist.
+15. Run the Fallow Quality layer and write `.workflow/fallow-audit.md`.
+16. Write release notes in `_workflow/runs/<run-id>/release-notes.md`.
+17. Write the final summary in `_workflow/runs/<run-id>/summary.md` and update `_workflow/runs/<run-id>/handoff.md`.
+18. Run the workflow health check and include the final artifact checklist.
 
 ## Request Types
 
@@ -639,7 +657,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> detect branch/worktree/run id/artifact root -> grill-me intake skill -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> _workflow/runs/<run-id>/spec.md -> show spec path and summary -> wait for explicit approval -> _workflow/runs/<run-id>/tasks.md -> all task execution through Build -> Refine -> Polish -> acceptance results + run-scoped progress + handoff after each task -> final diff audit -> run-scoped review -> release notes -> summary -> handoff -> health check
+direct prompt -> detect branch/worktree/run id/artifact root -> grill-me intake skill -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> _workflow/runs/<run-id>/spec.md -> show spec path and summary -> wait for explicit approval -> _workflow/runs/<run-id>/tasks.md -> all task execution through Build -> Refine -> Polish -> acceptance results + run-scoped progress + handoff after each task -> final diff audit -> run-scoped review -> Fallow Quality audit -> release notes -> summary -> handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, detailed current-state notes, success criteria, or acceptance criteria.
@@ -702,7 +720,7 @@ For review-only work:
 
 ```txt
 Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _workflow/runs/<run-id>/, and _decisions/. Report bugs, regressions, missing tests, and scope creep first. Do not edit files.
-Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _workflow/runs/<run-id>/, and _decisions/. Report bugs, regressions, missing tests, final diff audit gaps, acceptance result gaps, and scope creep first. Do not edit files.
+Review the current diff against AGENTS.md, RUN_WORKFLOW.md, _workflow/runs/<run-id>/, and _decisions/. Report bugs, regressions, missing tests, Fallow Quality gaps, final diff audit gaps, acceptance result gaps, and scope creep first. Do not edit files.
 ```
 
 ## Customizing For Other Stacks
@@ -714,7 +732,7 @@ To use this kit outside MERN:
 - Update folder structure and architecture rules in `docs/ARCHITECTURE.md`.
 - Replace verification commands in generated `_workflow/runs/<run-id>/tasks.md` plans.
 - Keep the same questions, detailed spec, vertical tasks, progress, review, summary, decisions, and health-check loop.
-- Keep the same dirty worktree protection, acceptance results, failure recovery protocol, final diff audit, release notes, and health-check loop.
+- Keep the same dirty worktree protection, acceptance results, failure recovery protocol, final diff audit, Fallow Quality audit, release notes, and health-check loop.
 
 ## Example MERN SaaS Workflow
 
