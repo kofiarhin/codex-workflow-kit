@@ -1,62 +1,31 @@
-# Progress Log (run: work)
+# Progress
 
-## 2026-05-25
+## 2026-06-03 TASK-001: Add Fallow Quality as a mandatory workflow layer
 
-- Task: Update workflow docs for token budget + resume safety.
-- Iteration: Build.
-- Status: Completed.
-- Files changed:
-  - templates/RUN_WORKFLOW.md
-  - README.md
-  - templates/.agents/skills/grill-me/SKILL.md
-- Notes:
-  - Added Token Budget / Resume Safety Protocol.
-  - Added Low Token Stop Protocol and Crash/Interrupted Resume Protocol.
-  - Updated continue workflow resume ordering and safety checks.
-  - Added iteration-level progress/handoff update requirements.
-- Next prompt:
-  - continue workflow
+- Status: Done
+- Lifecycle transition reached: Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+- Files changed: workflow docs/templates, installer, Fallow layer files, Fallow audit report, workflow artifacts.
+- Iteration 1 Build: fetched official Fallow files and added core workflow layer guidance.
+- Iteration 2 Refine: added template parity, installer coverage, README and prompts updates.
+- Iteration 3 Polish: ran verification and Fallow audit, created `.workflow/fallow-audit.md`.
+- Test plan: npm checks plus Fallow primary/fallback JSON parse.
+- Red phase evidence: missing-test exception for documentation-only change; no product behavior code changed.
+- Green phase evidence: `npm test`, `npm run build`, and `npm run test:workflow-routing` passed.
+- Refactor phase evidence: docs/templates reviewed for required Fallow rules.
+- Test commands run: `npm test`; `npm run build`; `npm run test:workflow-routing`; `npm run lint`; `npm run typecheck`; `npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true`; `npx fallow --format json --quiet --explain 2>/dev/null || true`.
+- Acceptance result: all acceptance criteria met.
+- Verification result: Passed for test/build/routing/lint/typecheck; Fallow verdict PARTIAL due documented non-blocking findings and local missing `main` ref for primary audit with successful fallback.
+- Failure recovery notes: Fallow primary now uses `--base main` and returned exit_code 2 because this local checkout has no `main` ref; fallback produced parseable JSON.
+- Review result: scope respected; no Fallow fixes applied.
+- Blockers: none.
+- Next step: final commit and PR.
 
-## 2026-05-25 (verification + artifact completion)
+## 2026-06-03 PR #3 audit feedback update
 
-- Task: Address PR fixes and complete run artifacts.
-- Iteration: Polish.
-- Status: Completed.
-- Files changed:
-  - README.md
-  - templates/RUN_WORKFLOW.md
-  - _workflow/runs/work/spec.md
-  - _workflow/runs/work/tasks.md
-  - _workflow/runs/work/review.md
-  - _workflow/runs/work/verification.md
-  - _workflow/runs/work/release-notes.md
-  - _workflow/runs/work/summary.md
-- Verification evidence:
-  - `rg -n "Token Budget / Resume Safety Protocol|Low Token Stop Protocol|Crash/Interrupted Resume Protocol|Token / Resume State|continue workflow" README.md templates/RUN_WORKFLOW.md` passed.
-  - `bash -n scripts/install.sh` passed.
-- Notes:
-  - Fixed RUN_WORKFLOW numbering: Token section is 1A, Continue Workflow is 1B.
-  - Fixed Continue Workflow list numbering sequence.
-  - Fixed README handoff/progress update cadence wording.
-
-## 2026-05-25 (design-taste-frontend integration)
-
-- Task: Add first-class conditional `design-taste-frontend` skill across templates/workflow/installer/docs.
-- Iterations: Build/Refine/Polish completed for docs+script scope.
-- Status: Done.
-- Files changed:
-  - templates/.agents/skills/design-taste-frontend/SKILL.md
-  - scripts/install.sh
-  - templates/AGENTS.md
-  - templates/RUN_WORKFLOW.md
-  - README.md
-  - _workflow/runs/work/tasks.md
-- Verification evidence:
-  - `bash -n scripts/install.sh` passed.
-  - `shellcheck scripts/install.sh` skipped (not available in environment).
-  - `git diff --stat` executed.
-  - `git diff` executed.
-- Acceptance:
-  - New skill template added verbatim.
-  - Installer now copies both grill-me and design-taste-frontend skills.
-  - Workflow docs include frontend taste detection + late discovery pause/update behavior.
+- Status: Done
+- Files changed: package scripts, Fallow command references, audit/follow-up artifacts, workflow evidence.
+- Verification result: `npm test`, `npm run build`, `npm run test:workflow-routing`, `npm run lint`, and `npm run typecheck` passed.
+- Fallow result: primary `npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true` returned exit_code 2 because no local `main` ref exists; fallback parsed JSON `kind=combined`.
+- Fallow verdict: PARTIAL.
+- Remaining findings documentation: `.workflow/fallow-followups.md`.
+- Next step: commit and update PR.
