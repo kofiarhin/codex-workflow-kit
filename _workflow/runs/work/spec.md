@@ -39,7 +39,7 @@
 - Expected final behavior: Fallow Quality runs after tests/lint/typecheck/build and review, before handoff/release/health.
 - User-facing outcome: workflow users get local Fallow files and a mandatory `.workflow/fallow-audit.md` report.
 - Developer-facing outcome: installer copies the layer and workflow docs document mandatory command rules.
-- System/workflow outcome: final health checks verify `.workflow/spec.md`, `.workflow/task-plan.md`, `.workflow/handoff.md`, `.workflow/release-notes.md`, `.workflow/fallow-audit.md`, verification status, and Fallow verdict.
+- System/workflow outcome: final health checks verify `.workflow/spec.md`, `.workflow/task-plan.md`, `.workflow/handoff.md`, `.workflow/release-notes.md`, `.workflow/fallow-audit.md`, `.workflow/fallow-followups.md` when findings remain, verification status, and Fallow verdict.
 - Backward compatibility expectations: Existing workflow sequence and run-scoped artifacts remain intact.
 
 ## 7. Scope
@@ -52,7 +52,7 @@
 - Primary users: AI coding agents running this workflow.
 - Secondary users: developers installing the workflow kit.
 - Main use cases: quality gate, cleanup intelligence, PR risk and health review.
-- Edge use cases: primary `audit` command cannot detect base branch and fallback command is required.
+- Edge use cases: primary `audit --base main` command requires a local `main` ref and fallback command is required when that ref is unavailable.
 
 ## 9. Functional Requirements
 - Required behaviors: store official Fallow files; read/extract rules; use JSON quiet explain commands with stderr discarded; document filters/fix safety; create audit report; update health checks.
@@ -112,10 +112,10 @@
 - Decisions to avoid until more evidence exists: auto-fixing Fallow findings.
 
 ## 16. Verification Strategy
-- Required automated checks: `npm test`, `npm run build`, `npm run test:workflow-routing`, Fallow primary/fallback JSON parse.
+- Required automated checks: `npm test`, `npm run build`, `npm run test:workflow-routing`, `npm run lint`, `npm run typecheck`, Fallow primary/fallback JSON parse.
 - Required manual checks: verify docs contain required command rules and order.
 - Test types needed: existing workflow routing validation plus documentation review.
-- Build/lint/typecheck expectations: build passes; lint/typecheck scripts may be absent and documented.
+- Build/lint/typecheck expectations: build passes; lint/typecheck scripts run safe workspace delegates.
 - Acceptance evidence required: audit file and Fallow verdict.
 - Proof of completion: committed docs/layer files and passing verification.
 
@@ -125,10 +125,11 @@
 - [x] Mandatory Fallow command rules and report format are documented.
 - [x] Installer copies the Fallow layer.
 - [x] `.workflow/fallow-audit.md` exists with required sections and verdict.
-- [x] Final health check requirements include `.workflow/*`, verification statuses, and Fallow verdict.
+- [x] `.workflow/fallow-followups.md` exists because findings remain.
+- [x] Final health check requirements include `.workflow/*`, verification statuses, follow-up artifact when findings remain, and Fallow verdict.
 
 ## 18. Edge Cases And Failure Modes
-- Edge cases: audit base branch detection unavailable; fallback required.
+- Edge cases: `main` ref unavailable in local checkout; fallback required.
 - Failure modes: malformed JSON, missing report, blocking maintainability findings.
 - Regression risks: docs/templates drift.
 - Recovery expectations: use fallback and document PARTIAL if non-blocking findings remain.

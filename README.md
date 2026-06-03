@@ -24,6 +24,7 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `.agents/skills/design-taste-frontend/SKILL.md`: Conditional frontend taste/design engineering skill used whenever work touches frontend/UI surfaces.
 - `layers/fallow-quality/SKILL.md` and `layers/fallow-quality/references/`: Official Fallow skill files stored locally for the reusable Fallow Quality layer.
 - `.workflow/fallow-audit.md`: Mandatory Fallow Quality audit report created after review and before handoff, release notes, and final health check.
+- `.workflow/fallow-followups.md`: Follow-up cleanup artifact required when Fallow findings remain.
 - `_workflow/runs/<run-id>/spec.md`: Saved detailed execution blueprint for one branch/worktree run.
 - `_workflow/runs/<run-id>/tasks.md`: Saved vertical task plan generated from the approved spec.
 - `_workflow/runs/<run-id>/progress.md`: Append-only task progress log for that run.
@@ -65,7 +66,7 @@ AI coding agents work better with clear scope and a repeatable loop. This kit ma
 - Append progress after each task inside the current run directory.
 - Run a final diff audit with `git diff --stat` and `git diff` before review and summary.
 - Write a review in `_workflow/runs/<run-id>/review.md`.
-- Run Fallow Quality after tests/lint/typecheck/build and review, using JSON commands with `--quiet --explain 2>/dev/null || true`, then write `.workflow/fallow-audit.md`.
+- Run Fallow Quality after tests/lint/typecheck/build and review, using `npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true`, then write `.workflow/fallow-audit.md` and `.workflow/fallow-followups.md` when findings remain.
 - Write release notes in `_workflow/runs/<run-id>/release-notes.md`.
 - Produce a final summary, workflow health status, final artifact checklist, and suggested commit message.
 
@@ -419,7 +420,7 @@ Health checks confirm:
 
 - `_workflow/runs/<run-id>/request.md` synced.
 - Root `WORK_REQUEST.md` was not auto-updated for active state.
-- Spec, task plan, progress, review, `.workflow/fallow-audit.md`, release notes, and summary artifacts exist.
+- Spec, task plan, progress, review, `.workflow/fallow-audit.md`, `.workflow/fallow-followups.md` when findings remain, release notes, and summary artifacts exist.
 - The detailed spec includes every required section, or missing sections were repaired before planning.
 - Dirty worktree protection ran.
 - Acceptance results were completed.
@@ -432,7 +433,7 @@ Health checks confirm:
 - Scope was respected.
 - Decisions were recorded when needed.
 
-If release notes, `.workflow/fallow-audit.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
+If release notes, `.workflow/fallow-audit.md`, required `.workflow/fallow-followups.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health is `Partial` or `Failed` depending on severity. If any required artifact is missing, health is `Failed`.
 
 ## Final Artifact Checklist
 

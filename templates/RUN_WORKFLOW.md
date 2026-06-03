@@ -1009,7 +1009,7 @@ Mandatory command rules extracted from the Fallow skill:
 Required primary command:
 
 ```bash
-npx fallow audit --format json --quiet --explain 2>/dev/null || true
+npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true
 ```
 
 Required fallback command when the primary command cannot produce parseable JSON:
@@ -1048,11 +1048,13 @@ Create or refresh `.workflow/fallow-audit.md` with this exact section structure:
 
 Verdict rules:
 
-- `PASSED`: Fallow ran successfully, JSON parsed, no blocking maintainability findings remain, and `.workflow/fallow-audit.md` exists.
-- `PARTIAL`: Fallow ran successfully and JSON parsed, but non-blocking findings remain and are documented with reasons.
-- `FAILED`: Fallow could not run, JSON output could not be parsed, blocking findings remain, or the required report was not created.
+- `PASSED`: Fallow primary audit ran successfully with `--base main`, JSON parsed, no blocking maintainability findings remain, and `.workflow/fallow-audit.md` exists.
+- `PARTIAL`: Fallow ran successfully but non-blocking findings remain, and all remaining findings are documented with reasons.
+- `FAILED`: Fallow could not run, JSON could not parse, blocking findings remain, or the required report is missing.
 
-Record the Fallow command, parsed root `kind`, high-level counts, blocking/non-blocking classification, any dry-run or applied fixes, remaining exceptions, verification status, and final verdict in `.workflow/fallow-audit.md`. Add the Fallow verdict to `<artifact-root>/review.md`, `<artifact-root>/release-notes.md`, `<artifact-root>/summary.md`, and `<artifact-root>/handoff.md`.
+If unused files, unused exports, duplicate clone groups, or complexity findings remain, create or update `.workflow/fallow-followups.md` with the candidates, recommended cleanup task, and why they are not fixed in the current workflow.
+
+Record the Fallow command, parsed root `kind`, high-level counts, blocking/non-blocking classification, any dry-run or applied fixes, remaining exceptions, verification status, follow-up artifact path, and final verdict in `.workflow/fallow-audit.md`. Add the Fallow verdict to `<artifact-root>/review.md`, `<artifact-root>/release-notes.md`, `<artifact-root>/summary.md`, and `<artifact-root>/handoff.md`.
 
 ## 13. Release Notes Phase
 
@@ -1162,6 +1164,7 @@ Before the final response, check:
 - Was the summary created?
 - Were release notes created?
 - Did `.workflow/fallow-audit.md` exist?
+- Did `.workflow/fallow-followups.md` exist when findings remained?
 - Did the final health check verify `.workflow/spec.md`, `.workflow/task-plan.md`, `.workflow/handoff.md`, `.workflow/release-notes.md`, and `.workflow/fallow-audit.md`?
 - Were tests/lint/typecheck/build statuses recorded?
 - Was the Fallow verdict recorded and consistent with `.workflow/fallow-audit.md`?
@@ -1186,11 +1189,11 @@ Before the final response, check:
 
 Final health status:
 
-- `Passed`: all required artifacts exist, `<artifact-root>/request.md` is synced, root `WORK_REQUEST.md` was not auto-updated for active state, the detailed spec exists with all required sections, the spec approval gate was completed before task planning, all executable tasks are complete, all required iteration evidence is present, code-changing tasks include required TDD-first evidence or justified missing-test exceptions, release notes exist, `.workflow/fallow-audit.md` exists with a `PASSED` or justified `PARTIAL` Fallow verdict, tests/lint/typecheck/build statuses are recorded, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
+- `Passed`: all required artifacts exist, `<artifact-root>/request.md` is synced, root `WORK_REQUEST.md` was not auto-updated for active state, the detailed spec exists with all required sections, the spec approval gate was completed before task planning, all executable tasks are complete, all required iteration evidence is present, code-changing tasks include required TDD-first evidence or justified missing-test exceptions, release notes exist, `.workflow/fallow-audit.md` exists with a `PASSED` or justified `PARTIAL` Fallow verdict, `.workflow/fallow-followups.md` exists when findings remain, tests/lint/typecheck/build statuses are recorded, final diff audit is complete or documented, dirty worktree protection was checked, acceptance results are complete, verification was run or documented, scope was respected, and decisions were handled correctly.
 - `Partial`: artifacts exist, but some tasks remain because of a documented blocker, human-review need, verification gap, TDD evidence gap with justified stop state, follow-up risk, missing parallel merge review, incomplete claim/lock evidence, or a documented approval-gate irregularity that did not lead to implementation.
 - `Failed`: any required artifact is missing, the detailed spec is missing required sections and planning proceeded anyway, `<artifact-root>/tasks.md` was generated before explicit spec approval, workflow execution continued without user confirmation, scope was not respected, required TDD-first evidence for code-changing tasks is absent without justified exception, required verification/review/summary documentation is absent, or parallel execution proceeded with overlapping active file locks.
 
-If release notes, `.workflow/fallow-audit.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, required detailed spec sections, explicit spec approval before task planning, iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, claims, locks, worker status, or parallel merge review are missing when required, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, `.workflow/fallow-audit.md`, required `.workflow/fallow-followups.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, required detailed spec sections, explicit spec approval before task planning, iteration evidence, TDD-first evidence for code-changing tasks, acceptance results, claims, locks, worker status, or parallel merge review are missing when required, health should be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## 18. Final Response
 

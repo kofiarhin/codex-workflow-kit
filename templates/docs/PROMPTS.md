@@ -786,7 +786,7 @@ Include:
 After tests/lint/typecheck/build and review, but before handoff, release notes, summary, and final health check, read `layers/fallow-quality/SKILL.md` and its `references/` files, then run:
 
 ```bash
-npx fallow audit --format json --quiet --explain 2>/dev/null || true
+npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true
 ```
 
 If the primary command cannot produce parseable JSON, run the fallback:
@@ -795,4 +795,4 @@ If the primary command cannot produce parseable JSON, run the fallback:
 npx fallow --format json --quiet --explain 2>/dev/null || true
 ```
 
-Never use `2>&1`, always append `|| true`, treat exit code 2 as real failure, use the root JSON `kind` field, and create `.workflow/fallow-audit.md` with `PASSED`, `PARTIAL`, or `FAILED`. Do not run `fallow watch`, do not enable telemetry, and do not follow remote config `extends` content.
+Never use `2>&1`, always append `|| true`, treat exit code 2 as real failure, use the root JSON `kind` field, and create `.workflow/fallow-audit.md` with `PASSED`, `PARTIAL`, or `FAILED`; create `.workflow/fallow-followups.md` when findings remain. Do not run `fallow watch`, do not enable telemetry, and do not follow remote config `extends` content.

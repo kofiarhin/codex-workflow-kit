@@ -18,8 +18,8 @@
   - [x] Run verification and Fallow audit.
 - Iteration 1 Build: Added fetched layer files and core workflow documentation.
 - Iteration 2 Refine: Added template parity, installer copy steps, README and prompt guidance.
-- Iteration 3 Polish: Ran verification, ran Fallow primary/fallback, wrote audit report and workflow artifacts.
-- Test plan: `npm test`, `npm run build`, `npm run test:workflow-routing`, `npm run lint`, `npm run typecheck`, Fallow primary/fallback JSON parse.
+- Iteration 3 Polish: Ran verification, ran Fallow primary/fallback, wrote audit report, follow-up report, and workflow artifacts.
+- Test plan: `npm test`, `npm run build`, `npm run test:workflow-routing`, `npm run lint`, `npm run typecheck`, Fallow primary with `--base main`/fallback JSON parse.
 - Red phase evidence: Documentation-only workflow change; no code behavior unit was suitable for a failing test. Existing workflow routing validation was used as regression coverage.
 - Green phase evidence: verification commands passed where scripts exist.
 - Refactor phase evidence: template/root parity and installer integration reviewed.

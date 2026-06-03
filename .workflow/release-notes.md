@@ -1,14 +1,14 @@
 # Release Notes: Implement Fallow Quality Layer
 
-- Request: Implement Fallow as a reusable workflow quality layer.
-- User-facing changes: Workflow now includes a mandatory Fallow Quality gate after review and before handoff/release/health.
-- Developer changes: Official Fallow skill files are stored locally; installer copies the layer; docs and templates include command rules, report format, and health checks.
+- Request: Update PR #3 based on audit feedback for the Fallow Quality workflow layer.
+- User-facing changes: Workflow now documents and uses `npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true` as the primary audit command.
+- Developer changes: Added safe root `lint` and `typecheck` workspace delegate scripts; added `.workflow/fallow-followups.md` for remaining Fallow findings; updated Fallow audit verdict evidence and workflow artifacts.
 - New routes/APIs: none.
 - New env vars: none.
 - Database/schema changes: none.
 - Dependencies added/removed: none.
-- Test commands run: `npm test`; `npm run build`; `npm run test:workflow-routing`; `npm run lint` (missing script); `npm run typecheck` (missing script); Fallow primary/fallback commands.
-- Known limitations: Fallow primary `audit` needs an explicit base branch in this checkout; fallback was used. Non-blocking Fallow findings remain documented.
-- Follow-up work: dedicated cleanup workflow for unused candidates and complexity hotspots.
+- Test commands run: `npm test`; `npm run build`; `npm run test:workflow-routing`; `npm run lint`; `npm run typecheck`; `npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true`; `npx fallow --format json --quiet --explain 2>/dev/null || true`.
+- Known limitations: This local checkout has no `main` ref, so the primary Fallow changed-code audit returned a parseable JSON error envelope with exit_code `2`; fallback Fallow analysis parsed successfully. Non-blocking Fallow findings remain documented in `.workflow/fallow-followups.md`.
+- Follow-up work: Run the recommended cleanup task in `.workflow/fallow-followups.md` after product/API/test-owner review.
 - Fallow verdict: PARTIAL.
-- Suggested commit message: `feat: add fallow quality workflow layer`
+- Suggested commit message: `fix: harden fallow quality audit workflow`

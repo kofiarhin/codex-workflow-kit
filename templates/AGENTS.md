@@ -51,6 +51,7 @@ Customize placeholders before using this in a production project. MERN is the de
   - Use Fallow for cleanup opportunities, unused files/exports/types/dependencies, unlisted dependencies, duplicates, circular dependencies, re-export cycles, complexity hotspots, architecture boundary violations, feature flag patterns, opt-in security candidates, changed-code PR risk, refactoring targets, and health scores.
   - Do not use Fallow as a TypeScript replacement, ESLint replacement, formatter, verified SAST/security scanner, or bundle size analyzer.
   - Always run Fallow with machine-readable JSON, `--quiet`, `--explain`, `2>/dev/null`, and `|| true`; never use `2>&1`; treat exit code 2 as real failure.
+  - Primary audit command: `npx fallow audit --base main --format json --quiet --explain 2>/dev/null || true`.
   - Create or refresh `.workflow/fallow-audit.md` with the required Fallow Audit sections and a `PASSED`, `PARTIAL`, or `FAILED` verdict.
 - Supporting docs:
   - `docs/PROJECT_CONTEXT.md`
@@ -586,6 +587,7 @@ Before the final response, check:
 - Was the summary created?
 - Were release notes created?
 - Did `.workflow/fallow-audit.md` exist?
+- Did `.workflow/fallow-followups.md` exist when Fallow findings remained?
 - Did the final health check verify `.workflow/spec.md`, `.workflow/task-plan.md`, `.workflow/handoff.md`, `.workflow/release-notes.md`, and `.workflow/fallow-audit.md`?
 - Were tests/lint/typecheck/build statuses recorded?
 - Was the Fallow verdict recorded?
@@ -604,9 +606,9 @@ Final health status must be one of:
 - `Partial`
 - `Failed`
 
-`Passed` requires a synced `<artifact-root>/request.md`, root `WORK_REQUEST.md` left manual/compatibility-only, a detailed spec with every required section, explicit spec approval before task planning, a task plan derived from and citing or referencing the approved detailed spec, progress, handoff, review, summary, release notes, `.workflow/fallow-audit.md` with a recorded Fallow verdict, recorded tests/lint/typecheck/build status, required iteration evidence for every executable task, required TDD-first evidence for every code-changing task or justified missing-test exceptions, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
+`Passed` requires a synced `<artifact-root>/request.md`, root `WORK_REQUEST.md` left manual/compatibility-only, a detailed spec with every required section, explicit spec approval before task planning, a task plan derived from and citing or referencing the approved detailed spec, progress, handoff, review, summary, release notes, `.workflow/fallow-audit.md` with a recorded Fallow verdict, `.workflow/fallow-followups.md` when findings remain, recorded tests/lint/typecheck/build status, required iteration evidence for every executable task, required TDD-first evidence for every code-changing task or justified missing-test exceptions, final diff audit completed or documented, dirty worktree checked, acceptance results completed, verification run or documented, scope respected, and decisions recorded if needed.
 
-If release notes, `.workflow/fallow-audit.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, required detailed spec sections, explicit spec approval before task planning, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If `<artifact-root>/tasks.md` was generated before explicit approval or workflow execution continued without user confirmation, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
+If release notes, `.workflow/fallow-audit.md`, required `.workflow/fallow-followups.md`, a Fallow verdict, tests/lint/typecheck/build status, final diff audit, dirty worktree check, required detailed spec sections, explicit spec approval before task planning, iteration evidence, TDD-first evidence for code-changing tasks, or acceptance results are missing, health must be `Partial` or `Failed` depending on severity. If `<artifact-root>/tasks.md` was generated before explicit approval or workflow execution continued without user confirmation, health must be `Partial` or `Failed` depending on severity. If any required artifact is missing, mark workflow health as `Failed`.
 
 ## Implementation Boundaries
 
