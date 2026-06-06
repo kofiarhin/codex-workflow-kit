@@ -1,22 +1,37 @@
 # Handoff (run: work)
 
 ## Request
-Bake `design-taste-frontend` in as a first-class conditional workflow skill.
+Implement Project Brain memory into `codex-workflow-kit` as CLI-native global and run-scoped structured workflow memory.
 
 ## Current State
-- Current phase: Completed.
+- Current phase: Workflow complete.
 - Last completed task: TASK-003.
+- Current task: None.
+- Current iteration/phase: All Build, Refine, and Polish iterations complete.
 - Next task: None.
 - Blockers: None.
 
 ## Status
-- Spec: `_workflow/runs/work/spec.md` (approved)
-- Task plan: `_workflow/runs/work/tasks.md`
+- Request: `_workflow/runs/work/request.md`
+- Spec: `_workflow/runs/work/spec.md` (approved 2026-06-06)
+- Task plan: `_workflow/runs/work/tasks.md` (TASK-001 through TASK-003 Done)
 - Progress: `_workflow/runs/work/progress.md`
-- Review: pending update in this run
-- Release notes: pending update in this run
-- Summary: pending update in this run
-- Workflow health: Passed (for this request scope)
+- Review: `_workflow/runs/work/review.md` (approved)
+- Verification: `_workflow/runs/work/verification.md` (passed)
+- Release notes: `_workflow/runs/work/release-notes.md`
+- Summary: `_workflow/runs/work/summary.md`
+- Project Brain: `_workflow/project-brain/project.json`
+- Run brain: `_workflow/runs/work/brain.json`
+- Dirty worktree status: Clean after the final workflow commit.
+- Acceptance: All criteria met.
+- Workflow health: Passed.
+
+## Verification
+- `npm run test:project-brain` passed.
+- `npm run test:workflow-routing` passed.
+- `bash -n scripts/install.sh` passed.
+- `npm test` passed.
+- JSON parsing and diff checks passed.
 
 ## Resume Prompt
-continue workflow
+No workflow work remains. Review the committed change or start a new request.

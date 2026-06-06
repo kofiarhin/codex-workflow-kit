@@ -1,0 +1,176 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-06-06T08:47:11Z",
+  "runId": "work",
+  "workflow": {
+    "currentStage": "workflow-complete",
+    "completedStages": [
+      "intake",
+      "spec",
+      "spec-approval",
+      "task-planning",
+      "implementation",
+      "verification",
+      "review",
+      "release-notes",
+      "summary"
+    ],
+    "nextStage": "none",
+    "status": "complete"
+  },
+  "goals": [
+    {
+      "id": "goal-project-brain-cli-memory",
+      "text": "Provide CLI-native project and run memory that agents maintain automatically without a separate UI.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/request.md",
+        "conversation": "user"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "requirements": [
+    {
+      "id": "requirement-json-source-of-truth",
+      "text": "Use non-destructive structured JSON as the source of truth and generate human-readable Markdown projections, activity, and checkpoints.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/spec.md",
+        "conversation": "user"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "constraints": [
+    {
+      "id": "constraint-preserve-workflow-compatibility",
+      "text": "Preserve existing workflow approval, TDD, progress, handoff, parallel, and installer behavior while adding Project Brain.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/spec.md",
+        "conversation": "user"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "architectureDecisions": [
+    {
+      "id": "architecture-run-seeds-installed",
+      "text": "Install generic run-memory seeds under _workflow/templates/run/ and require the workflow to copy missing seeds into each active run directory.",
+      "status": "active",
+      "confidence": 0.95,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/spec.md",
+        "conversation": "workflow"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "technicalDecisions": [
+    {
+      "id": "technical-no-new-dependency",
+      "text": "Implement Project Brain with versioned JSON/Markdown templates, Bash installer mappings, and dependency-free Node validation.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "scripts/validate-project-brain.js",
+        "conversation": "assistant"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "domainKnowledge": [],
+  "openQuestions": [],
+  "risks": [],
+  "artifacts": [
+    {
+      "id": "artifact-project-brain-templates",
+      "text": "Project Brain project templates and run-memory seeds are defined under templates/_workflow/.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "templates/_workflow/project-brain/project.json",
+        "conversation": "workflow"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "workflowHistory": [
+    {
+      "id": "workflow-history-project-brain-complete",
+      "text": "Completed Project Brain implementation, verification, review, release notes, and summary.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/summary.md",
+        "conversation": "workflow"
+      },
+      "createdAt": "2026-06-06T08:47:11Z",
+      "updatedAt": "2026-06-06T08:47:11Z",
+      "supersedes": [],
+      "history": []
+    }
+  ],
+  "custom": {},
+  "changeLog": [
+    {
+      "id": "run-change-implementation",
+      "text": "Recorded approved planning and Project Brain implementation progress.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/tasks.md",
+        "conversation": "workflow"
+      },
+      "createdAt": "2026-06-06T00:00:00Z",
+      "updatedAt": "2026-06-06T00:00:00Z",
+      "supersedes": [],
+      "history": []
+    },
+    {
+      "id": "run-change-workflow-complete",
+      "text": "Marked the Project Brain workflow complete after all verification and review passed.",
+      "status": "active",
+      "confidence": 1,
+      "source": {
+        "runId": "work",
+        "artifact": "_workflow/runs/work/summary.md",
+        "conversation": "workflow"
+      },
+      "createdAt": "2026-06-06T08:47:11Z",
+      "updatedAt": "2026-06-06T08:47:11Z",
+      "supersedes": [],
+      "history": []
+    }
+  ]
+}

@@ -1,22 +1,52 @@
 # Summary (run: work)
 
-- Request: Add `design-taste-frontend` as a first-class conditional workflow skill.
+## Request
+Implement Project Brain as CLI-native project/run memory, workflow state, history, conflicts, activity, and checkpoints.
+
+## Workflow Inputs
 - Spec used: `_workflow/runs/work/spec.md`
+- Detailed spec status: Complete; all 22 required sections were present before planning.
+- Approval: Explicit user approval received before task planning.
 - Task plan used: `_workflow/runs/work/tasks.md`
 - Review used: `_workflow/runs/work/review.md`
-- Tasks completed: TASK-001, TASK-002, TASK-003
-- Files changed:
-  - templates/.agents/skills/design-taste-frontend/SKILL.md
-  - scripts/install.sh
-  - templates/AGENTS.md
-  - templates/RUN_WORKFLOW.md
-  - README.md
-- Verification run:
-  - `bash -n scripts/install.sh` passed
-  - `shellcheck scripts/install.sh` unavailable
-  - `git diff --stat` + `git diff` executed
-- Acceptance results: met for requested scope
-- Final diff audit: matches requested frontend taste skill integration scope
-- Release notes file: `_workflow/runs/work/release-notes.md`
-- Unresolved issues: none
-- Next recommended work: optional CI lint policy check for workflow docs
+- Release notes: `_workflow/runs/work/release-notes.md`
+
+## Tasks Completed
+- TASK-001: Templates, schemas, installer, and focused validation.
+- TASK-002: Workflow/agent authority, lifecycle, context, activity, checkpoints, and conflict rules.
+- TASK-003: README/guidance, live memory, and full compatibility verification.
+
+## Iteration Evidence
+- Every task completed Build, Refine, and Polish.
+- TDD Red failures were observed for missing templates, conflict schema, preservation messaging, workflow contracts, README documentation, and installer output.
+- Green and refactor verification passed after each behavior change.
+- Prose-only/refinement-only iterations with no new executable behavior have explicit missing-test exceptions.
+
+## Files Changed
+- Root/template workflow and agent guides.
+- README and project/workflow guidance.
+- Project Brain project/run templates and live workflow memory.
+- Installer, package script, and focused validator.
+- Current run request/spec/tasks/progress/handoff/review/verification/release notes/summary.
+
+## Verification
+- `npm run test:project-brain` passed.
+- `npm run test:workflow-routing` passed.
+- `bash -n scripts/install.sh` passed.
+- `npm test` passed: 21 tests total.
+- Live JSON parse and diff checks passed.
+
+## Acceptance Results
+All approved request acceptance criteria are `[x]`.
+
+## Failure Recovery
+Only expected TDD Red failures occurred; each was corrected in scope and rerun successfully.
+
+## Final Diff Audit
+The diff matches the saved spec, contains no unrelated application changes or secrets, preserves existing workflow behavior, and includes required tests/artifacts.
+
+## Unresolved Issues
+None.
+
+## Next Recommended Work
+Optional atomic JSON mutation helper if future versions require executable concurrent writes.

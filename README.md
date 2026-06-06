@@ -5,7 +5,7 @@ A lightweight reusable AI engineering workflow system for OpenAI Codex, Claude C
 The kit turns a plain-English request into a clarified, specified, task-by-task workflow:
 
 ```txt
-request -> detect branch/worktree/run id/artifact root -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task iteration and after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
+request -> detect branch/worktree/run id/artifact root -> initialize/load Project Brain -> inject relevant memory -> grill-me intake skill unless skipped/resuming -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> detailed execution blueprint in _workflow/runs/<run-id>/spec.md -> show spec path and summary -> stop for explicit user approval or requested changes -> after approval only, vertical plan/tasks in _workflow/runs/<run-id>/tasks.md -> execute each task through Build -> Refine -> Polish, with Red -> Green -> Refactor inside every code-changing iteration -> acceptance results + run-scoped progress/handoff after each task iteration and after each task -> final diff audit -> run-scoped review, verification, release notes, summary, and handoff -> health check
 ```
 
 The grill-me skill is the workflow intake engine.
@@ -42,6 +42,43 @@ It does not generate an app, install dependencies, or force a framework. MERN is
 - `docs/DECISIONS.md`: Legacy/supporting project-level decision guidance when useful.
 - `scripts/install.sh`: Installer that copies workflow files into another repository.
 - `examples/mern-saas`: Filled-in examples for a realistic MERN SaaS project.
+
+## Project Brain
+
+Project Brain is the workflow kit's structured, visible memory system. Users stay in CLI chat; the files are backend memory maintained automatically by the agent, not a separate UI and not a manual data-entry experience.
+
+JSON is the source of truth:
+
+- `_workflow/project-brain/project.json`: Durable project goals, requirements, constraints, decisions, knowledge, questions, risks, artifacts, workflow state, and change log.
+- `_workflow/project-brain/history.json`: Append-only project memory events.
+- `_workflow/project-brain/conflicts.json`: Open and resolved contradictions without deleting either side.
+- `_workflow/project-brain/categories.json`: Built-in category registry, memory item contract, and governance for AI-created `custom.<category>` entries.
+- `_workflow/project-brain/PROJECT_BRAIN.md`: Generated human-readable projection of active JSON memory.
+
+Each active run automatically creates:
+
+- `_workflow/runs/<run-id>/brain.json`: Run-local structured memory and workflow state.
+- `_workflow/runs/<run-id>/activity.md`: Append-only compact memory/workflow activity.
+- `_workflow/runs/<run-id>/checkpoints.md`: Append-only milestone saves.
+
+The agent initializes Project Brain after detecting the artifact root, loads relevant active memory before planning and implementation, and extracts changes after intake, spec creation, task planning, task completion, review, release notes, and summary. It injects goals, constraints, architecture decisions, technical decisions, and current workflow state, plus only related requirements/artifacts/domain knowledge. It does not inject the entire chat history, stale runs, unrelated superseded decisions, or unlabeled low-confidence assumptions.
+
+Memory updates are non-destructive. Corrections preserve prior items through status, provenance, supersession links, item history, project history, and change logs. Contradictions remain in `conflicts.json`; explicit high-confidence user corrections can supersede prior memory, while ambiguous conflicts remain open for review. AI-created categories are allowed only under the governed `custom` namespace.
+
+After meaningful grouped changes, the agent appends the update and shows one compact block in chat:
+
+```txt
+Activity
+- Stage: <from> → <to>
+- Memory: <added/updated/conflict/resolved>
+- Artifact: <created/updated path>
+- Checkpoint: <saved/not saved>
+- Next: <next action>
+```
+
+Checkpoints are saved at intake completion, spec save, task-plan save, every completed task, conflict resolution, and workflow completion. Project Brain controls current workflow state; run `progress.md` remains authoritative for completed task execution evidence.
+
+The installer places generic run seeds under `_workflow/templates/run/` so the workflow can create run-local files. Existing Project Brain memory is preserved by default. Use `--force` only when replacing existing memory is intentional.
 
 ## Why Use It
 
@@ -218,7 +255,20 @@ Overwrite existing workflow files only when intentional:
 bash scripts/install.sh ../my-project --force
 ```
 
-Existing files are skipped by default.
+Existing files, including Project Brain memory, are skipped and preserved by default. Use `--force` only for intentional replacement.
+
+Installed Project Brain files:
+
+```txt
+_workflow/project-brain/project.json
+_workflow/project-brain/PROJECT_BRAIN.md
+_workflow/project-brain/history.json
+_workflow/project-brain/conflicts.json
+_workflow/project-brain/categories.json
+_workflow/templates/run/brain.json
+_workflow/templates/run/activity.md
+_workflow/templates/run/checkpoints.md
+```
 
 ## Usage
 
@@ -639,7 +689,7 @@ add dark theme
 Codex automatically runs:
 
 ```txt
-direct prompt -> detect branch/worktree/run id/artifact root -> grill-me intake skill -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> _workflow/runs/<run-id>/spec.md -> show spec path and summary -> wait for explicit approval -> _workflow/runs/<run-id>/tasks.md -> all task execution through Build -> Refine -> Polish -> acceptance results + run-scoped progress + handoff after each task -> final diff audit -> run-scoped review -> release notes -> summary -> handoff -> health check
+direct prompt -> detect branch/worktree/run id/artifact root -> initialize/load Project Brain -> inject relevant memory -> grill-me intake skill -> shared understanding handoff -> sync _workflow/runs/<run-id>/request.md -> dirty worktree check -> _workflow/runs/<run-id>/spec.md -> show spec path and summary -> wait for explicit approval -> _workflow/runs/<run-id>/tasks.md -> all task execution through Build -> Refine -> Polish -> acceptance results + run-scoped progress + handoff after each task -> final diff audit -> run-scoped review -> release notes -> summary -> handoff -> health check
 ```
 
 Manual editing remains useful when you want to predefine constraints, architecture rules, detailed current-state notes, success criteria, or acceptance criteria.

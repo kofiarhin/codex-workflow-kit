@@ -65,6 +65,8 @@ No typecheck script is currently defined.
 
 ## Architecture Rules
 
+- Project Brain JSON under `_workflow/project-brain/` is the source of truth for durable memory and current workflow state; run-scoped `progress.md` remains authoritative for completed task evidence.
+- Project Brain is CLI-native backend workflow memory. Do not add a separate memory UI unless a future request explicitly requires one.
 - Keep notification toasts as client-only UI state unless a future task explicitly adds persistence.
 - Use existing auth service functions for login/logout workflows.
 - Store user avatar images as URL strings only until a future media storage task is explicitly requested.
