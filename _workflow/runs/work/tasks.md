@@ -1,6 +1,8 @@
 # Task Plan: Implement Fallow Quality Layer
 
 - Spec file used: `_workflow/runs/work/spec.md`
+## Fallow Quality Task
+
 - Planning date: 2026-06-03
 - Progress and summary files read: none existed for this run before implementation.
 - Detailed spec sections used: affected surfaces, dependency map, workflow expectations, execution strategy, verification strategy, acceptance criteria, risks, assumptions, task extraction notes.
@@ -29,3 +31,188 @@
 - Verification commands: npm/Fallow commands listed in progress.
 - Stop condition: none.
 - Out-of-scope items: applying Fallow cleanup fixes.
+---
+
+# Task Plan: Project Brain Memory
+
+- Spec approval: Explicitly approved by the user on 2026-06-06 with `approve spec`.
+- Planning date: 2026-06-06
+- Progress/summary/handoff read: `_workflow/runs/work/progress.md`, `_workflow/runs/work/summary.md`, `_workflow/runs/work/handoff.md`
+- Spec sections used: 5-7, 9-22, including affected surfaces, dependencies, data/state impact, workflow expectations, execution/verification strategy, acceptance, edge cases, risks, assumptions, open questions, and task extraction notes.
+
+## TASK-001: Install valid Project Brain memory foundations
+
+- Status: Done
+- Lifecycle: Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+- Objective: Add versioned project/run memory templates, focused validation, and safe installer mappings.
+- Files affected: `templates/_workflow/project-brain/*`, `templates/_workflow/runs/{brain.json,activity.md,checkpoints.md}`, `scripts/install.sh`, `scripts/validate-project-brain.js`, `package.json`.
+- Checklist:
+  - [x] Added all eight requested templates.
+  - [x] Added project-level install targets and generic run seeds under `_workflow/templates/run/`.
+  - [x] Proved default preservation and intentional `--force` replacement.
+  - [x] Added dependency-free validation.
+- Iteration 1 Build:
+  - Goal: Establish minimum valid schemas and install mappings.
+  - Changes made: Added the focused validator, project/run templates, installer mappings, and npm script.
+  - Test plan: Require files, base schema, and mappings before implementation.
+  - Red phase evidence: `npm run test:project-brain` failed because `templates/_workflow/project-brain/project.json` did not exist.
+  - Green phase evidence: The same command passed after adding templates and mappings.
+  - Refactor phase evidence: Centralized file lists and brain-shape assertions; focused test and `bash -n` remained green.
+  - Test commands run: `npm run test:project-brain`; `bash -n scripts/install.sh`.
+  - Verification command/result: Both passed.
+  - Review findings: Base schema matched the requested version and collections.
+  - Acceptance status: Met.
+  - Remaining issues: Auxiliary conflict/item contracts needed stronger validation.
+  - Next action: Iteration 2 Refine.
+- Iteration 2 Refine:
+  - Goal: Govern memory items and conflict records explicitly.
+  - Changes made: Added memory-item schema assertions and a versioned conflict-record schema.
+  - Test plan: Require all item and conflict fields before adding them.
+  - Red phase evidence: Focused validation failed with `conflict record schema must include id`.
+  - Green phase evidence: Validation passed after adding `conflictRecordSchema` and allowed statuses.
+  - Refactor phase evidence: Kept schema metadata in JSON templates rather than duplicating it in validation logic.
+  - Test commands run: `npm run test:project-brain`.
+  - Verification command/result: Passed.
+  - Review findings: Conflicts retain both sides and resolution history without mutation of prior facts.
+  - Acceptance status: Met.
+  - Remaining issues: Installer behavior needed end-to-end proof.
+  - Next action: Iteration 3 Polish.
+- Iteration 3 Polish:
+  - Goal: Prove installer preservation and force behavior.
+  - Changes made: Added temp-directory install smoke tests and explicit preservation output.
+  - Test plan: Require preservation messaging, install files, mutate memory, reinstall, then force replace.
+  - Red phase evidence: Validation failed with `installer must explain Project Brain preservation`.
+  - Green phase evidence: Validation passed after installer messaging and mappings were complete.
+  - Refactor phase evidence: Temp files are cleaned in `finally`; install helper reuses one command path.
+  - Test commands run: `npm run test:project-brain`; `bash -n scripts/install.sh`; `git diff --check`.
+  - Verification command/result: Passed.
+  - Review findings: Existing memory is skipped by default and replaced only with `--force`.
+  - Acceptance status: Met.
+  - Remaining issues: None.
+  - Next action: TASK-002.
+- Acceptance result:
+  - [x] All requested templates exist and parse/render correctly.
+  - [x] Project memory installs at requested paths.
+  - [x] Run seeds can initialize active run files.
+  - [x] Existing memory is preserved by default and replaced only with `--force`.
+- Stop condition: Not reached.
+- Out-of-scope items respected: No UI, service, database, or dependency added.
+
+## TASK-002: Make Project Brain authoritative throughout workflow execution
+
+- Status: Done
+- Lifecycle: Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+- Objective: Integrate initialization, context injection, extraction, projection, checkpoints, conflict handling, and authority rules into workflow and agent contracts.
+- Files affected: `RUN_WORKFLOW.md`, `templates/RUN_WORKFLOW.md`, `AGENTS.md`, `templates/AGENTS.md`, `scripts/validate-project-brain.js`.
+- Checklist:
+  - [x] Added early mandatory Project Brain phase after artifact-root detection.
+  - [x] Added always/conditional/never context injection rules.
+  - [x] Added every requested extraction boundary.
+  - [x] Added non-destructive conflict/category/authority rules.
+  - [x] Added exact Activity and checkpoint contracts.
+  - [x] Preserved approval, TDD, completed-progress, resume, and parallel rules.
+- Iteration 1 Build:
+  - Goal: Add core workflow and agent contracts.
+  - Changes made: Inserted Project Brain sections into all four root/template guides.
+  - Test plan: Require all paths, milestones, extraction boundaries, Activity fields, and authority language.
+  - Red phase evidence: Focused validation failed because `RUN_WORKFLOW.md` lacked `_workflow/project-brain/project.json`.
+  - Green phase evidence: Focused validation passed after all four guides implemented the contract.
+  - Refactor phase evidence: Shared conceptual structure and exact field names are consistent across guides.
+  - Test commands run: `npm run test:project-brain`.
+  - Verification command/result: Passed.
+  - Review findings: Project Brain is mandatory and CLI-native; JSON/projection roles are explicit.
+  - Acceptance status: Met.
+  - Remaining issues: Resume, pipeline, parallel, and health rules needed hardening.
+  - Next action: Iteration 2 Refine.
+- Iteration 2 Refine:
+  - Goal: Reconcile current state safely and filter injected context.
+  - Changes made: Added pipeline initialization/injection, Project-Brain-first resume, completed-progress authority, malformed JSON stop behavior, and orchestrator-only shared writes.
+  - Test plan: Re-run focused validation and existing workflow routing after each refinement.
+  - Red phase evidence: Covered by the iteration's initial missing-contract failure; subsequent prose-only refinements reused the focused contract test without a new distinct failing behavior.
+  - Green phase evidence: Both focused and routing validation passed.
+  - Refactor phase evidence: Renumbered modified ordered lists and removed duplicate numbering without changing behavior.
+  - Test commands run: `npm run test:project-brain`; `npm run test:workflow-routing`.
+  - Verification command/result: Passed.
+  - Review findings: Superseded/stale/low-confidence memory is excluded unless needed and labeled.
+  - Acceptance status: Met.
+  - Remaining issues: Health-check consequences needed explicit wording.
+  - Next action: Iteration 3 Polish.
+- Iteration 3 Polish:
+  - Goal: Harden health and compatibility semantics.
+  - Changes made: Added health outcomes for missing/invalid brain files, destructive memory loss, ungoverned categories, stale projections, and missing activity/checkpoints.
+  - Test plan: Run focused and routing regression checks.
+  - Red phase evidence: Missing-test exception: this iteration changed policy prose only; focused structural checks already covered all new required markers.
+  - Green phase evidence: Focused and routing validation passed.
+  - Refactor phase evidence: Kept current-state authority and completed-evidence authority separate and explicit.
+  - Test commands run: `npm run test:project-brain`; `npm run test:workflow-routing`; `git diff --check`.
+  - Verification command/result: Passed.
+  - Review findings: No approval gate, TDD loop, parallel lock, or existing workflow artifact was removed.
+  - Acceptance status: Met.
+  - Remaining issues: None.
+  - Next action: TASK-003.
+- Acceptance result:
+  - [x] Project Brain is authoritative for current workflow state.
+  - [x] `progress.md` remains authoritative for completed task evidence.
+  - [x] Updates are automatic, non-destructive, conflict-aware, and governed.
+  - [x] Activity, checkpoint, context-injection, and extraction rules match the spec.
+- Stop condition: Not reached.
+- Out-of-scope items respected: No runtime daemon or application UI.
+
+## TASK-003: Document and verify the complete CLI-native Project Brain experience
+
+- Status: Done
+- Lifecycle: Planned -> Ready -> In Progress -> Verified -> Reviewed -> Done
+- Objective: Document Project Brain, initialize live memory for this run, and complete broad compatibility verification.
+- Files affected: `README.md`, `templates/_workflow/index.md`, `templates/_workflow/runs/README.md`, `docs/PROJECT_CONTEXT.md`, `templates/docs/PROJECT_CONTEXT.md`, live `_workflow/project-brain/*`, run brain/activity/checkpoints, validation and installer output.
+- Checklist:
+  - [x] Explained backend memory and CLI-only operation.
+  - [x] Listed installed and run-created files.
+  - [x] Included exact Activity example and conflict/checkpoint behavior.
+  - [x] Initialized live project/run memory non-destructively.
+  - [x] Ran focused, routing, Bash, client, server, JSON, and diff checks.
+- Iteration 1 Build:
+  - Goal: Add user-facing Project Brain documentation.
+  - Changes made: Added README Project Brain section, install list, workflow flow, run/index guidance, and durable context rules.
+  - Test plan: Require CLI wording, backend-memory wording, Activity block, and all file paths.
+  - Red phase evidence: Focused validation failed with `README must include a Project Brain section`.
+  - Green phase evidence: Validation passed after README and template guidance were updated.
+  - Refactor phase evidence: Centralized the detailed explanation in README and kept index/run docs concise.
+  - Test commands run: `npm run test:project-brain`.
+  - Verification command/result: Passed.
+  - Review findings: Documentation does not imply a separate app or manual UX.
+  - Acceptance status: Met.
+  - Remaining issues: Installer output and live dogfooding needed polish.
+  - Next action: Iteration 2 Refine.
+- Iteration 2 Refine:
+  - Goal: Improve install discoverability and dogfood Project Brain.
+  - Changes made: Added installer output locations; created live project and run JSON, projection, activity, history, conflicts, categories, and checkpoints.
+  - Test plan: Require installer output to identify Project Brain locations.
+  - Red phase evidence: Focused validation failed with `installer output must identify Project Brain files`.
+  - Green phase evidence: Validation passed after adding installer output.
+  - Refactor phase evidence: Live run memory references durable project items and keeps conflicts empty rather than duplicating stale chat.
+  - Test commands run: `npm run test:project-brain`; live JSON parse command.
+  - Verification command/result: Passed.
+  - Review findings: Project and run memory both exist and projection is clearly derived.
+  - Acceptance status: Met.
+  - Remaining issues: Full repository regression verification remained.
+  - Next action: Iteration 3 Polish.
+- Iteration 3 Polish:
+  - Goal: Complete compatibility and scope audit.
+  - Changes made: No behavior expansion; reviewed full diff and workflow contracts.
+  - Test plan: Run focused validation, routing validation, Bash syntax, full npm tests, JSON parsing, and diff checks.
+  - Red phase evidence: Missing-test exception: final polish was verification/review only; no new behavior was introduced.
+  - Green phase evidence: All focused and full suites passed.
+  - Refactor phase evidence: No further code refactor was needed after the final audit.
+  - Test commands run: `npm run test:project-brain`; `npm run test:workflow-routing`; `bash -n scripts/install.sh`; `npm test`; JSON parse command; `git diff --check`; `git diff --stat`; `git diff`.
+  - Verification command/result: Passed; npm emitted only existing proxy/router warnings.
+  - Review findings: Diff is in scope; no secrets, generated junk, dependency changes, UI, API, or database changes.
+  - Acceptance status: Met.
+  - Remaining issues: None.
+  - Next action: Final review, release notes, summary, handoff, commit, and PR.
+- Acceptance result:
+  - [x] README describes CLI-only backend memory clearly.
+  - [x] Installed and run-created lists are accurate.
+  - [x] All approved acceptance criteria are verified.
+  - [x] Existing workflow routing and application tests remain compatible.
+- Stop condition: Not reached.
+- Out-of-scope items respected: No unrelated application changes.

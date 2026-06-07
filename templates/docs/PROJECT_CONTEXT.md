@@ -57,6 +57,8 @@ This file captures durable repository facts discovered during workflow runs. Kee
 
 ## Architecture Rules
 
+- Project Brain JSON under `_workflow/project-brain/` is the source of truth for durable memory and current workflow state; run-scoped `progress.md` remains authoritative for completed task evidence.
+- Project Brain is CLI-native backend workflow memory. Do not add a separate memory UI unless a future request explicitly requires one.
 - `<Rule discovered from repo or agreed by team>`
 - `<Rule discovered from repo or agreed by team>`
 

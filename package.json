@@ -12,7 +12,8 @@
     "test": "npm run test --workspace client && npm run test --workspace server",
     "test:client": "npm run test --workspace client",
     "test:server": "npm run test --workspace server",
-    "test:workflow-routing": "node scripts/validate-frontend-skill-routing.js"
+    "test:workflow-routing": "node scripts/validate-frontend-skill-routing.js",
+    "test:project-brain": "node scripts/validate-project-brain.js"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
