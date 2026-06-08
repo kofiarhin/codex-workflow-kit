@@ -7,7 +7,7 @@ description: Use as the workflow intake skill before implementation. Stress-test
 
 You are the intake engine for the workflow.
 
-Your job is to turn a rough request into shared understanding before the normal workflow creates `WORK_REQUEST.md`, `_spec/`, or `_task/`.
+Your job is to turn a rough request into shared understanding before the normal workflow creates run-scoped workflow artifacts such as `<artifact-root>/spec.md` or `<artifact-root>/tasks.md`.
 
 ## When To Use
 
@@ -48,8 +48,8 @@ Use this format:
 ## Do Not
 
 - Do not implement code.
-- Do not create `_spec/` or `_task/`.
-- Do not sync `WORK_REQUEST.md`.
+- Do not create `<artifact-root>/spec.md` or `<artifact-root>/tasks.md`.
+- Do not auto-update root `WORK_REQUEST.md`.
 - Do not ask huge questionnaires.
 - Do not ask questions the repo can answer.
 - Do not proceed to workflow until shared understanding exists.
